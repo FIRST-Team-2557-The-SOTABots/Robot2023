@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.SwerveUtils;
 import lib.Component.GearShifter;
 import lib.Component.Gyro;
 import lib.Config.ShiftingSwerveDriveConfig;
@@ -26,30 +27,20 @@ public class ShiftingSwerveDrive extends SubsystemBase {
 
   private SwerveDriveKinematics mSwerveDriveKinematics;
   private SwerveDriveOdometry mSwerveDriveOdometry;
-
+  private final SwerveUtils mSwerveUtils;
   private boolean mFieldCentricActive;
 
   private double kMaxWheelSpeed;
 
   /** Creates a new ShiftingSwerveDrive. */
-  public ShiftingSwerveDrive(ShiftingSwerveModule[] swerveModules, GearShifter shifter, Gyro gyro, ShiftingSwerveDriveConfig config) {
+  public ShiftingSwerveDrive(SwerveUtils swerveUtils, ShiftingSwerveModule[] swerveModules, SwerveDriveKinematics kinematics, SwerveDriveOdometry odometry, GearShifter shifter, Gyro gyro, double maxWheelSpeed) {
+    mSwerveUtils = swerveUtils;
     mSwerveModules = swerveModules;
     mShifter = shifter;
     mGyro = gyro;
-
-    mSwerveDriveKinematics = new SwerveDriveKinematics(
-      config.getFrontRightModulePosition(),
-      config.getFrontLeftModulePosition(),
-      config.getBackRightModulePosition(),
-      config.getBackLeftModulePosition()
-    );
-    mSwerveDriveOdometry = new SwerveDriveOdometry(
-      mSwerveDriveKinematics,
-      mGyro.getAngleRotation2d(),
-      getModulePositions()
-    );
-
-    kMaxWheelSpeed = config.getMaxWheelSpeed();
+    mSwerveDriveKinematics = kinematics;
+    mSwerveDriveOdometry = odometry;
+    kMaxWheelSpeed = maxWheelSpeed;
   }
 
   /** 
@@ -99,18 +90,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     mShifter.shift(gear);
   }
 
-  /** 
-   * Gets the module positions from the modules
-   * @return An array of the position of the swerve modules
-   */
-  public SwerveModulePosition[] getModulePositions() {
-    int moduleNumber = mSwerveModules.length;
-    SwerveModulePosition[] modulePositions = new SwerveModulePosition[moduleNumber];
-    for (int i = 0; i < moduleNumber; i++) {
-      modulePositions[i] = mSwerveModules[i].getMeasuredPosition();
-    }
-    return modulePositions;
-  }
+
 
   /** 
    * Updates the pose of the robot using module positions and angle
@@ -135,7 +115,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     );
     mSwerveDriveOdometry.resetPosition(
       rotation,
-      getModulePositions(),
+      mSwerveUtils.getModulePositions(mSwerveModules),
       pose
     );
   }

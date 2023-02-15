@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.SerialPort.Port;
@@ -21,6 +23,8 @@ import frc.robot.Subsystem.Gyro.NavX;
 import frc.robot.Subsystem.Swerve.DoubleSolenoidSwerveShifter;
 import frc.robot.Subsystem.Swerve.ShiftingSwerveDrive;
 import frc.robot.Subsystem.Swerve.ShiftingSwerveModule;
+import frc.robot.util.ConfigUtils;
+import frc.robot.util.SwerveUtils;
 import lib.Config.DoubleSolenoidSwerveShifterConfig;
 import lib.Config.MotorControllerConfig;
 import lib.Config.ShiftingSwerveDriveConfig;
@@ -33,127 +37,97 @@ import static frc.robot.Constants.Swerve.*;
 
 public class RobotContainer {
 
-  ShiftingSwerveDrive mShiftingSwerveDrive;
-  DoubleSolenoidSwerveShifter mShifter;
-  NavX mNavx;
+  private final ConfigUtils configUtils;
 
-  public RobotContainer() throws JsonParseException, JsonMappingException, IOException {
+  public RobotContainer() throws Exception {
     ObjectMapper mapper = new ObjectMapper();
     mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    configUtils = new ConfigUtils(mapper) ;
+    SwerveUtils swerveUtils = new SwerveUtils();
+    ShiftingSwerveModule[] shiftingSwerveModules = createSwerveModules();
 
-    // TODO: Shorten these lines of swerve module declaration
-    ShiftingSwerveModule[] shiftingSwerveModules = {
-      // Front Right
-      new ShiftingSwerveModule(
-        new FalconDelegate(
-          SPEED_FRONT_RIGHT_PORT, 
-          mapper.readValue(
-            RobotContainer.class.getClassLoader().getResourceAsStream("Swerve\\FrontRight\\SpeedFalcon.json"), 
-            MotorControllerConfig.class
-          )
-        ),
-        new SparkMaxDelegate(
-          ANGLE_FRONT_RIGHT_PORT, 
-          mapper.readValue(
-            RobotContainer.class.getClassLoader().getResourceAsStream("Swerve\\FrontRight\\AngleSparkMax.json"), 
-            MotorControllerConfig.class
-          )
-        ),
-        new AnalogInput(ANGLE_ENCODER_FRONT_RIGHT_PORT),
-        mapper.readValue(
-          RobotContainer.class.getClassLoader().getResourceAsStream("Swerve\\FrontRight\\ShiftingSwerveModule.json"), 
-          ShiftingSwerveModuleConfig.class
-        )
-      ),
-      // Front Left
-      new ShiftingSwerveModule(
-        new FalconDelegate(
-          SPEED_FRONT_LEFT_PORT, 
-          mapper.readValue(
-            RobotContainer.class.getClassLoader().getResourceAsStream("Swerve\\FrontLeft\\SpeedFalcon.json"), 
-            MotorControllerConfig.class
-          )
-        ),
-        new SparkMaxDelegate(
-          ANGLE_FRONT_LEFT_PORT, 
-          mapper.readValue(
-            RobotContainer.class.getClassLoader().getResourceAsStream("Swerve\\FrontLeft\\AngleSparkMax.json"), 
-            MotorControllerConfig.class
-          )
-        ),
-        new AnalogInput(ANGLE_ENCODER_FRONT_LEFT_PORT),
-        mapper.readValue(
-          RobotContainer.class.getClassLoader().getResourceAsStream("Swerve\\FrontLeft\\ShiftingSwerveModule.json"), 
-          ShiftingSwerveModuleConfig.class
-        )
-      ),
-      // Back Right
-      new ShiftingSwerveModule(
-        new FalconDelegate(
-          SPEED_BACK_RIGHT_PORT, 
-          mapper.readValue(
-            RobotContainer.class.getClassLoader().getResourceAsStream("Swerve\\BackRight\\SpeedFalcon.json"), 
-            MotorControllerConfig.class
-          )
-        ),
-        new SparkMaxDelegate(
-          ANGLE_BACK_RIGHT_PORT, 
-          mapper.readValue(
-            RobotContainer.class.getClassLoader().getResourceAsStream("Swerve\\BackRight\\AngleSparkMax.json"), 
-            MotorControllerConfig.class
-          )
-        ),
-        new AnalogInput(ANGLE_ENCODER_BACK_RIGHT_PORT),
-        mapper.readValue(
-          RobotContainer.class.getClassLoader().getResourceAsStream("Swerve\\BackRight\\ShiftingSwerveModule.json"), 
-          ShiftingSwerveModuleConfig.class
-        )
-      ),
-      // Back Left
-      new ShiftingSwerveModule(
-        new FalconDelegate(
-          SPEED_BACK_LEFT_PORT, 
-          mapper.readValue(
-            RobotContainer.class.getClassLoader().getResourceAsStream("Swerve\\BackLeft\\SpeedFalcon.json"), 
-            MotorControllerConfig.class
-          )
-        ),
-        new SparkMaxDelegate(
-          ANGLE_BACK_LEFT_PORT, 
-          mapper.readValue(
-            RobotContainer.class.getClassLoader().getResourceAsStream("Swerve\\BackLeft\\AngleSparkMax.json"), 
-            MotorControllerConfig.class
-          )
-        ),
-        new AnalogInput(ANGLE_ENCODER_BACK_LEFT_PORT),
-        mapper.readValue(
-          RobotContainer.class.getClassLoader().getResourceAsStream("Swerve\\BackLeft\\ShiftingSwerveModule.json"), 
-          ShiftingSwerveModuleConfig.class
-        )
-      )
-    };
-    DoubleSolenoidSwerveShifter shifter = 
+    DoubleSolenoidSwerveShifter shifter =
       new DoubleSolenoidSwerveShifter(
         new DoubleSolenoid(MODULE_TYPE, SWERVE_FORWARD, SWERVE_REVERSE),
-        mapper.readValue(
-          RobotContainer.class.getClassLoader().getResourceAsStream("Swerve\\DoubleSolenoidSwerveShifter"),
-          DoubleSolenoidSwerveShifterConfig.class
-        )
-      );
-    NavX navX = new NavX(new AHRS(Port.kMXP));
-    mShiftingSwerveDrive = new ShiftingSwerveDrive(
-      shiftingSwerveModules, 
-      shifter, 
-      navX, 
-      mapper.readValue(
-        RobotContainer.class.getClassLoader().getResourceAsStream("Swerve\\ShiftingSwerveDrive.json"),
-        ShiftingSwerveDriveConfig.class
-      )
+        configUtils.readConfigFromClasspath("Swerve/DoubleSolenoidSwerveShifter.json",
+          DoubleSolenoidSwerveShifterConfig.class)
     );
 
+    NavX gyro = new NavX(new AHRS(Port.kMXP));
+    SwerveDriveKinematics kinematics = new SwerveDriveKinematics();
+    SwerveDriveOdometry swerveDriveOdometry = new SwerveDriveOdometry(kinematics, gyro.getAngleRotation2d(),
+              swerveUtils.getModulePositions(shiftingSwerveModules));
+    ShiftingSwerveDriveConfig swerveDriveConfig =
+            configUtils.readConfigFromClasspath("Swerve/ShiftingSwerve.json", ShiftingSwerveDriveConfig.class);
+
+    new ShiftingSwerveDrive(
+      swerveUtils,
+      shiftingSwerveModules,
+      kinematics,
+      swerveDriveOdometry,
+      shifter,
+      gyro,
+      swerveDriveConfig.getMaxWheelSpeed()
+    );
     configureBindings();
   }
 
+  private ShiftingSwerveModule[] createSwerveModules() throws Exception {
+      ShiftingSwerveModule[] shiftingSwerveModules = {
+              // Front Right
+              new ShiftingSwerveModule(
+                      new FalconDelegate(
+                              SPEED_FRONT_RIGHT_PORT,
+                              configUtils.readConfigFromClasspath("Swerve/FrontRight/SpeedFalcon.json", MotorControllerConfig.class)
+                      ),
+                      new SparkMaxDelegate(
+                              ANGLE_FRONT_RIGHT_PORT,
+                              configUtils.readConfigFromClasspath("Serve/FrontRight/AngleSparkMax.json", MotorControllerConfig.class)
+                      ),
+                      new AnalogInput(ANGLE_ENCODER_FRONT_RIGHT_PORT),
+                      configUtils.readConfigFromClasspath("Swerve/FrontRight/ShiftingSwerveModule.json", ShiftingSwerveModuleConfig.class)
+              ),
+              // Front Left
+              new ShiftingSwerveModule(
+                      new FalconDelegate(
+                              SPEED_FRONT_LEFT_PORT,
+                              configUtils.readConfigFromClasspath("Swerve/FrontLeft/SpeedFalcon.json", MotorControllerConfig.class)
+                      ),
+                      new SparkMaxDelegate(
+                              ANGLE_FRONT_LEFT_PORT,
+                              configUtils.readConfigFromClasspath("Swerve/FrontLeft/AngleSparkMax.json", MotorControllerConfig.class)
+                      ),
+                      new AnalogInput(ANGLE_ENCODER_FRONT_LEFT_PORT),
+                      configUtils.readConfigFromClasspath("Swerve/FrontLeft/ShiftingSwerveModule.json", ShiftingSwerveModuleConfig.class)
+              ),
+              // Back Right
+              new ShiftingSwerveModule(
+                      new FalconDelegate(
+                              SPEED_BACK_RIGHT_PORT,
+                              configUtils.readConfigFromClasspath("Swerve/BackRight/SpeedFalcon.json", MotorControllerConfig.class)),
+                      new SparkMaxDelegate(
+                              ANGLE_BACK_RIGHT_PORT,
+                              configUtils.readConfigFromClasspath("Swerve/BackRight/AngleSparkMax.json", MotorControllerConfig.class)
+                      ),
+                      new AnalogInput(ANGLE_ENCODER_BACK_RIGHT_PORT),
+                      configUtils.readConfigFromClasspath("Swerve/BackRight/ShiftingSwerveModule.json", ShiftingSwerveModuleConfig.class)
+              ),
+              // Back Left
+              new ShiftingSwerveModule(
+                      new FalconDelegate(
+                              SPEED_BACK_LEFT_PORT,
+                              configUtils.readConfigFromClasspath("Swerve/BackLeft/SpeedFalcon.json", MotorControllerConfig.class)
+                      ),
+                      new SparkMaxDelegate(
+                              ANGLE_BACK_LEFT_PORT,
+                              configUtils.readConfigFromClasspath("Swerve/BackLeft/AngleSparkMax.json", MotorControllerConfig.class)
+                      ),
+                      new AnalogInput(ANGLE_ENCODER_BACK_LEFT_PORT),
+                      configUtils.readConfigFromClasspath("Swerve/BackLeft/ShiftingSwerveModule.json", ShiftingSwerveModuleConfig.class)
+              )
+      };
+      return shiftingSwerveModules;
+  }
   private void configureBindings() {}
 
   public Command getAutonomousCommand() {
