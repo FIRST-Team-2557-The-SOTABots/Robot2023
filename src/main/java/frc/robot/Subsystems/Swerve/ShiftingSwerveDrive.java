@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.Subsystem.Swerve;
+package frc.robot.Subsystems.Swerve;
 
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 
@@ -24,12 +24,14 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   private GearShifter mShifter;
   private Gyro mGyro;
 
+  private Translation2d[] mModuleTranslation;
   private SwerveDriveKinematics mSwerveDriveKinematics;
   private SwerveDriveOdometry mSwerveDriveOdometry;
 
   private boolean mFieldCentricActive;
 
   private double kMaxWheelSpeed;
+  private double kMaxAngularVelocity;
 
   /** Creates a new ShiftingSwerveDrive. */
   public ShiftingSwerveDrive(ShiftingSwerveModule[] swerveModules, GearShifter shifter, Gyro gyro, ShiftingSwerveDriveConfig config) {
@@ -37,12 +39,8 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     mShifter = shifter;
     mGyro = gyro;
 
-    mSwerveDriveKinematics = new SwerveDriveKinematics(
-      config.getFrontRightModulePosition(),
-      config.getFrontLeftModulePosition(),
-      config.getBackRightModulePosition(),
-      config.getBackLeftModulePosition()
-    );
+    mModuleTranslation = config.getModuleTranslations();
+    mSwerveDriveKinematics = new SwerveDriveKinematics(mModuleTranslation);
     mSwerveDriveOdometry = new SwerveDriveOdometry(
       mSwerveDriveKinematics,
       mGyro.getAngleRotation2d(),
@@ -50,35 +48,40 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     );
 
     kMaxWheelSpeed = config.getMaxWheelSpeed();
+    kMaxAngularVelocity = config.getMaxAngularVelocity();
   }
 
   /** 
    * Drives the drivetrain with a standard point of rotation
    * @param fwd Forward velocity
-   * @param lft Left velocity
+   * @param str Left velocity
    * @param rot Angular velocity
    * @param currentAngle current angle of the robot
    */
-  public void drive(double fwd, double lft, double rot, Rotation2d currentAngle) {
-    drive(fwd, lft, rot, currentAngle, new Translation2d());
+  public void drive(double fwd, double str, double rot, Rotation2d currentAngle) {
+    drive(fwd, str, rot, currentAngle, new Translation2d());
   }
   
   /** 
    * Drive the drivetrain with a specified point of rotation
    * @param fwd Forward velocity
-   * @param lft Left velocity
+   * @param str Left velocity
    * @param rot Angular velocity
    * @param currentAngle Current angle of the robot
    * @param pointOfRotation Point the robot will rotate around 
    */
-  public void drive(double fwd, double lft, double rot, Rotation2d currentAngle, Translation2d pointOfRotation) {
+  public void drive(double fwd, double str, double rot, Rotation2d currentAngle, Translation2d pointOfRotation) {
+    // Squares inputs and scales based off of max speeds
+    fwd = -Math.signum(fwd) * fwd * fwd * kMaxWheelSpeed; 
+    str = -Math.signum(str) * str * str * kMaxWheelSpeed;
+    rot = -Math.signum(rot) * rot * rot * kMaxAngularVelocity;
+
     ChassisSpeeds speeds = mFieldCentricActive == true ?
-      ChassisSpeeds.fromFieldRelativeSpeeds(fwd, lft, rot, currentAngle) : 
-      new ChassisSpeeds(fwd, lft, rot);
+      ChassisSpeeds.fromFieldRelativeSpeeds(fwd, str, rot, currentAngle) : 
+      new ChassisSpeeds(fwd, str, rot);
     SwerveModuleState[] moduleStates = mSwerveDriveKinematics.toSwerveModuleStates(speeds, pointOfRotation);
     SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, kMaxWheelSpeed);
-    ShiftingSwerveModuleState[] shiftingModuleStates = ShiftingSwerveModuleState.toShiftingSwerveModuleState(moduleStates, mShifter.getGear()); 
-    drive(shiftingModuleStates);
+    drive(ShiftingSwerveModuleState.toShiftingSwerveModuleState(moduleStates, mShifter.getGear()));
   }
 
   /** 
@@ -140,6 +143,16 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     );
   }
 
+  /**
+   * Updates the rotation of the translations of the modules
+   * @param angle The angle of the drivetrain
+   */
+  public void updateModuleTranslation(Rotation2d angle) {
+    for (int i = 0; i < mModuleTranslation.length; i++) {
+      mModuleTranslation[i].rotateBy(angle);
+    }
+  } 
+
   /** 
    * Sets the status of field centric
    * @param fieldCentricActive The desired status of field centric
@@ -156,9 +169,26 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     return mFieldCentricActive;
   }
 
+  /**
+   * Gets the translation 2d array of the modules
+   * @return Translation 2d array of the modules
+   */
+  public Translation2d[] getModuleTranslation(){
+    return mModuleTranslation;
+  }
+
+  /**
+   * Gets the rotation 2d of the drivetrain
+   * @return The rotation2d of the drivetrain
+   */
+  public Rotation2d getRotation2d() {
+    return mGyro.getAngleRotation2d();
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    updatePose(getModulePositions(), mGyro.getAngleRotation2d());
+    updateModuleTranslation(mGyro.getAngleRotation2d());
   }
 }
