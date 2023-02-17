@@ -16,7 +16,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.SwerveUtils;
 import lib.Component.GearShifter;
 import lib.Component.Gyro;
 import lib.Config.ShiftingSwerveDriveConfig;
@@ -129,9 +128,22 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     );
     mSwerveDriveOdometry.resetPosition(
       rotation,
-      SwerveUtils.getModulePositions(mSwerveModules),
+      getModulePositions(),
       pose
     );
+  }
+
+  /**
+   * Gets the module positions from the modules
+   * @return An array of the position of the swerve modules
+   */
+  public SwerveModulePosition[] getModulePositions() {
+    int moduleNum = mSwerveModules.length;
+    SwerveModulePosition[] modulePositions = new SwerveModulePosition[moduleNum];
+    for (int i = 0; i < moduleNum; i++) {
+      modulePositions[i] = mSwerveModules[i].getMeasuredPosition();
+    }
+    return modulePositions;
   }
 
   /**
@@ -179,7 +191,10 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    updatePose(getModulePositions(), mGyro.getAngleRotation2d());
+    updatePose(
+      getModulePositions(), 
+      mGyro.getAngleRotation2d()
+    );
     updateModuleTranslation(mGyro.getAngleRotation2d());
   }
   

@@ -27,6 +27,7 @@ public class ShiftingSwerveModuleState extends SwerveModuleState {
         }
         return shiftingStates;
     }
+    
     public static ShiftingSwerveModuleState optimize(ShiftingSwerveModuleState state, Rotation2d angle) {
         SwerveModuleState.optimize(state, angle);
         return new ShiftingSwerveModuleState(state, state.gear);
