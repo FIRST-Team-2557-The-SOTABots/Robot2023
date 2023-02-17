@@ -43,7 +43,6 @@ public class RobotContainer {
     ObjectMapper mapper = new ObjectMapper();
     mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     configUtils = new ConfigUtils(mapper) ;
-    SwerveUtils swerveUtils = new SwerveUtils();
     ShiftingSwerveModule[] shiftingSwerveModules = createSwerveModules();
 
     DoubleSolenoidSwerveShifter shifter =
@@ -56,12 +55,11 @@ public class RobotContainer {
     NavX gyro = new NavX(new AHRS(Port.kMXP));
     SwerveDriveKinematics kinematics = new SwerveDriveKinematics();
     SwerveDriveOdometry swerveDriveOdometry = new SwerveDriveOdometry(kinematics, gyro.getAngleRotation2d(),
-              swerveUtils.getModulePositions(shiftingSwerveModules));
+              SwerveUtils.getModulePositions(shiftingSwerveModules));
     ShiftingSwerveDriveConfig swerveDriveConfig =
             configUtils.readConfigFromClasspath("Swerve/ShiftingSwerve.json", ShiftingSwerveDriveConfig.class);
 
     new ShiftingSwerveDrive(
-      swerveUtils,
       shiftingSwerveModules,
       kinematics,
       swerveDriveOdometry,

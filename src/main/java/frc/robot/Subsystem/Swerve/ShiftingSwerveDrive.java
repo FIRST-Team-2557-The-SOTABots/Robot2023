@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.SwerveUtils;
 import lib.Component.GearShifter;
 import lib.Component.Gyro;
-import lib.Config.ShiftingSwerveDriveConfig;
 
 public class ShiftingSwerveDrive extends SubsystemBase {
   private ShiftingSwerveModule[] mSwerveModules;
@@ -27,14 +26,12 @@ public class ShiftingSwerveDrive extends SubsystemBase {
 
   private SwerveDriveKinematics mSwerveDriveKinematics;
   private SwerveDriveOdometry mSwerveDriveOdometry;
-  private final SwerveUtils mSwerveUtils;
   private boolean mFieldCentricActive;
 
   private double kMaxWheelSpeed;
 
   /** Creates a new ShiftingSwerveDrive. */
-  public ShiftingSwerveDrive(SwerveUtils swerveUtils, ShiftingSwerveModule[] swerveModules, SwerveDriveKinematics kinematics, SwerveDriveOdometry odometry, GearShifter shifter, Gyro gyro, double maxWheelSpeed) {
-    mSwerveUtils = swerveUtils;
+  public ShiftingSwerveDrive(ShiftingSwerveModule[] swerveModules, SwerveDriveKinematics kinematics, SwerveDriveOdometry odometry, GearShifter shifter, Gyro gyro, double maxWheelSpeed) {
     mSwerveModules = swerveModules;
     mShifter = shifter;
     mGyro = gyro;
@@ -115,7 +112,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     );
     mSwerveDriveOdometry.resetPosition(
       rotation,
-      mSwerveUtils.getModulePositions(mSwerveModules),
+      SwerveUtils.getModulePositions(mSwerveModules),
       pose
     );
   }
