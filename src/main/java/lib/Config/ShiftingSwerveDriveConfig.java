@@ -14,6 +14,7 @@ public class ShiftingSwerveDriveConfig {
     private double trackWidth;
     
     private double maxWheelSpeed;
+    private double maxAngularVelocity;
     
     private double getWheelBase() {
         return wheelBase * METERS_PER_INCH;
@@ -23,24 +24,25 @@ public class ShiftingSwerveDriveConfig {
         return trackWidth * METERS_PER_INCH;
     }
 
-    public Translation2d getFrontRightModulePosition() {
-        return new Translation2d(getWheelBase() / 2, -getTrackWidth() / 2);
-    }
-
-    public Translation2d getFrontLeftModulePosition() {
-        return new Translation2d(getWheelBase() / 2, getTrackWidth() / 2);
-    }
-
-    public Translation2d getBackRightModulePosition() {
-        return new Translation2d(-getWheelBase() / 2, -getTrackWidth() / 2);
-    }
-    
-    public Translation2d getBackLeftModulePosition() {
-        return new Translation2d(-getWheelBase() / 2, getTrackWidth() / 2);
+    /**
+     * Order Front right, Front left, Back Left, Back Right
+     */
+    public Translation2d[] getModuleTranslations() {
+        Translation2d[] moduleTranslations = {
+            new Translation2d(getWheelBase() / 2, -getTrackWidth() / 2),
+            new Translation2d(getWheelBase() / 2, getTrackWidth() / 2),
+            new Translation2d(-getWheelBase() / 2, -getTrackWidth() / 2),
+            new Translation2d(-getWheelBase() / 2, getTrackWidth() / 2)
+        };
+        return moduleTranslations;
     }
 
     public double getMaxWheelSpeed() {
         return maxWheelSpeed;
+    }
+
+    public double getMaxAngularVelocity() {
+        return maxAngularVelocity;
     }
 
 }

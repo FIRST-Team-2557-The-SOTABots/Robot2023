@@ -37,6 +37,7 @@ import static frc.robot.Constants.Swerve.*;
 
 public class RobotContainer {
 
+  private ShiftingSwerveDrive mSwerveDrive;
   private final ConfigUtils configUtils;
 
   public RobotContainer() throws Exception {
@@ -53,76 +54,71 @@ public class RobotContainer {
     );
 
     NavX gyro = new NavX(new AHRS(Port.kMXP));
-    SwerveDriveKinematics kinematics = new SwerveDriveKinematics();
-    SwerveDriveOdometry swerveDriveOdometry = new SwerveDriveOdometry(kinematics, gyro.getAngleRotation2d(),
-              SwerveUtils.getModulePositions(shiftingSwerveModules));
     ShiftingSwerveDriveConfig swerveDriveConfig =
             configUtils.readConfigFromClasspath("Swerve/ShiftingSwerve.json", ShiftingSwerveDriveConfig.class);
 
-    new ShiftingSwerveDrive(
+    mSwerveDrive = new ShiftingSwerveDrive(
       shiftingSwerveModules,
-      kinematics,
-      swerveDriveOdometry,
       shifter,
       gyro,
-      swerveDriveConfig.getMaxWheelSpeed()
+      swerveDriveConfig
     );
     configureBindings();
   }
 
   private ShiftingSwerveModule[] createSwerveModules() throws Exception {
       ShiftingSwerveModule[] shiftingSwerveModules = {
-              // Front Right
-              new ShiftingSwerveModule(
-                      new FalconDelegate(
-                              SPEED_FRONT_RIGHT_PORT,
-                              configUtils.readConfigFromClasspath("Swerve/FrontRight/SpeedFalcon.json", MotorControllerConfig.class)
-                      ),
-                      new SparkMaxDelegate(
-                              ANGLE_FRONT_RIGHT_PORT,
-                              configUtils.readConfigFromClasspath("Serve/FrontRight/AngleSparkMax.json", MotorControllerConfig.class)
-                      ),
-                      new AnalogInput(ANGLE_ENCODER_FRONT_RIGHT_PORT),
-                      configUtils.readConfigFromClasspath("Swerve/FrontRight/ShiftingSwerveModule.json", ShiftingSwerveModuleConfig.class)
-              ),
-              // Front Left
-              new ShiftingSwerveModule(
-                      new FalconDelegate(
-                              SPEED_FRONT_LEFT_PORT,
-                              configUtils.readConfigFromClasspath("Swerve/FrontLeft/SpeedFalcon.json", MotorControllerConfig.class)
-                      ),
-                      new SparkMaxDelegate(
-                              ANGLE_FRONT_LEFT_PORT,
-                              configUtils.readConfigFromClasspath("Swerve/FrontLeft/AngleSparkMax.json", MotorControllerConfig.class)
-                      ),
-                      new AnalogInput(ANGLE_ENCODER_FRONT_LEFT_PORT),
-                      configUtils.readConfigFromClasspath("Swerve/FrontLeft/ShiftingSwerveModule.json", ShiftingSwerveModuleConfig.class)
-              ),
-              // Back Right
-              new ShiftingSwerveModule(
-                      new FalconDelegate(
-                              SPEED_BACK_RIGHT_PORT,
-                              configUtils.readConfigFromClasspath("Swerve/BackRight/SpeedFalcon.json", MotorControllerConfig.class)),
-                      new SparkMaxDelegate(
-                              ANGLE_BACK_RIGHT_PORT,
-                              configUtils.readConfigFromClasspath("Swerve/BackRight/AngleSparkMax.json", MotorControllerConfig.class)
-                      ),
-                      new AnalogInput(ANGLE_ENCODER_BACK_RIGHT_PORT),
-                      configUtils.readConfigFromClasspath("Swerve/BackRight/ShiftingSwerveModule.json", ShiftingSwerveModuleConfig.class)
-              ),
-              // Back Left
-              new ShiftingSwerveModule(
-                      new FalconDelegate(
-                              SPEED_BACK_LEFT_PORT,
-                              configUtils.readConfigFromClasspath("Swerve/BackLeft/SpeedFalcon.json", MotorControllerConfig.class)
-                      ),
-                      new SparkMaxDelegate(
-                              ANGLE_BACK_LEFT_PORT,
-                              configUtils.readConfigFromClasspath("Swerve/BackLeft/AngleSparkMax.json", MotorControllerConfig.class)
-                      ),
-                      new AnalogInput(ANGLE_ENCODER_BACK_LEFT_PORT),
-                      configUtils.readConfigFromClasspath("Swerve/BackLeft/ShiftingSwerveModule.json", ShiftingSwerveModuleConfig.class)
-              )
+            // Front Right
+            new ShiftingSwerveModule(
+                    new FalconDelegate(
+                            SPEED_FRONT_RIGHT_PORT,
+                            configUtils.readConfigFromClasspath("Swerve/FrontRight/SpeedFalcon.json", MotorControllerConfig.class)
+                    ),
+                    new SparkMaxDelegate(
+                            ANGLE_FRONT_RIGHT_PORT,
+                            configUtils.readConfigFromClasspath("Serve/FrontRight/AngleSparkMax.json", MotorControllerConfig.class)
+                    ),
+                    new AnalogInput(ANGLE_ENCODER_FRONT_RIGHT_PORT),
+                    configUtils.readConfigFromClasspath("Swerve/FrontRight/ShiftingSwerveModule.json", ShiftingSwerveModuleConfig.class)
+            ),
+            // Front Left
+            new ShiftingSwerveModule(
+                    new FalconDelegate(
+                            SPEED_FRONT_LEFT_PORT,
+                            configUtils.readConfigFromClasspath("Swerve/FrontLeft/SpeedFalcon.json", MotorControllerConfig.class)
+                    ),
+                    new SparkMaxDelegate(
+                            ANGLE_FRONT_LEFT_PORT,
+                            configUtils.readConfigFromClasspath("Swerve/FrontLeft/AngleSparkMax.json", MotorControllerConfig.class)
+                    ),
+                    new AnalogInput(ANGLE_ENCODER_FRONT_LEFT_PORT),
+                    configUtils.readConfigFromClasspath("Swerve/FrontLeft/ShiftingSwerveModule.json", ShiftingSwerveModuleConfig.class)
+            ),
+            // Back Right
+            new ShiftingSwerveModule(
+                    new FalconDelegate(
+                            SPEED_BACK_RIGHT_PORT,
+                            configUtils.readConfigFromClasspath("Swerve/BackRight/SpeedFalcon.json", MotorControllerConfig.class)),
+                    new SparkMaxDelegate(
+                            ANGLE_BACK_RIGHT_PORT,
+                            configUtils.readConfigFromClasspath("Swerve/BackRight/AngleSparkMax.json", MotorControllerConfig.class)
+                    ),
+                    new AnalogInput(ANGLE_ENCODER_BACK_RIGHT_PORT),
+                    configUtils.readConfigFromClasspath("Swerve/BackRight/ShiftingSwerveModule.json", ShiftingSwerveModuleConfig.class)
+            ),
+            // Back Left
+            new ShiftingSwerveModule(
+                    new FalconDelegate(
+                            SPEED_BACK_LEFT_PORT,
+                            configUtils.readConfigFromClasspath("Swerve/BackLeft/SpeedFalcon.json", MotorControllerConfig.class)
+                    ),
+                    new SparkMaxDelegate(
+                            ANGLE_BACK_LEFT_PORT,
+                            configUtils.readConfigFromClasspath("Swerve/BackLeft/AngleSparkMax.json", MotorControllerConfig.class)
+                    ),
+                    new AnalogInput(ANGLE_ENCODER_BACK_LEFT_PORT),
+                    configUtils.readConfigFromClasspath("Swerve/BackLeft/ShiftingSwerveModule.json", ShiftingSwerveModuleConfig.class)
+            )
       };
       return shiftingSwerveModules;
   }
