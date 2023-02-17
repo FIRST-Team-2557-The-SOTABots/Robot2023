@@ -1,7 +1,7 @@
 package frc.robot.util;
 
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import frc.robot.Subsystem.Swerve.ShiftingSwerveModule;
+import frc.robot.Subsystems.Swerve.ShiftingSwerveModule;
 
 public class SwerveUtils {
 
