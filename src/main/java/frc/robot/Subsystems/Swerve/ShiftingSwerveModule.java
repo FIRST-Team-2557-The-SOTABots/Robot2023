@@ -4,14 +4,11 @@
 
 package frc.robot.Subsystems.Swerve;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,7 +25,6 @@ public class ShiftingSwerveModule extends SubsystemBase {
   private double kAngleCountsPerRevolution;
   private double[] kGearRatios;
   private double kWheelCircumference;
-  private AtomicInteger mCurrentGear;
   
   private ProfiledPIDController mSpeedPID;
   private SimpleMotorFeedforward mSpeedFF;
@@ -103,22 +99,6 @@ public class ShiftingSwerveModule extends SubsystemBase {
 
     mSpeedMotor.setVoltage(speedPIDOutput + speedFFOutput);
   }
-
-  /** 
-   * Gets the swerve module state of the module
-   * @return The SwerveModuleState of the module
-   */
-  public SwerveModuleState getMeasuredState() {
-    SwerveModuleState state = new SwerveModuleState(
-      getSpeed(), 
-      getRotation2d()
-    );
-    if (state.speedMetersPerSecond < 0.0) {
-      state.speedMetersPerSecond *= -1;
-      state.angle = state.angle.plus(new Rotation2d(Math.PI));
-    }
-    return state;
-  }
   
   /** 
    * Gets the swerve module position of the module
@@ -135,10 +115,10 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * Gets the speed of the module in meters per second
    * @return The speed of the module in meters per second
    */
-  public double getSpeed() {
+  public double getSpeed(int gear) {
     return nativeToMetersPerSecond(
       mSpeedMotor.getTickVelocity(), 
-      kGearRatios[mCurrentGear.get()]
+      kGearRatios[gear]
     );
   }
 
@@ -150,6 +130,10 @@ public class ShiftingSwerveModule extends SubsystemBase {
     return -1 * MathUtil.inputModulus(mAngleEncoder.getAverageVoltage() - kAngleOffset, 0, kAngleCountsPerRevolution) + kAngleCountsPerRevolution;
   }
 
+  /**
+   * Gets the angle of the module in Rotation2d radians
+   * @return Rotation2d of the module
+   */
   public Rotation2d getRotation2d() {
     return new Rotation2d(nativeToRadians(getAngle()));
   }

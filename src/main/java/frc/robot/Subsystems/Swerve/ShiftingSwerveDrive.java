@@ -6,6 +6,7 @@ package frc.robot.Subsystems.Swerve;
 
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -54,7 +55,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   /** 
    * Drives the drivetrain with a standard point of rotation
    * @param fwd Forward velocity
-   * @param str Left velocity
+   * @param str Strafe velocity
    * @param rot Angular velocity
    * @param currentAngle current angle of the robot
    */
@@ -64,17 +65,17 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   
   /** 
    * Drive the drivetrain with a specified point of rotation
-   * @param fwd Forward velocity
-   * @param str Left velocity
-   * @param rot Angular velocity
+   * @param fwd Forward velocity from -1.0 to 1.0
+   * @param str Strafe velocity from -1.0 to 1.0
+   * @param rot Angular velocity from -1.0 to 1.0
    * @param currentAngle Current angle of the robot
    * @param pointOfRotation Point the robot will rotate around 
    */
   public void drive(double fwd, double str, double rot, Rotation2d currentAngle, Translation2d pointOfRotation) {
     // Squares inputs and scales based off of max speeds
-    fwd = -Math.signum(fwd) * fwd * fwd * kMaxWheelSpeed; 
-    str = -Math.signum(str) * str * str * kMaxWheelSpeed;
-    rot = -Math.signum(rot) * rot * rot * kMaxAngularVelocity;
+    fwd = MathUtil.clamp(fwd, -1.0, 1.0) * kMaxWheelSpeed; 
+    str = MathUtil.clamp(str, -1.0, 1.0) * kMaxWheelSpeed;
+    rot = MathUtil.clamp(rot, -1.0, 1.0) * kMaxAngularVelocity;
 
     ChassisSpeeds speeds = mFieldCentricActive == true ?
       ChassisSpeeds.fromFieldRelativeSpeeds(fwd, str, rot, currentAngle) : 
@@ -85,8 +86,8 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   }
 
   /** 
-   * Drives the drivetrain with a map of SwerveModuleStates 
-   * @param moduleStates map of the module states, the key corresponds to the key of the swerve module
+   * Drives the drivetrain with a array of SwerveModuleStates 
+   * @param moduleStates array of the module states, the key corresponds to the key of the swerve module
    */
   public void drive(ShiftingSwerveModuleState[] moduleStates) {
     for (int i = 0; i < moduleStates.length; i++) {
@@ -153,6 +154,14 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     }
   } 
 
+  /**
+   * Gets the translation 2d array of the modules
+   * @return Translation 2d array of the modules
+   */
+  public Translation2d[] getModuleTranslation(){
+    return mModuleTranslation;
+  }
+
   /** 
    * Sets the status of field centric
    * @param fieldCentricActive The desired status of field centric
@@ -169,13 +178,6 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     return mFieldCentricActive;
   }
 
-  /**
-   * Gets the translation 2d array of the modules
-   * @return Translation 2d array of the modules
-   */
-  public Translation2d[] getModuleTranslation(){
-    return mModuleTranslation;
-  }
 
   /**
    * Gets the rotation 2d of the drivetrain

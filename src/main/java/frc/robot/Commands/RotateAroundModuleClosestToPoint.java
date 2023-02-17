@@ -42,6 +42,11 @@ public class RotateAroundModuleClosestToPoint extends DefaultDrive{
     double str = mDriveStick.getLeftX();
     double rot = mDriveStick.getRightX();
 
+    // Squares inputs and preserves sign TODO: make controller class that handles this
+    fwd = -Math.signum(fwd) * fwd * fwd;
+    str = -Math.signum(str) * str * str;
+    rot = -Math.signum(rot) * rot * rot;
+
     super.drive(fwd, str, rot, mSwerveDrive.getRotation2d(), mClosestModule);
   }
 
