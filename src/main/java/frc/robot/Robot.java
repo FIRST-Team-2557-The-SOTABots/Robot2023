@@ -19,7 +19,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     try {
       m_robotContainer = new RobotContainer();
-    } catch (IOException e) {
+    } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }

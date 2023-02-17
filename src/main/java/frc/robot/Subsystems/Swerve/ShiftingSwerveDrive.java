@@ -16,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.SwerveUtils;
 import lib.Component.GearShifter;
 import lib.Component.Gyro;
 import lib.Config.ShiftingSwerveDriveConfig;
@@ -34,6 +35,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   private double kMaxWheelSpeed;
   private double kMaxAngularVelocity;
 
+// Note I kept the old way of handling dependancy injection because it would keep things more inline with other subsystems by injecting a config also
   /** Creates a new ShiftingSwerveDrive. */
   public ShiftingSwerveDrive(ShiftingSwerveModule[] swerveModules, GearShifter shifter, Gyro gyro, ShiftingSwerveDriveConfig config) {
     mSwerveModules = swerveModules;
@@ -62,7 +64,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   public void drive(double fwd, double str, double rot, Rotation2d currentAngle) {
     drive(fwd, str, rot, currentAngle, new Translation2d());
   }
-  
+
   /** 
    * Drive the drivetrain with a specified point of rotation
    * @param fwd Forward velocity from -1.0 to 1.0
@@ -88,6 +90,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   /** 
    * Drives the drivetrain with a array of SwerveModuleStates 
    * @param moduleStates array of the module states, the key corresponds to the key of the swerve module
+
    */
   public void drive(ShiftingSwerveModuleState[] moduleStates) {
     for (int i = 0; i < moduleStates.length; i++) {
@@ -101,19 +104,6 @@ public class ShiftingSwerveDrive extends SubsystemBase {
    */
   public void shift(int gear) {
     mShifter.shift(gear);
-  }
-
-  /** 
-   * Gets the module positions from the modules
-   * @return An array of the position of the swerve modules
-   */
-  public SwerveModulePosition[] getModulePositions() {
-    int moduleNumber = mSwerveModules.length;
-    SwerveModulePosition[] modulePositions = new SwerveModulePosition[moduleNumber];
-    for (int i = 0; i < moduleNumber; i++) {
-      modulePositions[i] = mSwerveModules[i].getMeasuredPosition();
-    }
-    return modulePositions;
   }
 
   /** 
@@ -139,7 +129,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     );
     mSwerveDriveOdometry.resetPosition(
       rotation,
-      getModulePositions(),
+      SwerveUtils.getModulePositions(mSwerveModules),
       pose
     );
   }
@@ -178,7 +168,6 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     return mFieldCentricActive;
   }
 
-
   /**
    * Gets the rotation 2d of the drivetrain
    * @return The rotation2d of the drivetrain
@@ -193,4 +182,5 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     updatePose(getModulePositions(), mGyro.getAngleRotation2d());
     updateModuleTranslation(mGyro.getAngleRotation2d());
   }
+  
 }
