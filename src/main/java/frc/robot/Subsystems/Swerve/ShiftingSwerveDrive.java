@@ -7,6 +7,7 @@ package frc.robot.Subsystems.Swerve;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -28,26 +29,29 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   private Translation2d[] mModuleTranslation;
   private SwerveDriveKinematics mSwerveDriveKinematics;
   private SwerveDriveOdometry mSwerveDriveOdometry;
+  // private SwerveDrivePoseEstimator mSwerveDrivePoseEstimator;
 
   private boolean mFieldCentricActive;
 
   private double kMaxWheelSpeed;
   private double kMaxAngularVelocity;
 
-// Note I kept the old way of handling dependancy injection because it would keep things more inline with other subsystems by injecting a config also
   /** Creates a new ShiftingSwerveDrive. */
-  public ShiftingSwerveDrive(ShiftingSwerveModule[] swerveModules, GearShifter shifter, Gyro gyro, ShiftingSwerveDriveConfig config) {
+  public ShiftingSwerveDrive(
+      ShiftingSwerveModule[] swerveModules, 
+      Translation2d[] moduleTranslations, 
+      SwerveDriveKinematics swerveDriveKinematics, 
+      SwerveDriveOdometry swerveDriveOdometry, 
+      GearShifter shifter, 
+      Gyro gyro, 
+      ShiftingSwerveDriveConfig config) {
     mSwerveModules = swerveModules;
     mShifter = shifter;
     mGyro = gyro;
 
-    mModuleTranslation = config.getModuleTranslations();
-    mSwerveDriveKinematics = new SwerveDriveKinematics(mModuleTranslation);
-    mSwerveDriveOdometry = new SwerveDriveOdometry(
-      mSwerveDriveKinematics,
-      mGyro.getAngleRotation2d(),
-      getModulePositions()
-    );
+    mModuleTranslation = moduleTranslations;
+    mSwerveDriveKinematics = swerveDriveKinematics;
+    mSwerveDriveOdometry = swerveDriveOdometry;
 
     kMaxWheelSpeed = config.getMaxWheelSpeed();
     kMaxAngularVelocity = config.getMaxAngularVelocity();

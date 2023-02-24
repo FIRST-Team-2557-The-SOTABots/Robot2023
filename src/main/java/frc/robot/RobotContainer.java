@@ -7,7 +7,13 @@ package frc.robot;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathPlannerTrajectory;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.SerialPort.Port;
@@ -31,13 +37,14 @@ import static frc.robot.Constants.Swerve.*;
 public class RobotContainer {
 
   private final ShiftingSwerveDrive mSwerveDrive;
-  
+
   private final ConfigUtils configUtils;
+  private final PathPlannerTrajectory autoTrajectory;
 
   public RobotContainer() throws Exception {
     ObjectMapper mapper = new ObjectMapper();
     mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-    configUtils = new ConfigUtils(mapper) ;
+    configUtils = new ConfigUtils(mapper);
 
     ShiftingSwerveModule[] shiftingSwerveModules = createSwerveModules();
     DoubleSolenoidSwerveShifter shifter =
@@ -45,13 +52,36 @@ public class RobotContainer {
         new DoubleSolenoid(MODULE_TYPE, SWERVE_FORWARD, SWERVE_REVERSE),
         configUtils.readConfigFromClasspath("Swerve/DoubleSolenoidSwerveShifter.json", DoubleSolenoidSwerveShifterConfig.class)
     );
-    NavX gyro = new NavX(new AHRS(Port.kMXP));            
+    NavX gyro = new NavX(new AHRS(Port.kMXP));    
+    
+    ShiftingSwerveDriveConfig swerveDriveConfig = 
+      configUtils.readConfigFromClasspath("Swerve/ShiftingSwerve.json", ShiftingSwerveDriveConfig.class);
+    Translation2d[] moduleTranslations = swerveDriveConfig.getModuleTranslations();
+    SwerveDriveKinematics swerveDriveKinematics = new SwerveDriveKinematics(moduleTranslations);
+    SwerveModulePosition[] modulePositions = new SwerveModulePosition[shiftingSwerveModules.length];
+    for (int i = 0; i < modulePositions.length; i++) {
+      modulePositions[i] = shiftingSwerveModules[i].getMeasuredPosition();
+    }
+    SwerveDriveOdometry swerveDriveOdometry = new SwerveDriveOdometry(
+      swerveDriveKinematics, 
+      gyro.getAngleRotation2d(), 
+      modulePositions
+    );
+    SwerveDrivePoseEstimator swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(
+      swerveDriveKinematics, 
+      gyro.getAngleRotation2d(), 
+      modulePositions, 
+      autoTrajectory.getInitialHolonomicPose()  
+    );
 
     mSwerveDrive = new ShiftingSwerveDrive(
       shiftingSwerveModules,
+      moduleTranslations,
+      swerveDriveKinematics,
+      swerveDriveOdometry,
       shifter,
       gyro,
-      configUtils.readConfigFromClasspath("Swerve/ShiftingSwerve.json", ShiftingSwerveDriveConfig.class)
+      swerveDriveConfig
     );
     configureBindings();
   }
