@@ -1,0 +1,25 @@
+{
+    "hiGearRatio": 0.0,
+    "loGearRatio": 0.0,
+
+    "angleOffset":0.0,
+    "angleEncoderCPR": 0.0,
+
+    "wheelCircumference": 0.0,
+    
+    "speedKP": 0.0,
+    "speedKI": 0.0,
+    "speedKD": 0.0,
+    "speedMaxAccel": 0.0,
+    "speedMaxVel": 0.0,
+    "speedKS": 0.0,
+    "speedKV": 0.0,
+
+    "angleKP": 0.0,
+    "angleKI": 0.0,
+    "angleKD": 0.0,
+    "angleMaxAccel": 0.0,
+    "angleKS": 0.0,
+    "angleKV": 0.0,
+    "anglePIDTolerance": 0.0
+}

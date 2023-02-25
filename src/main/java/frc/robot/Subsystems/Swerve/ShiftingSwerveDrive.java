@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Util.Configs.ShiftingSwerveDriveConfig;
 import frc.robot.Util.Interfaces.GearShifter;
@@ -142,6 +143,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     SwerveModulePosition[] modulePositions = new SwerveModulePosition[moduleNum];
     for (int i = 0; i < moduleNum; i++) {
       modulePositions[i] = mSwerveModules[i].getMeasuredPosition();
+      
     }
     return modulePositions;
   }
@@ -196,6 +198,8 @@ public class ShiftingSwerveDrive extends SubsystemBase {
       mGyro.getRotation2d()
     );
     updateModuleTranslation(mGyro.getRotation2d());
+
+    
   }
   
 }

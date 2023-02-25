@@ -5,10 +5,13 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Util.Configs.ShiftingSwerveModuleConfig;
 import frc.robot.Util.Interfaces.SOTAMotorController;
+import frc.robot.Util.Interfaces.ShiftingSwerveModuleInterface;
 
-public class ShiftingSwerveModuleI2 {
+public class ShiftingSwerveModuleI2 implements Subsystem{
 
     private SOTAMotorController mAngleMotor;
     private SOTAMotorController mSpeedMotor;
@@ -147,5 +150,8 @@ public class ShiftingSwerveModuleI2 {
     return kWheelCircumference / gearRatio / mSpeedMotor.getEncoderCountsPerRevolution();
   }
 
-
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Angle No Offset", getAngle());
+  }
 }

@@ -85,7 +85,7 @@ public class SparkMaxDelegate implements SOTAMotorController{
 
     @Override
     public double getEncoderCountsPerRevolution() {
-        return encoderCountsPerRevolution;
+        return 0; //TODO: fix
     }
 
     @Override
