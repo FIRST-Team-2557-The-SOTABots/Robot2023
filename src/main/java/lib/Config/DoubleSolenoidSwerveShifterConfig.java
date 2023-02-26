@@ -10,6 +10,13 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 public class DoubleSolenoidSwerveShifterConfig {
     private String hiGearValue;
     private String loGearValue;
+
+    //TODO: Temp please remove once json problem fixed
+    public DoubleSolenoidSwerveShifterConfig(String hiGearValue, String loGearValue) {
+        this.hiGearValue = hiGearValue;
+        this.loGearValue = loGearValue;
+
+    }
     
     private Value convertStringToValue(String str) {
         switch(str) {

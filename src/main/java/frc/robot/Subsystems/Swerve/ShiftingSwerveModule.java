@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lib.Config.ShiftingSwerveModuleConfig;
 import lib.MotorController.SotaMotorController;
@@ -62,6 +63,8 @@ public class ShiftingSwerveModule extends SubsystemBase {
       )
     );
 
+    mSpeedPID.setTolerance(config.getSpeedPIDTolerance());
+
     mAngleFF = new SimpleMotorFeedforward(
       config.getAngleKS(),
       config.getAngleKV()
@@ -94,7 +97,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
     mAngleMotor.setVoltage(state.speedMetersPerSecond == 0.0 ? 0.0 : anglePIDOutput + angleFFOutput);
 
     double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, state.gear);
-    double speedPIDOutput = speedSetpointNative == 0 ? 0.0 : mSpeedPID.calculate(mSpeedMotor.getTickVelocity(), speedSetpointNative);
+    double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getTickVelocity(), speedSetpointNative);
     double speedFFOutput = mSpeedFF.calculate(speedSetpointNative);
 
     mSpeedMotor.setVoltage(speedPIDOutput + speedFFOutput);
@@ -188,6 +191,8 @@ public class ShiftingSwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Speed set", mSpeedMotor.get());
+    SmartDashboard.putNumber("Angle get", mAngleMotor.get());
   }
 
 }

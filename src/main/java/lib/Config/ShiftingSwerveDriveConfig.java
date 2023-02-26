@@ -15,6 +15,15 @@ public class ShiftingSwerveDriveConfig {
     
     private double maxWheelSpeed;
     private double maxAngularVelocity;
+
+    //TODO: temp remove once json problem is fixed
+    public ShiftingSwerveDriveConfig(double wheelBase, double trackWidth, double maxWheelSpeed, double maxAngularVelocity) {
+        this.wheelBase = wheelBase;
+        this.trackWidth = trackWidth;
+        this.maxWheelSpeed = maxWheelSpeed;
+        this.maxAngularVelocity = maxAngularVelocity;
+        
+    }
     
     private double getWheelBase() {
         return wheelBase * METERS_PER_INCH;

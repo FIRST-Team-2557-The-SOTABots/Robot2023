@@ -12,6 +12,15 @@ public class MotorControllerConfig {
     private String motorType;
     private int encoderCountsPerRevolution;
 
+    //TODO: Temp please remove once json problem is fixed
+    public MotorControllerConfig(boolean isInverted, String idleMode, String motorType, int encoderCountsPerRevolution) {
+        this.isInverted = isInverted;
+        this.encoderCountsPerRevolution = encoderCountsPerRevolution;
+        this.idleMode = idleMode;
+        this.motorType = motorType;
+        
+    }
+
     public boolean getInverted() {
         return isInverted;
     }

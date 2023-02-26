@@ -16,10 +16,6 @@ public class SparkMaxDelegate implements SotaMotorController {
     CANSparkMax mSparkMax;
     int kEncoderCountsPerRevolution;
 
-    public SparkMaxDelegate(int canId) {
-        this(canId, new MotorControllerConfig());
-    }
-
     public SparkMaxDelegate(int canId, MotorControllerConfig config) {
         MotorType motorType;
         switch(config.getMotorType()) {

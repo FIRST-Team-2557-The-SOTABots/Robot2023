@@ -6,6 +6,7 @@ package frc.robot.Commands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
@@ -35,6 +36,10 @@ public class DefaultDrive extends CommandBase {
     fwd = -Math.signum(fwd) * fwd * fwd;
     str = -Math.signum(str) * str * str;
     rot = -Math.signum(rot) * rot * rot;
+
+    SmartDashboard.putNumber("fwd", fwd);
+    SmartDashboard.putNumber("str", str);
+    SmartDashboard.putNumber("rot", rot);
 
     drive(fwd, str, rot, mSwerveDrive.getRotation2d(), new Translation2d());
   }

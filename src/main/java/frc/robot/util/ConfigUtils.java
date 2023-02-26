@@ -18,7 +18,7 @@ public class ConfigUtils {
     }
 
     public <T> T readConfigFromClasspath(String classpathLocation, Class<T> clazz) throws IOException {
-        try(InputStream in = ConfigUtils.class.getClassLoader().getResourceAsStream(classpathLocation)) {
+        try(InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(classpathLocation)) {
             return objectMapper.readValue(in, clazz);
         }
     }
