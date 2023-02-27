@@ -1,7 +1,10 @@
 package frc.robot.Util.Controllers;
 
+import javax.management.RuntimeErrorException;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.Util.Configs.DoubleSolenoidConfig;
 import frc.robot.Util.Interfaces.GearShifter;
@@ -9,17 +12,19 @@ import frc.robot.Util.Interfaces.GearShifter;
 public class DoubleSolenoidShifter implements GearShifter{
     
     private DoubleSolenoid shifter;
-    int[] gearRatios;
+    private int[] gearRatios;
 
     private Value kHiGearValue;
     private Value kLoGearValue;
 
-    public DoubleSolenoidShifter(DoubleSolenoid shifter, DoubleSolenoidConfig config) {
-        this.shifter = shifter; gearRatios = config.getGearRatios();
+    public DoubleSolenoidShifter(DoubleSolenoid solenoid, DoubleSolenoidConfig config) {
+        this.shifter = solenoid; gearRatios = config.getGearRatios(); this.kHiGearValue = Value.kForward; this.kLoGearValue = Value.kReverse;
+        shifter = new DoubleSolenoid(PneumaticsModuleType.REVPH, 6, 7);
     }
 
     @Override
     public int getGear() {
+        if(shifter == null) throw new RuntimeException("Null swerve module");
         return shifter.get() == kHiGearValue ? 1 : 0;
     }
 

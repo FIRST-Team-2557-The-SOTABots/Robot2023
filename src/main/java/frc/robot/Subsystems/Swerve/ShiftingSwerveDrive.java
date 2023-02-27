@@ -20,9 +20,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Util.Configs.ShiftingSwerveDriveConfig;
 import frc.robot.Util.Interfaces.GearShifter;
 import frc.robot.Util.Interfaces.SOTAGyro;
+import frc.robot.Util.Interfaces.ShiftingSwerveModuleInterface;
 
 public class ShiftingSwerveDrive extends SubsystemBase {
-  private ShiftingSwerveModuleI2[] mSwerveModules;
+  private ShiftingSwerveModuleInterface[] mSwerveModules;
   private GearShifter mShifter;
   private SOTAGyro mGyro;
 
@@ -37,7 +38,9 @@ public class ShiftingSwerveDrive extends SubsystemBase {
 
 // Note I kept the old way of handling dependancy injection because it would keep things more inline with other subsystems by injecting a config also
   /** Creates a new ShiftingSwerveDrive. */
-  public ShiftingSwerveDrive(ShiftingSwerveModuleI2[] swerveModules, GearShifter shifter, SOTAGyro gyro, ShiftingSwerveDriveConfig config) {
+  public ShiftingSwerveDrive(ShiftingSwerveModuleInterface[] swerveModules, 
+  GearShifter shifter, 
+  SOTAGyro gyro, ShiftingSwerveDriveConfig config) {
     mSwerveModules = swerveModules;
     mShifter = shifter;
     mGyro = gyro;
@@ -95,6 +98,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   public void drive(ShiftingSwerveModuleState[] moduleStates) {
     for (int i = 0; i < moduleStates.length; i++) {
       mSwerveModules[i].drive(moduleStates[i]);
+      SmartDashboard.putNumber("SwerveAngle", mSwerveModules[i].getAngle());
     }
   }
   

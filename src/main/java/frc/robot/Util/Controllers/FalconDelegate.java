@@ -7,7 +7,7 @@ import frc.robot.Util.Interfaces.SOTAMotorController;
 public class FalconDelegate implements SOTAMotorController{
     WPI_TalonFX motor;
     private MotorLimits motorLimits;
-    private Double encoderCountsPerRevolution;
+    private Double countsPerRevolution;
 
     public FalconDelegate(WPI_TalonFX motor){
         this(motor, null, null);
@@ -16,7 +16,7 @@ public class FalconDelegate implements SOTAMotorController{
         this(motor, motorLimits, null);
     }
     public FalconDelegate(WPI_TalonFX motor, MotorLimits motorLimits, Double encoderCountsPerRevolution){
-        this.motor = motor; ; this.encoderCountsPerRevolution = encoderCountsPerRevolution; this.motorLimits = motorLimits;
+        this.motor = motor; ; this.countsPerRevolution = encoderCountsPerRevolution; this.motorLimits = motorLimits;
     }
 
     @Override
@@ -62,6 +62,7 @@ public class FalconDelegate implements SOTAMotorController{
 
     @Override
     public double getSensorTickVelocity() {
+
         return motor.getSelectedSensorVelocity();
     }
 
@@ -82,7 +83,8 @@ public class FalconDelegate implements SOTAMotorController{
 
     @Override
     public double getEncoderCountsPerRevolution() {
-        return encoderCountsPerRevolution;
+        if(countsPerRevolution == null) throw new IllegalAccessError("no countsPerRevolution Initialized");
+        return countsPerRevolution;
     }
 
     @Override

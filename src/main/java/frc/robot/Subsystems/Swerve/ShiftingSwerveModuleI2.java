@@ -11,7 +11,7 @@ import frc.robot.Util.Configs.ShiftingSwerveModuleConfig;
 import frc.robot.Util.Interfaces.SOTAMotorController;
 import frc.robot.Util.Interfaces.ShiftingSwerveModuleInterface;
 
-public class ShiftingSwerveModuleI2 implements Subsystem{
+public class ShiftingSwerveModuleI2 implements ShiftingSwerveModuleInterface{
 
     private SOTAMotorController mAngleMotor;
     private SOTAMotorController mSpeedMotor;
@@ -25,6 +25,8 @@ public class ShiftingSwerveModuleI2 implements Subsystem{
     private double kAngleCountsPerRevolution;
     private double[] kGearRatios;
     private double kWheelCircumference; 
+
+    // private String motorPosition; TODO: make it so it can access its position
 
     public ShiftingSwerveModuleI2(SOTAMotorController angleMotor, 
             SOTAMotorController speedMotor, 
@@ -42,6 +44,7 @@ public class ShiftingSwerveModuleI2 implements Subsystem{
 
         this.mAnglePID = config.anglePID();
         this.mSpeedPID = config.speedPID();
+        
         
     }
 

@@ -9,7 +9,7 @@ public class CompositeMotor implements SOTAMotorController{
     private SOTAMotorController motor;
     private AnalogInput encoder;
     private MotorLimits motorLimits;
-    private Double encoderCountsPerRevolution;
+    private Double countsPerRevolution;
 
     public CompositeMotor(SOTAMotorController motor, AnalogInput encoder){
             this(motor, encoder, null, motor.getEncoderCountsPerRevolution());
@@ -21,7 +21,7 @@ public class CompositeMotor implements SOTAMotorController{
     }
 
     public CompositeMotor(SOTAMotorController motor,AnalogInput encoder, MotorLimits motorLimits, Double encoderCountsPerRevolution){
-        this.motor = motor; this.motorLimits = motorLimits; this.encoderCountsPerRevolution = encoderCountsPerRevolution; 
+        this.motor = motor; this.motorLimits = motorLimits; this.countsPerRevolution = encoderCountsPerRevolution; 
     }
 
     @Override
@@ -87,7 +87,7 @@ public class CompositeMotor implements SOTAMotorController{
 
     @Override
     public double getEncoderCountsPerRevolution() {
-        return encoderCountsPerRevolution;
+        return countsPerRevolution;
     }
 
     @Override

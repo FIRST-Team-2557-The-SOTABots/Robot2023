@@ -6,9 +6,9 @@ import com.revrobotics.CANSparkMax;
 import frc.robot.Util.Interfaces.SOTAMotorController;
 
 public class SparkMaxDelegate implements SOTAMotorController{
-    CANSparkMax motor;
+    private CANSparkMax motor;
     private MotorLimits motorLimits;
-    private Double encoderCountsPerRevolution;
+    private Double countsPerRevolution;
 
     public SparkMaxDelegate(CANSparkMax motor){
         this(motor, null,  null);
@@ -18,7 +18,7 @@ public class SparkMaxDelegate implements SOTAMotorController{
     }
     
     public SparkMaxDelegate(CANSparkMax motor, MotorLimits motorLimits, Double encoderCountsPerRevolution){
-        this.motor = motor; this.motorLimits = motorLimits; this.encoderCountsPerRevolution = encoderCountsPerRevolution;
+        this.motor = motor; this.motorLimits = motorLimits; this.countsPerRevolution = encoderCountsPerRevolution;
     }
 
     @Override
@@ -85,7 +85,7 @@ public class SparkMaxDelegate implements SOTAMotorController{
 
     @Override
     public double getEncoderCountsPerRevolution() {
-        return 0; //TODO: fix
+        return countsPerRevolution;
     }
 
     @Override

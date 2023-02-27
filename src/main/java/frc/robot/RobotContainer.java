@@ -17,14 +17,11 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.I2C.Port;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Subsystems.Intake;
+import frc.robot.Commands.DriveCommand;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveModuleI2;
 import frc.robot.Util.Configs.DoubleSolenoidConfig;
@@ -36,7 +33,6 @@ import frc.robot.Util.Controllers.DoubleSolenoidShifter;
 import frc.robot.Util.Controllers.FalconDelegate;
 import frc.robot.Util.Controllers.SparkMaxDelegate;
 import frc.robot.Util.Interfaces.GearShifter;
-import frc.robot.Util.Interfaces.IntakeInterface;
 import frc.robot.Util.Interfaces.NavX;
 import frc.robot.Util.Interfaces.SOTAGyro;
 import frc.robot.Util.Interfaces.SOTAMotorController;
@@ -57,43 +53,49 @@ public class RobotContainer {
 
 
     ShiftingSwerveModuleI2[] swerveModules = {
-      intiSwerveModule("src/main/java/frc/resources/Swerve/BackLeft/SpeedFalcon.json",
-        "src/main/java/frc/resources/Swerve/BackLeft/AngleSparkMax.json",
+      intiSwerveModule("Swerve/BackLeft/SpeedFalcon",
+        "Swerve/BackLeft/AngleSparkMax",
        1, 
-       "src/main/java/frc/resources/Swerve/BackLeft/ShiftingSwerveModule.json"),
-       intiSwerveModule("src/main/java/frc/resources/Swerve/BackRight/SpeedFalcon.json",
-       "src/main/java/frc/resources/Swerve/BackRight/AngleSparkMax.json",
+       "Swerve/BackLeft/ShiftingSwerveModule"),
+       intiSwerveModule("Swerve/BackRight/SpeedFalcon",
+       "Swerve/BackRight/AngleSparkMax",
       2, 
-      "src/main/java/frc/resources/Swerve/BackRight/ShiftingSwerveModule.json"),
-      intiSwerveModule("src/main/java/frc/resources/Swerve/FrontLeft/SpeedFalcon.json",
-        "src/main/java/frc/resources/Swerve/FrontLeft/AngleSparkMax.json",
+      "Swerve/BackRight/ShiftingSwerveModule"),
+      intiSwerveModule("Swerve/FrontLeft/SpeedFalcon",
+        "Swerve/FrontLeft/AngleSparkMax",
        0, 
-       "src/main/java/frc/resources/Swerve/FrontLeft/ShiftingSwerveModule.json"),
-       intiSwerveModule("src/main/java/frc/resources/Swerve/FrontRight/SpeedFalcon.json",
-       "src/main/java/frc/resources/Swerve/FrontRight/AngleSparkMax.json",
+       "Swerve/FrontLeft/ShiftingSwerveModule"),
+       intiSwerveModule("Swerve/FrontRight/SpeedFalcon",
+       "Swerve/FrontRight/AngleSparkMax",
+
       3, 
-      "src/main/java/frc/resources/Swerve/FrontRight/ShiftingSwerveModule.json"),
+      "Swerve/FrontRight/ShiftingSwerveModule"),
      
      
     };
 
     SOTAGyro gyro = new NavX(new AHRS(Port.kMXP));
 
-    try (DoubleSolenoid solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 8, 9)) {
-      GearShifter shifter = new DoubleSolenoidShifter(solenoid, configUtils.readFromClassPath(DoubleSolenoidConfig.class, 
-      "src/main/java/frc/resources/Swerve/DoubleSolenoidSwerveShifter.json"));
+    try{
+      DoubleSolenoid solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 8, 9);
+      GearShifter shifter = new DoubleSolenoidShifter(solenoid, 
+        configUtils.readFromClassPath(DoubleSolenoidConfig.class, 
+        "Swerve/DoubleSolenoidSwerveShifter"));
       mSwerveDrive = new ShiftingSwerveDrive(swerveModules, shifter, gyro, 
-      configUtils.readFromClassPath(ShiftingSwerveDriveConfig.class, "src/main/java/frc/resources/Swerve/ShiftingSwerveDrive.json"));
+      configUtils.readFromClassPath(ShiftingSwerveDriveConfig.class, "Swerve/ShiftingSwerveDrive"));
 
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
+      throw new RuntimeException("Faild to create swerveDrive", e);
     }
-    
+    configureDefaultCommands();
     configureBindings();
+    
   }
 
-  
+  private void configureDefaultCommands(){
+    mSwerveDrive.setDefaultCommand(new DriveCommand(mSwerveDrive, dController));
+  }
 
   private void configureBindings() {
     
@@ -109,7 +111,7 @@ public class RobotContainer {
         MotorControllerConfig config = configUtils.readFromClassPath(MotorControllerConfig.class, resourceId);
         WPI_TalonFX motor = new WPI_TalonFX(config.getPort());
         motor.setInverted(config.getInverted());
-        return new FalconDelegate(motor);
+        return new FalconDelegate(motor, null, config.getCountsPerRevolution());
     } catch(IOException e) {
       throw new RuntimeException("Error Initializing Talon", e);
     }
@@ -119,7 +121,7 @@ public class RobotContainer {
   public SparkMaxDelegate initSparkMaxDelegate(String resourceId){
     try{
       MotorControllerConfig config = configUtils.readFromClassPath(MotorControllerConfig.class, resourceId);
-       MotorType motorType;
+      MotorType motorType;
       switch(config.getMotorType()) {
           case("BRUSHLESS"):
               motorType = MotorType.kBrushless;
@@ -132,7 +134,7 @@ public class RobotContainer {
       }
       CANSparkMax motor = new CANSparkMax(config.getPort(), motorType);
       motor.setInverted(config.getInverted());
-      return new SparkMaxDelegate(motor);
+      return new SparkMaxDelegate(motor, null, config.getCountsPerRevolution());
     } catch(IOException e){
       throw new RuntimeException("Error Initialzing SparkMax", e);
     }

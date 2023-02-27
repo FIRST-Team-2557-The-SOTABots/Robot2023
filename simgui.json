@@ -6,7 +6,12 @@
           "open": true
         }
       },
-      "Talon FX[6]": {
+      "SPARK MAX [12]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX[13]": {
         "header": {
           "open": true
         }
@@ -21,6 +26,15 @@
   "NetworkTables": {
     "transitory": {
       "Shuffleboard": {
+        ".metadata": {
+          "open": true
+        },
+        ".recording": {
+          "open": true
+        },
+        "open": true
+      },
+      "SmartDashboard": {
         "open": true
       }
     }

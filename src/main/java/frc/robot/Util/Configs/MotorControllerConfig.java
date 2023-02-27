@@ -19,8 +19,8 @@ public class MotorControllerConfig  {
         return motorType;
     }
 
-    public int getCountsPerRevolution() {
-        return countsPerRevolution;
+    public double getCountsPerRevolution() {
+        return (double)countsPerRevolution;
     }
 
     public int getPort(){
