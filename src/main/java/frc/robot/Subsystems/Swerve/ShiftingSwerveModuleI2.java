@@ -66,7 +66,7 @@ public class ShiftingSwerveModuleI2 extends SubsystemBase implements ShiftingSwe
 
     mAngleMotor.setVoltage(state.speedMetersPerSecond == 0.0 ? 0.0 : anglePIDOutput + angleFFOutput);
 
-    double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, state.getGear());
+    double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[state.getGear()]);
     double speedPIDOutput = speedSetpointNative == 0 ? 0.0 : mSpeedPID.calculate(mSpeedMotor.getSensorTickVelocity(), speedSetpointNative);
     double speedFFOutput = mSpeedFF.calculate(speedSetpointNative);
 
