@@ -8,15 +8,17 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 
-public class DriveCommand extends CommandBase {
+public class DriveCommand extends RunCommand {
   private ShiftingSwerveDrive mSwerveDrive;
   private CommandXboxController mDriveStick;
 
   /** Creates a new DefaultDrive. */
   public DriveCommand(ShiftingSwerveDrive swerveDrive, CommandXboxController driveStick) {
+    super(null, swerveDrive );
     this.mSwerveDrive = swerveDrive;
     this.mDriveStick = driveStick;
     addRequirements(mSwerveDrive);
@@ -27,8 +29,9 @@ public class DriveCommand extends CommandBase {
   public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
+  // @Override
+  // public void execute() {
+    public void temp(){
     double fwd = mDriveStick.getLeftY();
     double str = mDriveStick.getLeftX();
     double rot = mDriveStick.getRightX();
@@ -47,7 +50,10 @@ public class DriveCommand extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    SmartDashboard.putBoolean("DriveCommandFinished", true);
+
+  }
 
   protected void drive(double fwd, double str, double rot, Rotation2d angle, Translation2d pointOfRotation) {
     mSwerveDrive.drive(fwd, str, rot, angle, pointOfRotation);
@@ -56,6 +62,7 @@ public class DriveCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    SmartDashboard.putBoolean("DriveCommandFinished", true);
     return false;
   }
 }

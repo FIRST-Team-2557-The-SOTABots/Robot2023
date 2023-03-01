@@ -1,6 +1,6 @@
 {
     "port": 5,
-    "isInverted": false,
+    "isInverted": true,
     "idleMode": "BRAKE",
     "motorType": "BRUSHLESS",
     "countsPerRevolution": 2048

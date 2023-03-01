@@ -21,7 +21,7 @@ public class CompositeMotor implements SOTAMotorController{
     }
 
     public CompositeMotor(SOTAMotorController motor,AnalogInput encoder, MotorLimits motorLimits, Double encoderCountsPerRevolution){
-        this.motor = motor; this.motorLimits = motorLimits; this.countsPerRevolution = encoderCountsPerRevolution; 
+        this.motor = motor; this.motorLimits = motorLimits; this.countsPerRevolution = encoderCountsPerRevolution; this.encoder = encoder;
     }
 
     @Override

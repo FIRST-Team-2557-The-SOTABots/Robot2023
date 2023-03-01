@@ -1,11 +1,11 @@
 package frc.robot.Util.Configs;
 
 public class MotorControllerConfig  {
-    private int port ;
-    private boolean isInverted ;
-    private String motorType ;
-    private int countsPerRevolution ;
-    private String idleMode ;
+    private int port;
+    private boolean isInverted;
+    private String motorType;
+    private int countsPerRevolution;
+    private String idleMode;
 
     public boolean getInverted() {
         return isInverted;

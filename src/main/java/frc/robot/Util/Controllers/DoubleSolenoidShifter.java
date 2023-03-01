@@ -18,7 +18,8 @@ public class DoubleSolenoidShifter implements GearShifter{
     private Value kLoGearValue;
 
     public DoubleSolenoidShifter(DoubleSolenoid solenoid, DoubleSolenoidConfig config) {
-        this.shifter = solenoid; gearRatios = config.getGearRatios(); this.kHiGearValue = Value.kForward; this.kLoGearValue = Value.kReverse;
+        this.shifter = solenoid; gearRatios = config.getGearRatios(); this.kHiGearValue = Value.kForward; 
+        this.kLoGearValue = Value.kReverse;
         shifter = new DoubleSolenoid(PneumaticsModuleType.REVPH, 6, 7);
     }
 

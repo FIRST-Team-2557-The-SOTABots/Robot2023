@@ -98,8 +98,11 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   public void drive(ShiftingSwerveModuleState[] moduleStates) {
     for (int i = 0; i < moduleStates.length; i++) {
       mSwerveModules[i].drive(moduleStates[i]);
-      SmartDashboard.putNumber("SwerveAngle", mSwerveModules[i].getAngle());
+      
+
     }
+    
+
   }
   
   /** 
@@ -149,6 +152,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
       modulePositions[i] = mSwerveModules[i].getMeasuredPosition();
       
     }
+
     return modulePositions;
   }
 
@@ -202,7 +206,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
       mGyro.getRotation2d()
     );
     updateModuleTranslation(mGyro.getRotation2d());
-
+    
     
   }
   
