@@ -49,8 +49,7 @@ public class ShiftingSwerveModuleI2 extends SubsystemBase implements ShiftingSwe
 
         this.mAnglePID = config.anglePID();
         this.mSpeedPID = config.speedPID();
-        
-        
+                
     }
 
 //     /**
@@ -64,19 +63,20 @@ public class ShiftingSwerveModuleI2 extends SubsystemBase implements ShiftingSwe
     double anglePIDOutput = mAnglePID.calculate(getAngle(), angleSetpointNative);
     double angleFFOutput = mAngleFF.calculate(mAnglePID.getSetpoint().velocity);
 
-    mAngleMotor.setVoltage(state.speedMetersPerSecond == 0.0 ? 0.0 : anglePIDOutput + angleFFOutput);
+    // SmartDashboard.putNumber("Angle Max Accel" + modulePosition, mAnglePID.get);
 
+    // SmartDashboard.putNumber("Angle Position" + modulePosition, getAngle());
+    // SmartDashboard.putNumber("Angle velocity Setpoint" + modulePosition, mAnglePID.getSetpoint().velocity);
+    // SmartDashboard.putNumber("Angle PID Output" + modulePosition, anglePIDOutput);
+    // SmartDashboard.putNumber("Angle FF output" + modulePosition, angleFFOutput);
+    SmartDashboard.putNumber("Angle Velocity Setpoint " + modulePosition, mAnglePID.getSetpoint().velocity);
+    // mAngleMotor.setVoltage(state.speedMetersPerSecond == 0.0 ? 0.0 : anglePIDOutput + angleFFOutput);
+    
     double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[state.getGear()]);
     double speedPIDOutput = speedSetpointNative == 0 ? 0.0 : mSpeedPID.calculate(mSpeedMotor.getSensorTickVelocity(), speedSetpointNative);
     double speedFFOutput = mSpeedFF.calculate(speedSetpointNative);
 
-    mSpeedMotor.setVoltage(speedPIDOutput + speedFFOutput);
-    
-    SmartDashboard.putNumber("speed setpoint " + modulePosition, state.speedMetersPerSecond);
-    SmartDashboard.putNumber("angle setpoint " + modulePosition, state.angle.getRadians());
-    SmartDashboard.putNumber("angleVoltage" + modulePosition, state.speedMetersPerSecond == 0.0 ? 0.0 : anglePIDOutput + angleFFOutput);
-    SmartDashboard.putNumber("speedVoltage" + modulePosition, speedFFOutput + speedPIDOutput);
-
+    // mSpeedMotor.setVoltage(speedPIDOutput + speedFFOutput);
     
   }
 
@@ -108,6 +108,10 @@ public class ShiftingSwerveModuleI2 extends SubsystemBase implements ShiftingSwe
    */
   public double getAngle() {
     return -1.0 * MathUtil.inputModulus(mAngleMotor.getEncoder() - kAngleOffset, 0, kAngleCountsPerRevolution) + kAngleCountsPerRevolution;
+  }
+
+  public double getAngleNoOffset() {
+    return mAngleMotor.getEncoder();
   }
 
   /**
@@ -167,6 +171,7 @@ public class ShiftingSwerveModuleI2 extends SubsystemBase implements ShiftingSwe
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Angle no offset " + modulePosition, getAngle());
+    // SmartDashboard.putNumber("Angle no offset " + modulePosition, getAngleNoOffset());
+    SmartDashboard.putNumber("Angle " + modulePosition, getAngle());
   }
 }

@@ -1,10 +1,10 @@
 {
     "gearRatios": [5.07,10.40],
 
-    "angleOffset":0.0,
+    "angleOffset": 0.0,
     "angleEncoderCPR": 5.0,
 
-    "wheelDiameter": 4.0 , 
+    "wheelDiameter": 4.0, 
     
     "speedKP": 0.014,
     "speedKI": 0.0,
@@ -19,7 +19,7 @@
     "angleKI": 0.0,
     "angleKD": 0.0,
     "angleMaxAccel": 70.0,
-    "angleKS": 0.0027625,
-    "angleKV": 0.0029725,
+    "angleKS": 0.109,
+    "angleKV": 6.568383,
     "anglePIDTolerance": 0.0
 }

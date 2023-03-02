@@ -10,11 +10,10 @@ public class ShiftingSwerveModuleConfig {
     
     private double[] gearRatios;
 
-
     private double angleOffset;
     private double angleEncoderCPR;
 
-    private double wheelCircumference;
+    private double wheelDiameter;   
 
     private double speedKP;
     private double speedKI;
@@ -29,16 +28,12 @@ public class ShiftingSwerveModuleConfig {
     private double angleKI;
     private double angleKD;
     private double angleMaxAccel;
-    private double angleMaxVel;
 
     private double angleKS;
     private double angleKV;
 
     private double anglePIDTolerance;
     private double speedPIDTolerance;
-
-    
-
 
     public double[] getGearRatios(){
         return gearRatios;
@@ -52,8 +47,16 @@ public class ShiftingSwerveModuleConfig {
         return angleEncoderCPR;
     }
 
+    /**
+     * This needs to exist so that wheelDiameter is assigned a value with objectMapper
+     * for now this is not used and would prefer to use getWheelCircumference
+     */
+    public double getwheelDiameter() {
+        return wheelDiameter;
+    }
+
     public double getWheelCircumference() {
-        return wheelCircumference;
+        return wheelDiameter * Math.PI;
     }
 
     public double getSpeedKP() {
@@ -101,7 +104,7 @@ public class ShiftingSwerveModuleConfig {
     }
 
     public double getAngleMaxVel() {
-        return angleMaxVel;
+        return angleMaxAccel * Math.sqrt((angleEncoderCPR / 4) / angleMaxAccel);
     }
 
     public double getAngleKS() {
@@ -127,7 +130,7 @@ public class ShiftingSwerveModuleConfig {
     }
     public ProfiledPIDController anglePID(){
         ProfiledPIDController pid = new ProfiledPIDController(angleKP, angleKI, angleKD, 
-        new TrapezoidProfile.Constraints(angleMaxVel, angleMaxAccel));
+        new TrapezoidProfile.Constraints(getAngleMaxVel(), angleMaxAccel));
         pid.setTolerance(anglePIDTolerance);
         return pid;
     }

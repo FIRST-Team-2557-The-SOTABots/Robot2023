@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -62,21 +63,21 @@ public class RobotContainer {
       initSwerveModule("Swerve/FrontLeft/SpeedFalcon",
         "Swerve/FrontLeft/AngleSparkMax",
        0, 
-       "Defaulti2SwerveModule"),
+       "Swerve/FrontLeft/ShiftingSwerveModule"),
       initSwerveModule("Swerve/BackLeft/SpeedFalcon",
         "Swerve/BackLeft/AngleSparkMax",
        1, 
-       "Defaulti2SwerveModule"),
+       "Swerve/BackLeft/ShiftingSwerveModule"),
        initSwerveModule("Swerve/BackRight/SpeedFalcon",
        "Swerve/BackRight/AngleSparkMax",
       2, 
-      "Defaulti2SwerveModule"),
+      "Swerve/BackRight/ShiftingSwerveModule"),
       
        initSwerveModule("Swerve/FrontRight/SpeedFalcon",
        "Swerve/FrontRight/AngleSparkMax",
 
       3, 
-      "Defaulti2SwerveModule"),
+      "Swerve/FrontRight/ShiftingSwerveModule"),
      
      
     };
@@ -108,11 +109,15 @@ public class RobotContainer {
           double fwd = dController.getLeftY();
           double str = dController.getLeftX();
           double rot = dController.getRightY();
-  
           
           fwd = -Math.signum(fwd) * fwd * fwd ;
           str = -Math.signum(str) * str * str ;
           rot = -Math.signum(rot) * rot * rot ;
+
+          SmartDashboard.putNumber("fwd", fwd);
+          SmartDashboard.putNumber("str", str);
+          SmartDashboard.putNumber("rot", rot);
+
           mSwerveDrive.drive(fwd,str,rot, new Rotation2d());
         }, mSwerveDrive
       ));
