@@ -44,6 +44,7 @@ import frc.robot.Util.Controllers.FalconDelegate;
 import frc.robot.Util.Controllers.NavX;
 import frc.robot.Util.Controllers.PigeonDelegate;
 import frc.robot.Util.Controllers.SOTADutyCycleEncoder;
+import frc.robot.Util.Controllers.SOTAXboxcontroller;
 import frc.robot.Util.Controllers.SparkMaxDelegate;
 import frc.robot.Util.Interfaces.GearShifter;
 import frc.robot.Util.Interfaces.SOTAEncoder;
@@ -57,8 +58,8 @@ public class RobotContainer {
 
   private final SOTAGyro gyro;
 
-  private final CommandXboxController dController;
-  private final CommandXboxController mController;
+  private final SOTAXboxcontroller dController;
+  private final SOTAXboxcontroller mController;
 
   private ShiftingSwerveDrive mSwerveDrive;
   private Arm mArm;
@@ -71,8 +72,8 @@ public class RobotContainer {
     mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     this.configUtils = new ConfigUtils(mapper);
 
-    dController = new CommandXboxController(0);
-    mController = new CommandXboxController(1);
+    dController = new SOTAXboxcontroller(0);
+    mController = new SOTAXboxcontroller(1);
 
     this.gyro = new NavX(new AHRS(Port.kMXP));
 

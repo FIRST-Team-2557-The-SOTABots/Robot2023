@@ -11,13 +11,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
+import frc.robot.Util.Controllers.SOTAXboxcontroller;
 
 public class DriveCommand extends CommandBase {
   private ShiftingSwerveDrive mSwerveDrive;
   private CommandXboxController mDriveStick;
 
   /** Creates a new DefaultDrive. */
-  public DriveCommand(ShiftingSwerveDrive swerveDrive, CommandXboxController driveStick) {
+  public DriveCommand(ShiftingSwerveDrive swerveDrive, SOTAXboxcontroller driveStick) {
     this.mSwerveDrive = swerveDrive;
     this.mDriveStick = driveStick;
     addRequirements(mSwerveDrive);

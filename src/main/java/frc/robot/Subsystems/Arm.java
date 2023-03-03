@@ -46,7 +46,7 @@ public class Arm extends SubsystemBase {
 
   public void setExtensionSpeed(double speed){
     if(limitSwitch.get() && speed < 0) winchMotor.set(0);
-    winchMotor.set(speed);
+    winchMotor.setVoltage(speed);
   }
 
   @Override
