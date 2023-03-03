@@ -63,14 +63,13 @@ public class ShiftingSwerveModuleI2 extends SubsystemBase implements ShiftingSwe
     double anglePIDOutput = mAnglePID.calculate(getAngle(), angleSetpointNative);
     double angleFFOutput = mAngleFF.calculate(mAnglePID.getSetpoint().velocity);
 
-    // SmartDashboard.putNumber("Angle Max Accel" + modulePosition, mAnglePID.get);
 
-    // SmartDashboard.putNumber("Angle Position" + modulePosition, getAngle());
-    // SmartDashboard.putNumber("Angle velocity Setpoint" + modulePosition, mAnglePID.getSetpoint().velocity);
-    // SmartDashboard.putNumber("Angle PID Output" + modulePosition, anglePIDOutput);
-    // SmartDashboard.putNumber("Angle FF output" + modulePosition, angleFFOutput);
-    SmartDashboard.putNumber("Angle Velocity Setpoint " + modulePosition, mAnglePID.getSetpoint().velocity);
-    // mAngleMotor.setVoltage(state.speedMetersPerSecond == 0.0 ? 0.0 : anglePIDOutput + angleFFOutput);
+    SmartDashboard.putNumber("angle" + modulePosition, getAngle());
+    SmartDashboard.putNumber("stateAngle"+ modulePosition, state.angle.getRadians());
+    SmartDashboard.putNumber("anglePID output"+ modulePosition, anglePIDOutput);
+    SmartDashboard.putNumber("anglePID V Setpoint"+ modulePosition, mAnglePID.getSetpoint().velocity);
+    SmartDashboard.putNumber("FF output"+ modulePosition, angleFFOutput);
+    mAngleMotor.setVoltage(state.speedMetersPerSecond == 0.0 ? 0.0 : anglePIDOutput + angleFFOutput);
     
     double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[state.getGear()]);
     double speedPIDOutput = speedSetpointNative == 0 ? 0.0 : mSpeedPID.calculate(mSpeedMotor.getSensorTickVelocity(), speedSetpointNative);

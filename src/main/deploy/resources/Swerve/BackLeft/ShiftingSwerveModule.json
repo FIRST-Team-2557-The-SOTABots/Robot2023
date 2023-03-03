@@ -15,11 +15,11 @@
     "speedKV": 0.00005,
     "speedPIDTolerance": 0.05,
 
-    "angleKP": 0.00001,
+    "angleKP": 0.0001,
     "angleKI": 0.0,
     "angleKD": 0.0,
-    "angleMaxAccel": 7.0,
-    "angleKS": 0.109,
-    "angleKV": 6.568383,
+    "angleMaxAccel": 70.0,
+    "angleKS": 0.537678342,
+    "angleKV": 0.131499829,
     "anglePIDTolerance": 0.0
 }

@@ -12,13 +12,12 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 
-public class DriveCommand extends RunCommand {
+public class DriveCommand extends CommandBase {
   private ShiftingSwerveDrive mSwerveDrive;
   private CommandXboxController mDriveStick;
 
   /** Creates a new DefaultDrive. */
   public DriveCommand(ShiftingSwerveDrive swerveDrive, CommandXboxController driveStick) {
-    super(null, swerveDrive );
     this.mSwerveDrive = swerveDrive;
     this.mDriveStick = driveStick;
     addRequirements(mSwerveDrive);
@@ -30,8 +29,8 @@ public class DriveCommand extends RunCommand {
 
   // Called every time the scheduler runs while the command is scheduled.
   // @Override
-  // public void execute() {
-    public void temp(){
+  public void execute() {
+    
     double fwd = mDriveStick.getLeftY();
     double str = mDriveStick.getLeftX();
     double rot = mDriveStick.getRightX();

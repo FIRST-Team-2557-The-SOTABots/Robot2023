@@ -50,6 +50,7 @@ public class RobotContainer {
   private final CommandXboxController dController;
   private ShiftingSwerveDrive mSwerveDrive;
   private final SOTAGyro gyro;
+  private DriveCommand mDriveCommand;
 
   public RobotContainer() {
     ObjectMapper mapper = new ObjectMapper();
@@ -96,31 +97,14 @@ public class RobotContainer {
       e.printStackTrace();
       throw new RuntimeException("Faild to create swerveDrive", e);
     }
+    this.mDriveCommand = new DriveCommand(mSwerveDrive, dController);
     configureDefaultCommands();
     configureBindings();
     
   }
 
   private void configureDefaultCommands(){
-    mSwerveDrive.setDefaultCommand(
-      new RunCommand(() ->  {
-        
-          // get inputs then square them, preserving sign
-          double fwd = dController.getLeftY();
-          double str = dController.getLeftX();
-          double rot = dController.getRightY();
-          
-          fwd = -Math.signum(fwd) * fwd * fwd ;
-          str = -Math.signum(str) * str * str ;
-          rot = -Math.signum(rot) * rot * rot ;
-
-          SmartDashboard.putNumber("fwd", fwd);
-          SmartDashboard.putNumber("str", str);
-          SmartDashboard.putNumber("rot", rot);
-
-          mSwerveDrive.drive(fwd,str,rot, new Rotation2d());
-        }, mSwerveDrive
-      ));
+    mSwerveDrive.setDefaultCommand(mDriveCommand);
   }
 
   private void configureBindings() {
