@@ -6,6 +6,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 public class ShiftingSwerveModuleConfig {
 
+    private int encoderPort;
+
     private String modulePosition;
     
     private double[] gearRatios;
@@ -34,6 +36,10 @@ public class ShiftingSwerveModuleConfig {
 
     private double anglePIDTolerance;
     private double speedPIDTolerance;
+
+    public int getEncoderPort(){
+        return encoderPort;
+    }
 
     public double[] getGearRatios(){
         return gearRatios;

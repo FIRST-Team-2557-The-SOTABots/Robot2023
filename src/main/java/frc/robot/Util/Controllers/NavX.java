@@ -2,12 +2,13 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.Util.Interfaces;
+package frc.robot.Util.Controllers;
 
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Util.Interfaces.SOTAGyro;
 
 public class NavX extends SubsystemBase implements SOTAGyro{
   private AHRS mNavX;
@@ -81,6 +82,12 @@ public class NavX extends SubsystemBase implements SOTAGyro{
   public void close() throws Exception {
     // TODO Auto-generated method stub
     
+  }
+
+  @Override
+  public double getYaw() {
+    
+    return mNavX.getYaw();
   }
 
   

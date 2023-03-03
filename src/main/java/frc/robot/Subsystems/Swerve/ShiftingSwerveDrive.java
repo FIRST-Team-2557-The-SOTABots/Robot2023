@@ -113,6 +113,10 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     mShifter.shift(gear);
   }
 
+  public void shift(){
+    mShifter.shift(mShifter.getGear() == 1 ? 0 : 1);
+  }
+
   /** 
    * Updates the pose of the robot using module positions and angle
    * @param modulePositions Positions of the module

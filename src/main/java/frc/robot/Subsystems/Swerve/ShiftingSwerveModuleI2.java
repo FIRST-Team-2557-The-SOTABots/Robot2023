@@ -30,12 +30,12 @@ public class ShiftingSwerveModuleI2 extends SubsystemBase implements ShiftingSwe
 
     private int modulePosition; 
 
-    public ShiftingSwerveModuleI2( int modulePosition,
+    public ShiftingSwerveModuleI2(
       SOTAMotorController angleMotor, 
             SOTAMotorController speedMotor, 
             ShiftingSwerveModuleConfig config) {
 
-        this.modulePosition = modulePosition;
+        this.modulePosition = config.getEncoderPort();
         this.mSpeedMotor = speedMotor; this.mAngleMotor = angleMotor;
 
         this.kAngleOffset = config.getAngleOffset();
@@ -64,7 +64,7 @@ public class ShiftingSwerveModuleI2 extends SubsystemBase implements ShiftingSwe
     double angleFFOutput = mAngleFF.calculate(mAnglePID.getSetpoint().velocity);
 
 
-    SmartDashboard.putNumber("angle" + modulePosition, getAngle());
+    SmartDashboard.putNumber("angle" + modulePosition, getAngleNoOffset());
     SmartDashboard.putNumber("stateAngle"+ modulePosition, state.angle.getRadians());
     SmartDashboard.putNumber("anglePID output"+ modulePosition, anglePIDOutput);
     SmartDashboard.putNumber("anglePID V Setpoint"+ modulePosition, mAnglePID.getSetpoint().velocity);
@@ -171,6 +171,6 @@ public class ShiftingSwerveModuleI2 extends SubsystemBase implements ShiftingSwe
   @Override
   public void periodic() {
     // SmartDashboard.putNumber("Angle no offset " + modulePosition, getAngleNoOffset());
-    SmartDashboard.putNumber("Angle " + modulePosition, getAngle());
+    SmartDashboard.putNumber("Angle no offset " + modulePosition, getAngleNoOffset());
   }
 }

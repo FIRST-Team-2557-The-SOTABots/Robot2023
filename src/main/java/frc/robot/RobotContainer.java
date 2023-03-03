@@ -17,6 +17,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.I2C.Port;
@@ -27,19 +28,25 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Commands.ArmPID;
 import frc.robot.Commands.DriveCommand;
+import frc.robot.Subsystems.Arm;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveModuleI2;
 import frc.robot.Util.Configs.DoubleSolenoidConfig;
 import frc.robot.Util.Configs.MotorControllerConfig;
 import frc.robot.Util.Configs.ShiftingSwerveDriveConfig;
 import frc.robot.Util.Configs.ShiftingSwerveModuleConfig;
+import frc.robot.Util.Controllers.AnalogInputEncoder;
 import frc.robot.Util.Controllers.CompositeMotor;
 import frc.robot.Util.Controllers.DoubleSolenoidShifter;
 import frc.robot.Util.Controllers.FalconDelegate;
+import frc.robot.Util.Controllers.NavX;
+import frc.robot.Util.Controllers.PigeonDelegate;
+import frc.robot.Util.Controllers.SOTADutyCycleEncoder;
 import frc.robot.Util.Controllers.SparkMaxDelegate;
 import frc.robot.Util.Interfaces.GearShifter;
-import frc.robot.Util.Interfaces.NavX;
+import frc.robot.Util.Interfaces.SOTAEncoder;
 import frc.robot.Util.Interfaces.SOTAGyro;
 import frc.robot.Util.Interfaces.SOTAMotorController;
 import frc.robot.Util.UtilityClasses.ConfigUtils;
@@ -47,9 +54,16 @@ import frc.robot.Util.UtilityClasses.ConfigUtils;
 public class RobotContainer {
   // private final ArmInterface arm;
   private final ConfigUtils configUtils;
-  private final CommandXboxController dController;
-  private ShiftingSwerveDrive mSwerveDrive;
+
   private final SOTAGyro gyro;
+
+  private final CommandXboxController dController;
+  private final CommandXboxController mController;
+
+  private ShiftingSwerveDrive mSwerveDrive;
+  private Arm mArm;
+
+  private ArmPID mArmPID;
   private DriveCommand mDriveCommand;
 
   public RobotContainer() {
@@ -58,32 +72,29 @@ public class RobotContainer {
     this.configUtils = new ConfigUtils(mapper);
 
     dController = new CommandXboxController(0);
+    mController = new CommandXboxController(1);
 
+    this.gyro = new NavX(new AHRS(Port.kMXP));
 
     ShiftingSwerveModuleI2[] swerveModules = {
       initSwerveModule("Swerve/FrontLeft/SpeedFalcon",
         "Swerve/FrontLeft/AngleSparkMax",
-       0, 
        "Swerve/FrontLeft/ShiftingSwerveModule"),
+
       initSwerveModule("Swerve/BackLeft/SpeedFalcon",
         "Swerve/BackLeft/AngleSparkMax",
-       1, 
        "Swerve/BackLeft/ShiftingSwerveModule"),
+
        initSwerveModule("Swerve/BackRight/SpeedFalcon",
        "Swerve/BackRight/AngleSparkMax",
-      2, 
       "Swerve/BackRight/ShiftingSwerveModule"),
       
        initSwerveModule("Swerve/FrontRight/SpeedFalcon",
        "Swerve/FrontRight/AngleSparkMax",
-
-      3, 
       "Swerve/FrontRight/ShiftingSwerveModule"),
-     
-     
     };
 
-    this.gyro = new NavX(new AHRS(Port.kMXP));
+    
 
     try{
       DoubleSolenoid solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 8, 9);
@@ -97,7 +108,19 @@ public class RobotContainer {
       e.printStackTrace();
       throw new RuntimeException("Faild to create swerveDrive", e);
     }
+
+    SOTAMotorController winchMotor = initSparkMaxDelegate("SuperStructure/WinchMotor");
+    SOTAMotorController rotatorMotor = initSparkMaxDelegate("SuperStructure/RotatorMotor");
+    SOTAEncoder rotatorEncoder = new SOTADutyCycleEncoder(1);
+    SOTAMotorController rotatorComposite = new CompositeMotor(rotatorMotor, rotatorEncoder);
+    SOTAGyro armGyro = new PigeonDelegate(4);
+    DigitalInput limitSwitch = new DigitalInput(0);
+
+    this.mArm = new Arm(armGyro, winchMotor, rotatorMotor, null);
+
     this.mDriveCommand = new DriveCommand(mSwerveDrive, dController);
+
+
     configureDefaultCommands();
     configureBindings();
     
@@ -110,7 +133,7 @@ public class RobotContainer {
   private void configureBindings() {
     dController.a().onTrue(new InstantCommand(
       () -> {
-        mSwerveDrive.shift(0);
+        mSwerveDrive.shift();
       }, mSwerveDrive
     ));
     
@@ -157,15 +180,19 @@ public class RobotContainer {
     }
   }
 
-  public ShiftingSwerveModuleI2 initSwerveModule(String speedConfig, String angleConfig, int encoderPort, String ModuleConfig){
-    SOTAMotorController speedMotor = initFalconDelegate(speedConfig);
-    SOTAMotorController angleMotor = initSparkMaxDelegate(angleConfig);
-    AnalogInput encoder = new AnalogInput(encoderPort);
-    SOTAMotorController angleComposite = new CompositeMotor(angleMotor, encoder);
+  public ShiftingSwerveModuleI2 initSwerveModule(String speedConfig, String angleConfig,  String ModuleConfig){
+    // SOTAMotorController speedMotor = initFalconDelegate(speedConfig);
+    // SOTAMotorController angleMotor = initSparkMaxDelegate(angleConfig);
+    // SOTAEncoder encoder = new AnalogInputEncoder();
+    // SOTAMotorController angleComposite = new CompositeMotor(angleMotor, encoder);
 
     try{
       ShiftingSwerveModuleConfig config = configUtils.readFromClassPath(ShiftingSwerveModuleConfig.class, ModuleConfig);
-      return new ShiftingSwerveModuleI2(encoderPort, angleComposite,speedMotor, config);
+      SOTAMotorController speedMotor = initFalconDelegate(speedConfig);
+    SOTAMotorController angleMotor = initSparkMaxDelegate(angleConfig);
+    SOTAEncoder encoder = new AnalogInputEncoder(config.getEncoderPort());
+    SOTAMotorController angleComposite = new CompositeMotor(angleMotor, encoder);
+      return new ShiftingSwerveModuleI2(angleComposite,speedMotor, config);
     } catch(IOException e){
       throw new RuntimeException("Could not create config", e);
     }

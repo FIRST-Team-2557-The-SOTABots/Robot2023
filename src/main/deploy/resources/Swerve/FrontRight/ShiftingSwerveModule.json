@@ -1,7 +1,9 @@
 {
+    "encoderPort": 3,
+
     "gearRatios": [5.07,10.40],
 
-    "angleOffset": 4.088134347,
+    "angleOffset": 4.141845279,
     "angleEncoderCPR": 5.0,
 
     "wheelDiameter": 4.0, 

@@ -11,4 +11,5 @@ public interface SOTAGyro extends Gyro{
     public void resetAngle();
     public double getPitch();
     public double getRoll();
+    public double getYaw();
 }

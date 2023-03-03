@@ -2,25 +2,25 @@ package frc.robot.Util.Controllers;
 
 
 
-import edu.wpi.first.wpilibj.AnalogInput;
+import frc.robot.Util.Interfaces.SOTAEncoder;
 import frc.robot.Util.Interfaces.SOTAMotorController;
 
 public class CompositeMotor implements SOTAMotorController{
     private SOTAMotorController motor;
-    private AnalogInput encoder;
+    private SOTAEncoder encoder;
     private MotorLimits motorLimits;
     private Double countsPerRevolution;
 
-    public CompositeMotor(SOTAMotorController motor, AnalogInput encoder){
+    public CompositeMotor(SOTAMotorController motor, SOTAEncoder encoder){
             this(motor, encoder, null, motor.getEncoderCountsPerRevolution());
 
     }
 
-    public CompositeMotor(SOTAMotorController motor,AnalogInput encoder, MotorLimits motorLimits){
+    public CompositeMotor(SOTAMotorController motor,SOTAEncoder encoder, MotorLimits motorLimits){
         this(motor, encoder, motorLimits, null);
     }
 
-    public CompositeMotor(SOTAMotorController motor,AnalogInput encoder, MotorLimits motorLimits, Double encoderCountsPerRevolution){
+    public CompositeMotor(SOTAMotorController motor,SOTAEncoder encoder, MotorLimits motorLimits, Double encoderCountsPerRevolution){
         this.motor = motor; this.motorLimits = motorLimits; this.countsPerRevolution = encoderCountsPerRevolution; this.encoder = encoder;
     }
 
@@ -77,7 +77,7 @@ public class CompositeMotor implements SOTAMotorController{
 
     @Override
     public double getEncoder() {
-        return encoder.getAverageVoltage();
+        return encoder.get();
     }
 
     @Override
