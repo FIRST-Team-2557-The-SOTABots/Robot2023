@@ -14,23 +14,18 @@ import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.I2C.Port;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Commands.ArmPID;
+import frc.robot.Commands.ArmPID2;
 import frc.robot.Commands.DriveCommand;
-import frc.robot.Subsystems.Arm;
+import frc.robot.Subsystems.SuperStructure;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveModuleI2;
 import frc.robot.Util.Configs.DoubleSolenoidConfig;
@@ -41,9 +36,11 @@ import frc.robot.Util.Controllers.AnalogInputEncoder;
 import frc.robot.Util.Controllers.CompositeMotor;
 import frc.robot.Util.Controllers.DoubleSolenoidShifter;
 import frc.robot.Util.Controllers.FalconDelegate;
+import frc.robot.Util.Controllers.MotorLimits;
 import frc.robot.Util.Controllers.NavX;
 import frc.robot.Util.Controllers.PigeonDelegate;
 import frc.robot.Util.Controllers.SOTADutyCycleEncoder;
+import frc.robot.Util.Controllers.SOTAMotorControllerGroup;
 import frc.robot.Util.Controllers.SOTAXboxcontroller;
 import frc.robot.Util.Controllers.SparkMaxDelegate;
 import frc.robot.Util.Interfaces.GearShifter;
@@ -62,9 +59,9 @@ public class RobotContainer {
   private final SOTAXboxcontroller mController;
 
   private ShiftingSwerveDrive mSwerveDrive;
-  private Arm mArm;
+  private SuperStructure mArm;
 
-  private ArmPID mArmPID;
+  private ArmPID2 mArmPID;
   private DriveCommand mDriveCommand;
 
   public RobotContainer() {
@@ -109,15 +106,21 @@ public class RobotContainer {
       e.printStackTrace();
       throw new RuntimeException("Faild to create swerveDrive", e);
     }
-
+    MotorLimits motorLimits = new MotorLimits(0.45, 0.65);
     SOTAMotorController winchMotor = initSparkMaxDelegate("SuperStructure/WinchMotor");
     SOTAMotorController rotatorMotor = initSparkMaxDelegate("SuperStructure/RotatorMotor");
     SOTAEncoder rotatorEncoder = new SOTADutyCycleEncoder(1);
-    SOTAMotorController rotatorComposite = new CompositeMotor(rotatorMotor, rotatorEncoder);
+    SOTAMotorController rotatorComposite = new CompositeMotor(rotatorMotor, rotatorEncoder, motorLimits);
     SOTAGyro armGyro = new PigeonDelegate(4);
     DigitalInput limitSwitch = new DigitalInput(0);
+    SOTAMotorController leftMotorIntake = initFalconDelegate("SuperStructure/IntakeMotorLeft");
+    SOTAMotorController rightMotorIntake = initFalconDelegate("SuperStructure/IntakeMotorRight");
+    SOTAMotorController intakeMotors = new SOTAMotorControllerGroup(rightMotorIntake, leftMotorIntake);
+    this.mArm = new SuperStructure(armGyro, winchMotor, rotatorComposite, limitSwitch, intakeMotors);
 
-    this.mArm = new Arm(armGyro, winchMotor, rotatorMotor, null);
+    PIDController armController = new PIDController(0.03,0,0);
+
+    // this.mArmPID = new ArmPID2( mArm, armController, 0, mController);
 
     this.mDriveCommand = new DriveCommand(mSwerveDrive, dController);
 
@@ -129,6 +132,7 @@ public class RobotContainer {
 
   private void configureDefaultCommands(){
     mSwerveDrive.setDefaultCommand(mDriveCommand);
+    // mArm.setDefaultCommand(mArmPID);
   }
 
   private void configureBindings() {
@@ -138,6 +142,7 @@ public class RobotContainer {
       }, mSwerveDrive
     ));
     
+      
   }
 
   public Command getAutonomousCommand() {

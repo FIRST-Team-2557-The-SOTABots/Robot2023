@@ -18,35 +18,41 @@ import frc.robot.Util.Interfaces.SOTAEncoder;
 import frc.robot.Util.Interfaces.SOTAGyro;
 import frc.robot.Util.Interfaces.SOTAMotorController;
 
-public class Arm extends SubsystemBase {
+public class SuperStructure extends SubsystemBase {
 
   private SOTAGyro pigeon;
   private SOTAMotorController rotatorMotor;
   private SOTAMotorController winchMotor;
   private DigitalInput limitSwitch;
+  private SOTAMotorController intakeMotors;
 
   /** Creates a new ArmSubsystem. */
-  public Arm(SOTAGyro pigeon, SOTAMotorController winchMotor, SOTAMotorController rotatorMotor, DigitalInput limitSwitch) {
+  public SuperStructure(SOTAGyro pigeon, SOTAMotorController winchMotor,
+   SOTAMotorController rotatorMotor, DigitalInput limitSwitch,
+    SOTAMotorController intake) {
     this.pigeon = pigeon;
     this.winchMotor = winchMotor;
     this.rotatorMotor = rotatorMotor;
     this.limitSwitch = limitSwitch;
+    this.intakeMotors = intake;
   }
 
-  
+  public double getRoll(){
+    return pigeon.getRoll();
+  }
 
   public void setRotatorSpeed(double spd){
-    // if(rotatorMotor.getEncoder() > ArmConstants.LOWER_LIMIT && rotatorMotor.getEncoder() < ArmConstants.UPPER_LIMIT){
-    //   rotatorMotor.set(MathUtil.clamp(spd, -0.5, 0.5));
-    // }else{
-    //   rotatorMotor.set(0);
-    // }
+      rotatorMotor.set(MathUtil.clamp(spd, -0.5, 0.5));
     
   }
 
   public void setExtensionSpeed(double speed){
     if(limitSwitch.get() && speed < 0) winchMotor.set(0);
     winchMotor.setVoltage(speed);
+  }
+
+  public void setIntake(double speed){
+    intakeMotors.setVoltage(speed);
   }
 
   @Override

@@ -138,6 +138,7 @@ public class ShiftingSwerveModuleConfig {
         ProfiledPIDController pid = new ProfiledPIDController(angleKP, angleKI, angleKD, 
         new TrapezoidProfile.Constraints(getAngleMaxVel(), angleMaxAccel));
         pid.setTolerance(anglePIDTolerance);
+        pid.enableContinuousInput(0, angleEncoderCPR);
         return pid;
     }
     public ProfiledPIDController speedPID(){

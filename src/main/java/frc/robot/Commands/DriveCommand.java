@@ -15,7 +15,7 @@ import frc.robot.Util.Controllers.SOTAXboxcontroller;
 
 public class DriveCommand extends CommandBase {
   private ShiftingSwerveDrive mSwerveDrive;
-  private CommandXboxController mDriveStick;
+  private SOTAXboxcontroller mDriveStick;
 
   /** Creates a new DefaultDrive. */
   public DriveCommand(ShiftingSwerveDrive swerveDrive, SOTAXboxcontroller driveStick) {
@@ -41,9 +41,9 @@ public class DriveCommand extends CommandBase {
     str = -Math.signum(str) * str * str;
     rot = -Math.signum(rot) * rot * rot;
 
-    SmartDashboard.putNumber("fwd", fwd);
-    SmartDashboard.putNumber("str", str);
-    SmartDashboard.putNumber("rot", rot);
+    // SmartDashboard.putNumber("fwd", fwd);
+    // SmartDashboard.putNumber("str", str);
+    // SmartDashboard.putNumber("rot", rot);
 
     drive(fwd, str, rot, mSwerveDrive.getRotation2d(), new Translation2d());
   }
@@ -51,7 +51,6 @@ public class DriveCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    SmartDashboard.putBoolean("DriveCommandFinished", true);
 
   }
 
@@ -62,7 +61,6 @@ public class DriveCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    SmartDashboard.putBoolean("DriveCommandFinished", true);
     return false;
   }
 }

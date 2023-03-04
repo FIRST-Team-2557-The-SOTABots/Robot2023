@@ -82,6 +82,9 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     str = MathUtil.clamp(str, -1.0, 1.0) * kMaxWheelSpeed;
     rot = MathUtil.clamp(rot, -1.0, 1.0) * kMaxAngularVelocity;
 
+    SmartDashboard.putNumber("rot", rot);
+    SmartDashboard.putNumber("kMaxAngularVelocity", kMaxAngularVelocity);
+
     ChassisSpeeds speeds = mFieldCentricActive == true ?
       ChassisSpeeds.fromFieldRelativeSpeeds(fwd, str, rot, currentAngle) : 
       new ChassisSpeeds(fwd, str, rot);
@@ -98,11 +101,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   public void drive(ShiftingSwerveModuleState[] moduleStates) {
     for (int i = 0; i < moduleStates.length; i++) {
       mSwerveModules[i].drive(moduleStates[i]);
-      
-
     }
-    
-
   }
   
   /** 
@@ -114,7 +113,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   }
 
   public void shift(){
-    mShifter.shift(mShifter.getGear() == 1 ? 0 : 1);
+    shift(mShifter.getGear() == 1 ? 0 : 1);
   }
 
   /** 
@@ -211,7 +210,8 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     );
     updateModuleTranslation(mGyro.getRotation2d());
     
-    
+    SmartDashboard.putNumber("inHighGear", mShifter.getGear());
+    SmartDashboard.putBoolean("FieldCentric", mFieldCentricActive);
   }
   
 }

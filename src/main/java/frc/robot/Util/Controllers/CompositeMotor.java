@@ -2,6 +2,7 @@ package frc.robot.Util.Controllers;
 
 
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Util.Interfaces.SOTAEncoder;
 import frc.robot.Util.Interfaces.SOTAMotorController;
 
@@ -37,6 +38,7 @@ public class CompositeMotor implements SOTAMotorController{
 
             }
         }
+        SmartDashboard.putNumber("armSpeed", speed);
         motor.set(speed);         
     }
 

@@ -10,7 +10,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
-import frc.robot.Subsystems.Arm;
+import frc.robot.Subsystems.SuperStructure;
 import frc.robot.Util.Interfaces.SOTAGyro;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -18,7 +18,7 @@ import frc.robot.Util.Interfaces.SOTAGyro;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ArmPID extends PIDCommand {
   /** Creates a new ArmPID. */
-  public ArmPID(PIDController armPID, Arm m_ArmSubsystem, SOTAGyro armGyro, double setPoint) {
+  public ArmPID(PIDController armPID, SuperStructure m_ArmSubsystem, SOTAGyro armGyro, double setPoint) {
     super(
         // The controller that the command will use
         armPID,
@@ -28,7 +28,7 @@ public class ArmPID extends PIDCommand {
         () -> setPoint,
         // This uses the output
         output -> {
-          SmartDashboard.putNumber("PID Output:", output);
+          SmartDashboard.putNumber("Arm PID Output:", output);
           // Use the output here
           m_ArmSubsystem.setRotatorSpeed(MathUtil.clamp(output, -0.5, 0.5));
         });
@@ -37,6 +37,9 @@ public class ArmPID extends PIDCommand {
     addRequirements(m_ArmSubsystem);
   }
 
+  public void setSetpoint(){
+    
+  }
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {

@@ -8,7 +8,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Util.Configs.ShiftingSwerveModuleConfig;
-import frc.robot.Util.Controllers.CompositeMotor;
 import frc.robot.Util.Interfaces.SOTAMotorController;
 import frc.robot.Util.Interfaces.ShiftingSwerveModuleInterface;
 
@@ -64,17 +63,19 @@ public class ShiftingSwerveModuleI2 extends SubsystemBase implements ShiftingSwe
     double angleFFOutput = mAngleFF.calculate(mAnglePID.getSetpoint().velocity);
 
 
-    SmartDashboard.putNumber("angle" + modulePosition, getAngleNoOffset());
-    SmartDashboard.putNumber("stateAngle"+ modulePosition, state.angle.getRadians());
-    SmartDashboard.putNumber("anglePID output"+ modulePosition, anglePIDOutput);
-    SmartDashboard.putNumber("anglePID V Setpoint"+ modulePosition, mAnglePID.getSetpoint().velocity);
-    SmartDashboard.putNumber("FF output"+ modulePosition, angleFFOutput);
+    // SmartDashboard.putNumber("angle" + modulePosition, getAngle());
+    // SmartDashboard.putNumber("stateAngle"+ modulePosition, angleSetpointNative);
+    // SmartDashboard.putNumber("anglePID output"+ modulePosition, anglePIDOutput);
+    // SmartDashboard.putNumber("anglePID V Setpoint"+ modulePosition, mAnglePID.getSetpoint().velocity);
+    // SmartDashboard.putNumber("FF output"+ modulePosition, angleFFOutput);
+
     mAngleMotor.setVoltage(state.speedMetersPerSecond == 0.0 ? 0.0 : anglePIDOutput + angleFFOutput);
     
     double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[state.getGear()]);
     double speedPIDOutput = speedSetpointNative == 0 ? 0.0 : mSpeedPID.calculate(mSpeedMotor.getSensorTickVelocity(), speedSetpointNative);
     double speedFFOutput = mSpeedFF.calculate(speedSetpointNative);
 
+    mSpeedMotor.setVoltage(state.speedMetersPerSecond/2);
     // mSpeedMotor.setVoltage(speedPIDOutput + speedFFOutput);
     
   }
@@ -106,7 +107,7 @@ public class ShiftingSwerveModuleI2 extends SubsystemBase implements ShiftingSwe
    * @return The angle of the module in absolute encoder ticks
    */
   public double getAngle() {
-    return -1.0 * MathUtil.inputModulus(mAngleMotor.getEncoder() - kAngleOffset, 0, kAngleCountsPerRevolution) + kAngleCountsPerRevolution;
+    return -1 *(-1.0 * MathUtil.inputModulus(mAngleMotor.getEncoder() - kAngleOffset, 0, kAngleCountsPerRevolution) + kAngleCountsPerRevolution);
   }
 
   public double getAngleNoOffset() {
@@ -170,7 +171,6 @@ public class ShiftingSwerveModuleI2 extends SubsystemBase implements ShiftingSwe
 
   @Override
   public void periodic() {
-    // SmartDashboard.putNumber("Angle no offset " + modulePosition, getAngleNoOffset());
     SmartDashboard.putNumber("Angle no offset " + modulePosition, getAngleNoOffset());
   }
 }
