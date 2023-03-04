@@ -13,7 +13,7 @@ public class ShiftingSwerveModuleState extends SwerveModuleState{
     }
 
     public ShiftingSwerveModuleState(int speed, Rotation2d angle, int gear){
-        this(new SwerveModuleState(speed, angle), gear);
+        this(new SwerveModuleState  (speed, angle), gear);
     }
 
     public ShiftingSwerveModuleState(SwerveModuleState state, int gear){

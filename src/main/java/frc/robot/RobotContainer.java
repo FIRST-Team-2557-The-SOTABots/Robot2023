@@ -113,8 +113,8 @@ public class RobotContainer {
     SOTAMotorController rotatorComposite = new CompositeMotor(rotatorMotor, rotatorEncoder, motorLimits);
     SOTAGyro armGyro = new PigeonDelegate(4);
     DigitalInput limitSwitch = new DigitalInput(0);
-    SOTAMotorController leftMotorIntake = initFalconDelegate("SuperStructure/IntakeMotorLeft");
-    SOTAMotorController rightMotorIntake = initFalconDelegate("SuperStructure/IntakeMotorRight");
+    SOTAMotorController leftMotorIntake = initSparkMaxDelegate("SuperStructure/IntakeMotorLeft");
+    SOTAMotorController rightMotorIntake = initSparkMaxDelegate("SuperStructure/IntakeMotorRight");
     SOTAMotorController intakeMotors = new SOTAMotorControllerGroup(rightMotorIntake, leftMotorIntake);
     this.mArm = new SuperStructure(armGyro, winchMotor, rotatorComposite, limitSwitch, intakeMotors);
 
@@ -141,6 +141,17 @@ public class RobotContainer {
         mSwerveDrive.shift();
       }, mSwerveDrive
     ));
+    // TODO: add reset gyro
+    // dController.b().onTrue(new InstantCommand(
+    //   () -> {
+    //   }
+    // ));A
+    dController.x().onTrue(new InstantCommand(() -> {
+      mSwerveDrive.setFieldCentricActive(true);
+    }));
+    dController.y().onTrue(new InstantCommand(() -> {
+      mSwerveDrive.setFieldCentricActive(false);
+    }));
     
       
   }

@@ -46,7 +46,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     mGyro = gyro;
 
     mModuleTranslation = config.getModuleTranslations();
-    mSwerveDriveKinematics = new SwerveDriveKinematics(mModuleTranslation);
+    mSwerveDriveKinematics = config.getKinematics();
     mSwerveDriveOdometry = new SwerveDriveOdometry(
       mSwerveDriveKinematics,
       mGyro.getRotation2d(),
@@ -83,12 +83,12 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     rot = MathUtil.clamp(rot, -1.0, 1.0) * kMaxAngularVelocity;
 
     SmartDashboard.putNumber("rot", rot);
-    SmartDashboard.putNumber("kMaxAngularVelocity", kMaxAngularVelocity);
 
     ChassisSpeeds speeds = mFieldCentricActive == true ?
-      ChassisSpeeds.fromFieldRelativeSpeeds(fwd, str, rot, currentAngle) : 
+      ChassisSpeeds.fromFieldRelativeSpeeds(fwd, str, rot, getRotation2d()) : 
       new ChassisSpeeds(fwd, str, rot);
-    SwerveModuleState[] moduleStates = mSwerveDriveKinematics.toSwerveModuleStates(speeds, pointOfRotation);
+    SwerveModuleState[] moduleStates = mSwerveDriveKinematics.toSwerveModuleStates(speeds, new Translation2d());
+    SmartDashboard.putNumber("chassis rot", moduleStates[0].angle.getRadians());
     SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, kMaxWheelSpeed);
     drive(ShiftingSwerveModuleState.toShiftingSwerveModuleState(moduleStates, mShifter.getGear()));
   }
@@ -100,6 +100,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
    */
   public void drive(ShiftingSwerveModuleState[] moduleStates) {
     for (int i = 0; i < moduleStates.length; i++) {
+      SmartDashboard.putNumber("f jiaosjdf", moduleStates[i].angle.getRadians());
       mSwerveModules[i].drive(moduleStates[i]);
     }
   }
@@ -212,6 +213,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     
     SmartDashboard.putNumber("inHighGear", mShifter.getGear());
     SmartDashboard.putBoolean("FieldCentric", mFieldCentricActive);
+    SmartDashboard.putNumber("Bot angle", getRotation2d().getDegrees());
   }
   
 }
