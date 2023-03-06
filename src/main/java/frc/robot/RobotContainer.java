@@ -27,27 +27,27 @@ import frc.robot.Commands.ArmPID2;
 import frc.robot.Commands.DriveCommand;
 import frc.robot.Subsystems.SuperStructure;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
-import frc.robot.Subsystems.Swerve.ShiftingSwerveModuleI2;
-import frc.robot.Util.Configs.DoubleSolenoidConfig;
-import frc.robot.Util.Configs.MotorControllerConfig;
-import frc.robot.Util.Configs.ShiftingSwerveDriveConfig;
-import frc.robot.Util.Configs.ShiftingSwerveModuleConfig;
-import frc.robot.Util.Controllers.AnalogInputEncoder;
-import frc.robot.Util.Controllers.CompositeMotor;
-import frc.robot.Util.Controllers.DoubleSolenoidShifter;
-import frc.robot.Util.Controllers.FalconDelegate;
-import frc.robot.Util.Controllers.MotorLimits;
-import frc.robot.Util.Controllers.NavX;
-import frc.robot.Util.Controllers.PigeonDelegate;
-import frc.robot.Util.Controllers.SOTADutyCycleEncoder;
-import frc.robot.Util.Controllers.SOTAMotorControllerGroup;
-import frc.robot.Util.Controllers.SOTAXboxcontroller;
-import frc.robot.Util.Controllers.SparkMaxDelegate;
-import frc.robot.Util.Interfaces.GearShifter;
-import frc.robot.Util.Interfaces.SOTAEncoder;
-import frc.robot.Util.Interfaces.SOTAGyro;
-import frc.robot.Util.Interfaces.SOTAMotorController;
-import frc.robot.Util.UtilityClasses.ConfigUtils;
+import frc.robot.Subsystems.Swerve.ShiftingSwerveModule;
+import frc.robot.util.Configs.DoubleSolenoidConfig;
+import frc.robot.util.Configs.MotorControllerConfig;
+import frc.robot.util.Configs.ShiftingSwerveDriveConfig;
+import frc.robot.util.Configs.ShiftingSwerveModuleConfig;
+import frc.robot.util.Control.SOTAXboxcontroller;
+import frc.robot.util.Encoder.AnalogInputEncoder;
+import frc.robot.util.Encoder.SOTADutyCycleEncoder;
+import frc.robot.util.Encoder.SOTAEncoder;
+import frc.robot.util.Gyro.NavX;
+import frc.robot.util.Gyro.Pigeon;
+import frc.robot.util.Gyro.SOTAGyro;
+import frc.robot.util.MotorController.CompositeMotor;
+import frc.robot.util.MotorController.Falcon;
+import frc.robot.util.MotorController.MotorLimits;
+import frc.robot.util.MotorController.SOTAMotorController;
+import frc.robot.util.MotorController.SOTAMotorControllerGroup;
+import frc.robot.util.MotorController.SparkMax;
+import frc.robot.util.Pneumatics.DoubleSolenoidShifter;
+import frc.robot.util.Pneumatics.GearShifter;
+import frc.robot.util.UtilityClasses.ConfigUtils;
 
 public class RobotContainer {
   // private final ArmInterface arm;
@@ -74,7 +74,7 @@ public class RobotContainer {
 
     this.gyro = new NavX(new AHRS(Port.kMXP));
 
-    ShiftingSwerveModuleI2[] swerveModules = {
+    ShiftingSwerveModule[] swerveModules = {
       initSwerveModule("Swerve/FrontLeft/SpeedFalcon",
         "Swerve/FrontLeft/AngleSparkMax",
        "Swerve/FrontLeft/ShiftingSwerveModule"),
@@ -111,7 +111,7 @@ public class RobotContainer {
     SOTAMotorController rotatorMotor = initSparkMaxDelegate("SuperStructure/RotatorMotor");
     SOTAEncoder rotatorEncoder = new SOTADutyCycleEncoder(1);
     SOTAMotorController rotatorComposite = new CompositeMotor(rotatorMotor, rotatorEncoder, motorLimits);
-    SOTAGyro armGyro = new PigeonDelegate(4);
+    SOTAGyro armGyro = new Pigeon(4);
     DigitalInput limitSwitch = new DigitalInput(0);
     SOTAMotorController leftMotorIntake = initSparkMaxDelegate("SuperStructure/IntakeMotorLeft");
     SOTAMotorController rightMotorIntake = initSparkMaxDelegate("SuperStructure/IntakeMotorRight");
@@ -163,19 +163,19 @@ public class RobotContainer {
   }
 
 
-  public FalconDelegate initFalconDelegate(String resourceId){
+  public Falcon initFalconDelegate(String resourceId){
     try{
         MotorControllerConfig config = configUtils.readFromClassPath(MotorControllerConfig.class, resourceId);
         WPI_TalonFX motor = new WPI_TalonFX(config.getPort());
         motor.setInverted(config.getInverted());
-        return new FalconDelegate(motor, null, config.getCountsPerRevolution());
+        return new Falcon(motor, null, config.getCountsPerRevolution());
     } catch(IOException e) {
       throw new RuntimeException("Error Initializing Talon", e);
     }
   }
 
 
-  public SparkMaxDelegate initSparkMaxDelegate(String resourceId){
+  public SparkMax initSparkMaxDelegate(String resourceId){
     try{
       MotorControllerConfig config = configUtils.readFromClassPath(MotorControllerConfig.class, resourceId);
       MotorType motorType;
@@ -191,13 +191,13 @@ public class RobotContainer {
       }
       CANSparkMax motor = new CANSparkMax(config.getPort(), motorType);
       motor.setInverted(config.getInverted());
-      return new SparkMaxDelegate(motor, null, config.getCountsPerRevolution());
+      return new SparkMax(motor, null, config.getCountsPerRevolution());
     } catch(IOException e){
       throw new RuntimeException("Error Initialzing SparkMax", e);
     }
   }
 
-  public ShiftingSwerveModuleI2 initSwerveModule(String speedConfig, String angleConfig,  String ModuleConfig){
+  public ShiftingSwerveModule initSwerveModule(String speedConfig, String angleConfig,  String ModuleConfig){
     // SOTAMotorController speedMotor = initFalconDelegate(speedConfig);
     // SOTAMotorController angleMotor = initSparkMaxDelegate(angleConfig);
     // SOTAEncoder encoder = new AnalogInputEncoder();
@@ -209,7 +209,7 @@ public class RobotContainer {
     SOTAMotorController angleMotor = initSparkMaxDelegate(angleConfig);
     SOTAEncoder encoder = new AnalogInputEncoder(config.getEncoderPort());
     SOTAMotorController angleComposite = new CompositeMotor(angleMotor, encoder);
-      return new ShiftingSwerveModuleI2(angleComposite,speedMotor, config);
+      return new ShiftingSwerveModule(angleComposite,speedMotor, config);
     } catch(IOException e){
       throw new RuntimeException("Could not create config", e);
     }

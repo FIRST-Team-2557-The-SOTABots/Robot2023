@@ -1,4 +1,4 @@
-package frc.robot.Util.Controllers;
+package frc.robot.util.MotorController;
 
 public class MotorLimits {
     private Double upperLimit;

@@ -4,7 +4,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.SuperStructure;
-import frc.robot.Util.Controllers.SOTAXboxcontroller;
+import frc.robot.util.Control.SOTAXboxcontroller;
 
 public class ArmPID2 extends CommandBase{
     private SuperStructure mArm;
@@ -26,7 +26,7 @@ public class ArmPID2 extends CommandBase{
         double output = pidController.calculate(mArm.getRoll());
         mArm.setRotatorSpeed(output);
         mArm.setIntake(controller.getLeftTriggerAxis());
-        SmartDashboard.putNumber("", output)
+        SmartDashboard.putNumber("", output);
     }
     
 }

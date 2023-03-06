@@ -1,10 +1,9 @@
-package frc.robot.Util.Controllers;
+package frc.robot.util.MotorController;
 
 
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Util.Interfaces.SOTAEncoder;
-import frc.robot.Util.Interfaces.SOTAMotorController;
+import frc.robot.util.Encoder.SOTAEncoder;
 
 public class CompositeMotor implements SOTAMotorController{
     private SOTAMotorController motor;

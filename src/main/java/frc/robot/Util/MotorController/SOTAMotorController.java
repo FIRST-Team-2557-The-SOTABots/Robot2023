@@ -1,7 +1,6 @@
-package frc.robot.Util.Interfaces;
+package frc.robot.util.MotorController;
 
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import frc.robot.Util.Controllers.MotorLimits;
 
 public interface SOTAMotorController extends MotorController{
     double getSensorTickVelocity();

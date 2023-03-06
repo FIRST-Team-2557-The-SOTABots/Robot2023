@@ -1,9 +1,8 @@
-package frc.robot.Util.Controllers;
+package frc.robot.util.Encoder;
 
 import edu.wpi.first.wpilibj.DigitalSource;
 import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import frc.robot.Util.Interfaces.SOTAEncoder;
 
 public class SOTADutyCycleEncoder extends DutyCycleEncoder implements SOTAEncoder{
     public SOTADutyCycleEncoder(DutyCycle dutyCycle) {

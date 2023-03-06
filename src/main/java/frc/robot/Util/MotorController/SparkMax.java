@@ -1,22 +1,22 @@
-package frc.robot.Util.Controllers;
+package frc.robot.util.MotorController;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import frc.robot.Util.Interfaces.SOTAMotorController;
+import com.revrobotics.CANSparkMax;
 
-public class FalconDelegate implements SOTAMotorController{
-    WPI_TalonFX motor;
+public class SparkMax implements SOTAMotorController{
+    private CANSparkMax motor;
     private MotorLimits motorLimits;
     private Double countsPerRevolution;
 
-    public FalconDelegate(WPI_TalonFX motor){
-        this(motor, null, null);
+    public SparkMax(CANSparkMax motor){
+        this(motor, null,  null);
     }
-    public FalconDelegate(WPI_TalonFX motor, MotorLimits motorLimits){
+    public SparkMax(CANSparkMax motor, MotorLimits motorLimits){
         this(motor, motorLimits, null);
     }
-    public FalconDelegate(WPI_TalonFX motor, MotorLimits motorLimits, Double encoderCountsPerRevolution){
-        this.motor = motor; ; this.countsPerRevolution = encoderCountsPerRevolution; this.motorLimits = motorLimits;
+    
+    public SparkMax(CANSparkMax motor, MotorLimits motorLimits, Double encoderCountsPerRevolution){
+        this.motor = motor; this.motorLimits = motorLimits; this.countsPerRevolution = encoderCountsPerRevolution;
     }
 
     @Override
@@ -62,34 +62,33 @@ public class FalconDelegate implements SOTAMotorController{
 
     @Override
     public double getSensorTickVelocity() {
-
-        return motor.getSelectedSensorVelocity();
+        return motor.getEncoder().getVelocity();
     }
 
     @Override
     public double getTickPosition() {
-        return motor.getSelectedSensorPosition();
+        return motor.getEncoder().getPosition();
     }
 
+    
     @Override
     public double getEncoder() {
-        return motor.getSelectedSensorPosition() ;
+        return motor.getEncoder().getPosition();
     }
 
     @Override
     public double getMotorCurrent() {
-        return motor.getSupplyCurrent();
+        return motor.getOutputCurrent();
     }
 
     @Override
     public double getEncoderCountsPerRevolution() {
-        if(countsPerRevolution == null) throw new IllegalAccessError("no countsPerRevolution Initialized");
         return countsPerRevolution;
     }
 
     @Override
     public double getMotorTemperature() {
-        return motor.getTemperature();
+        return motor.getMotorTemperature();
     }
 
     @Override
@@ -99,8 +98,7 @@ public class FalconDelegate implements SOTAMotorController{
 
     @Override
     public double getLowerLimit() {
-        
-        return motorLimits.getUpperLimit();
+        return motorLimits.getLowerLimit();
     }
     @Override
     public double getUpperLimit() {

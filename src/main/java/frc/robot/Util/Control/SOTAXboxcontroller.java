@@ -1,6 +1,4 @@
-package frc.robot.Util.Controllers;
-
-import java.util.HashMap;
+package frc.robot.util.Control;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 

@@ -1,7 +1,7 @@
 package frc.robot.Subsystems;
 
-import frc.robot.Util.Interfaces.IntakeInterface;
-import frc.robot.Util.Interfaces.SOTAMotorController;
+import frc.robot.util.MotorController.SOTAMotorController;
+import frc.robot.util.Subsystem.IntakeInterface;
 
 public class Intake implements IntakeInterface{
     SOTAMotorController motors;

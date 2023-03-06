@@ -7,11 +7,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Util.Configs.ShiftingSwerveModuleConfig;
-import frc.robot.Util.Interfaces.SOTAMotorController;
-import frc.robot.Util.Interfaces.ShiftingSwerveModuleInterface;
+import frc.robot.util.Configs.ShiftingSwerveModuleConfig;
+import frc.robot.util.MotorController.SOTAMotorController;
 
-public class ShiftingSwerveModuleI2 extends SubsystemBase implements ShiftingSwerveModuleInterface{
+public class ShiftingSwerveModule extends SubsystemBase {
 
 
     private SOTAMotorController mAngleMotor;
@@ -29,7 +28,7 @@ public class ShiftingSwerveModuleI2 extends SubsystemBase implements ShiftingSwe
 
     private int modulePosition; 
 
-    public ShiftingSwerveModuleI2(
+    public ShiftingSwerveModule(
       SOTAMotorController angleMotor, 
             SOTAMotorController speedMotor, 
             ShiftingSwerveModuleConfig config) {

@@ -1,4 +1,4 @@
-package frc.robot.Util.Interfaces;
+package frc.robot.util.Subsystem;
 
 import edu.wpi.first.wpilibj2.command.Subsystem;
 

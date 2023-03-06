@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
-import frc.robot.Util.Controllers.SOTAXboxcontroller;
+import frc.robot.util.Control.SOTAXboxcontroller;
 
 public class DriveCommand extends CommandBase {
   private ShiftingSwerveDrive mSwerveDrive;

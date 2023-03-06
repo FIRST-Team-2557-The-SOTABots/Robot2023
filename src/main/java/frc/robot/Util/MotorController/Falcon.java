@@ -1,24 +1,20 @@
-package frc.robot.Util.Controllers;
+package frc.robot.util.MotorController;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import com.revrobotics.CANSparkMax;
-
-import frc.robot.Util.Interfaces.SOTAMotorController;
-
-public class SparkMaxDelegate implements SOTAMotorController{
-    private CANSparkMax motor;
+public class Falcon implements SOTAMotorController{
+    WPI_TalonFX motor;
     private MotorLimits motorLimits;
     private Double countsPerRevolution;
 
-    public SparkMaxDelegate(CANSparkMax motor){
-        this(motor, null,  null);
+    public Falcon(WPI_TalonFX motor){
+        this(motor, null, null);
     }
-    public SparkMaxDelegate(CANSparkMax motor, MotorLimits motorLimits){
+    public Falcon(WPI_TalonFX motor, MotorLimits motorLimits){
         this(motor, motorLimits, null);
     }
-    
-    public SparkMaxDelegate(CANSparkMax motor, MotorLimits motorLimits, Double encoderCountsPerRevolution){
-        this.motor = motor; this.motorLimits = motorLimits; this.countsPerRevolution = encoderCountsPerRevolution;
+    public Falcon(WPI_TalonFX motor, MotorLimits motorLimits, Double encoderCountsPerRevolution){
+        this.motor = motor; ; this.countsPerRevolution = encoderCountsPerRevolution; this.motorLimits = motorLimits;
     }
 
     @Override
@@ -64,33 +60,34 @@ public class SparkMaxDelegate implements SOTAMotorController{
 
     @Override
     public double getSensorTickVelocity() {
-        return motor.getEncoder().getVelocity();
+
+        return motor.getSelectedSensorVelocity();
     }
 
     @Override
     public double getTickPosition() {
-        return motor.getEncoder().getPosition();
+        return motor.getSelectedSensorPosition();
     }
 
-    
     @Override
     public double getEncoder() {
-        return motor.getEncoder().getPosition();
+        return motor.getSelectedSensorPosition() ;
     }
 
     @Override
     public double getMotorCurrent() {
-        return motor.getOutputCurrent();
+        return motor.getSupplyCurrent();
     }
 
     @Override
     public double getEncoderCountsPerRevolution() {
+        if(countsPerRevolution == null) throw new IllegalAccessError("no countsPerRevolution Initialized");
         return countsPerRevolution;
     }
 
     @Override
     public double getMotorTemperature() {
-        return motor.getMotorTemperature();
+        return motor.getTemperature();
     }
 
     @Override
@@ -100,7 +97,8 @@ public class SparkMaxDelegate implements SOTAMotorController{
 
     @Override
     public double getLowerLimit() {
-        return motorLimits.getLowerLimit();
+        
+        return motorLimits.getUpperLimit();
     }
     @Override
     public double getUpperLimit() {

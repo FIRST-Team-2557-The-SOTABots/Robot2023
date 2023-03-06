@@ -1,11 +1,10 @@
-package frc.robot.Util.Controllers;
+package frc.robot.util.MotorController;
 
 import java.util.Arrays;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
-import frc.robot.Util.Interfaces.SOTAMotorController;
 
 public class SOTAMotorControllerGroup implements SOTAMotorController, Sendable, AutoCloseable {
     private boolean m_isInverted;

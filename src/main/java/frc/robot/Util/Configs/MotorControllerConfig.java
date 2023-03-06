@@ -1,4 +1,4 @@
-package frc.robot.Util.Configs;
+package frc.robot.util.Configs;
 
 public class MotorControllerConfig  {
     private int port;

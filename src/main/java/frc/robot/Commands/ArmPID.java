@@ -11,7 +11,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.Subsystems.SuperStructure;
-import frc.robot.Util.Interfaces.SOTAGyro;
+import frc.robot.util.Gyro.SOTAGyro;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:

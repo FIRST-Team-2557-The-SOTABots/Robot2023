@@ -1,13 +1,9 @@
-package frc.robot.Util.Controllers;
-
-import javax.management.RuntimeErrorException;
+package frc.robot.util.Pneumatics;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import frc.robot.Util.Configs.DoubleSolenoidConfig;
-import frc.robot.Util.Interfaces.GearShifter;
+import frc.robot.util.Configs.DoubleSolenoidConfig;
 
 public class DoubleSolenoidShifter implements GearShifter{
     

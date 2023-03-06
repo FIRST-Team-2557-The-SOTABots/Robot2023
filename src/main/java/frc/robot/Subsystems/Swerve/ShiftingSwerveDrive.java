@@ -17,13 +17,12 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Util.Configs.ShiftingSwerveDriveConfig;
-import frc.robot.Util.Interfaces.GearShifter;
-import frc.robot.Util.Interfaces.SOTAGyro;
-import frc.robot.Util.Interfaces.ShiftingSwerveModuleInterface;
+import frc.robot.util.Configs.ShiftingSwerveDriveConfig;
+import frc.robot.util.Gyro.SOTAGyro;
+import frc.robot.util.Pneumatics.GearShifter;
 
 public class ShiftingSwerveDrive extends SubsystemBase {
-  private ShiftingSwerveModuleInterface[] mSwerveModules;
+  private ShiftingSwerveModule[] mSwerveModules;
   private GearShifter mShifter;
   private SOTAGyro mGyro;
 
@@ -36,11 +35,12 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   private double kMaxWheelSpeed;
   private double kMaxAngularVelocity;
 
-// Note I kept the old way of handling dependancy injection because it would keep things more inline with other subsystems by injecting a config also
   /** Creates a new ShiftingSwerveDrive. */
-  public ShiftingSwerveDrive(ShiftingSwerveModuleInterface[] swerveModules, 
-  GearShifter shifter, 
-  SOTAGyro gyro, ShiftingSwerveDriveConfig config) {
+  public ShiftingSwerveDrive(
+    ShiftingSwerveModule[] swerveModules, 
+    GearShifter shifter, 
+    SOTAGyro gyro, 
+    ShiftingSwerveDriveConfig config) {
     mSwerveModules = swerveModules;
     mShifter = shifter;
     mGyro = gyro;

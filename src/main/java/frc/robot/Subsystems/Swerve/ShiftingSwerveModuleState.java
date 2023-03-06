@@ -3,7 +3,7 @@ package frc.robot.Subsystems.Swerve;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
-public class ShiftingSwerveModuleState extends SwerveModuleState{
+public class ShiftingSwerveModuleState extends SwerveModuleState {
 
     private int gear;
     
@@ -30,6 +30,7 @@ public class ShiftingSwerveModuleState extends SwerveModuleState{
         }
         return shiftingStates;
     }
+    
     public static ShiftingSwerveModuleState optimize(ShiftingSwerveModuleState state, Rotation2d rotation){
         return new ShiftingSwerveModuleState(SwerveModuleState.optimize(state, rotation), state.gear);
     }

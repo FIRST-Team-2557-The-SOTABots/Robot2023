@@ -1,4 +1,4 @@
-package frc.robot.Util.Interfaces;
+package frc.robot.util.Gyro;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.interfaces.Gyro;

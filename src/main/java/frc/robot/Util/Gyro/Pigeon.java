@@ -1,17 +1,16 @@
-package frc.robot.Util.Controllers;
+package frc.robot.util.Gyro;
 
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import frc.robot.Util.Interfaces.SOTAGyro;
 
-public class PigeonDelegate extends WPI_Pigeon2 implements SOTAGyro{
+public class Pigeon extends WPI_Pigeon2 implements SOTAGyro{
 
-    public PigeonDelegate(int deviceNumber) {
+    public Pigeon(int deviceNumber) {
         super(deviceNumber);
     }
 
-    public PigeonDelegate(int deviceNumber, String canbus) {
+    public Pigeon(int deviceNumber, String canbus) {
         super(deviceNumber, canbus);
     }
 

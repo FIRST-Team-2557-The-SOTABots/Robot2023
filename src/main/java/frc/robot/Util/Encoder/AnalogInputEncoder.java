@@ -1,16 +1,15 @@
-package frc.robot.Util.Controllers;
+package frc.robot.util.Encoder;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import frc.robot.Util.Interfaces.SOTAEncoder;
 
 public class AnalogInputEncoder extends AnalogInput implements SOTAEncoder{
     double offset;
 
     public AnalogInputEncoder(int port){
         super(port);
-        
 
     }
+
     public AnalogInputEncoder(int port, double offset){
         super(port);
     }

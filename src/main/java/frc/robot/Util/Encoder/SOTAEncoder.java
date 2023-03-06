@@ -1,4 +1,4 @@
-package frc.robot.Util.Interfaces;
+package frc.robot.util.Encoder;
 
 public interface SOTAEncoder {
     public double get();
