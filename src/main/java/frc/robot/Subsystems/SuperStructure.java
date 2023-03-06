@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.Encoder.SOTAEncoder;
-import frc.robot.util.Gyro.SOTAGyro;
-import frc.robot.util.MotorController.SOTAMotorController;
+import lib.Encoder.SOTAEncoder;
+import lib.Gyro.SOTAGyro;
+import lib.MotorController.SOTAMotorController;
 
 public class SuperStructure extends SubsystemBase {
 

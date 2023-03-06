@@ -7,13 +7,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.Configs.ShiftingSwerveModuleConfig;
-import frc.robot.util.MotorController.SOTAMotorController;
+import lib.Configs.ShiftingSwerveModuleConfig;
+import lib.MotorController.SOTAMotorController;
 
 public class ShiftingSwerveModule extends SubsystemBase {
 
-
-    private SOTAMotorController mAngleMotor;
+    private SOTAMotorController mAngleMotor; // TODO: Change to a SOTACompositeMotor
     private SOTAMotorController mSpeedMotor;
 
     private ProfiledPIDController mAnglePID;
@@ -50,10 +49,10 @@ public class ShiftingSwerveModule extends SubsystemBase {
                 
     }
 
-//     /**
-//    * Drives the modules with a ShiftingSwerveModuleState
-//    * @param state The ShiftingSwerveModuleState
-//    */
+  /**
+   * Drives the modules with a ShiftingSwerveModuleState
+   * @param state The ShiftingSwerveModuleState
+   */
   public void drive(ShiftingSwerveModuleState state) {
     state = ShiftingSwerveModuleState.optimize(state, getRotation2d());
 

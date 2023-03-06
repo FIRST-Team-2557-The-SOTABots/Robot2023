@@ -28,26 +28,26 @@ import frc.robot.Commands.DriveCommand;
 import frc.robot.Subsystems.SuperStructure;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveModule;
-import frc.robot.util.Configs.DoubleSolenoidConfig;
-import frc.robot.util.Configs.MotorControllerConfig;
-import frc.robot.util.Configs.ShiftingSwerveDriveConfig;
-import frc.robot.util.Configs.ShiftingSwerveModuleConfig;
-import frc.robot.util.Control.SOTAXboxcontroller;
-import frc.robot.util.Encoder.AnalogInputEncoder;
-import frc.robot.util.Encoder.SOTADutyCycleEncoder;
-import frc.robot.util.Encoder.SOTAEncoder;
-import frc.robot.util.Gyro.NavX;
-import frc.robot.util.Gyro.Pigeon;
-import frc.robot.util.Gyro.SOTAGyro;
-import frc.robot.util.MotorController.CompositeMotor;
-import frc.robot.util.MotorController.Falcon;
-import frc.robot.util.MotorController.MotorLimits;
-import frc.robot.util.MotorController.SOTAMotorController;
-import frc.robot.util.MotorController.SOTAMotorControllerGroup;
-import frc.robot.util.MotorController.SparkMax;
-import frc.robot.util.Pneumatics.DoubleSolenoidShifter;
-import frc.robot.util.Pneumatics.GearShifter;
-import frc.robot.util.UtilityClasses.ConfigUtils;
+import lib.Configs.DoubleSolenoidConfig;
+import lib.Configs.MotorControllerConfig;
+import lib.Configs.ShiftingSwerveDriveConfig;
+import lib.Configs.ShiftingSwerveModuleConfig;
+import lib.Control.SOTAXboxcontroller;
+import lib.Encoder.AnalogInputEncoder;
+import lib.Encoder.SOTADutyCycleEncoder;
+import lib.Encoder.SOTAEncoder;
+import lib.Gyro.delegate.NavX;
+import lib.Gyro.delegate.Pigeon;
+import lib.Gyro.SOTAGyro;
+import lib.MotorController.CompositeMotor;
+import lib.MotorController.delegate.Falcon;
+import lib.MotorController.MotorLimits;
+import lib.MotorController.SOTAMotorController;
+import lib.MotorController.SOTAMotorControllerGroup;
+import lib.MotorController.delegate.SparkMax;
+import lib.Pneumatics.DoubleSolenoidShifter;
+import lib.Pneumatics.GearShifter;
+import lib.UtilityClasses.ConfigUtils;
 
 public class RobotContainer {
   // private final ArmInterface arm;
@@ -107,14 +107,14 @@ public class RobotContainer {
       throw new RuntimeException("Faild to create swerveDrive", e);
     }
     MotorLimits motorLimits = new MotorLimits(0.45, 0.65);
-    SOTAMotorController winchMotor = initSparkMaxDelegate("SuperStructure/WinchMotor");
-    SOTAMotorController rotatorMotor = initSparkMaxDelegate("SuperStructure/RotatorMotor");
+    SOTAMotorController winchMotor = createSparkMax("SuperStructure/WinchMotor");
+    SOTAMotorController rotatorMotor = createSparkMax("SuperStructure/RotatorMotor");
     SOTAEncoder rotatorEncoder = new SOTADutyCycleEncoder(1);
     SOTAMotorController rotatorComposite = new CompositeMotor(rotatorMotor, rotatorEncoder, motorLimits);
     SOTAGyro armGyro = new Pigeon(4);
     DigitalInput limitSwitch = new DigitalInput(0);
-    SOTAMotorController leftMotorIntake = initSparkMaxDelegate("SuperStructure/IntakeMotorLeft");
-    SOTAMotorController rightMotorIntake = initSparkMaxDelegate("SuperStructure/IntakeMotorRight");
+    SOTAMotorController leftMotorIntake = createSparkMax("SuperStructure/IntakeMotorLeft");
+    SOTAMotorController rightMotorIntake = createSparkMax("SuperStructure/IntakeMotorRight");
     SOTAMotorController intakeMotors = new SOTAMotorControllerGroup(rightMotorIntake, leftMotorIntake);
     this.mArm = new SuperStructure(armGyro, winchMotor, rotatorComposite, limitSwitch, intakeMotors);
 
@@ -163,7 +163,7 @@ public class RobotContainer {
   }
 
 
-  public Falcon initFalconDelegate(String resourceId){
+  private Falcon createFalcon(String resourceId){
     try{
         MotorControllerConfig config = configUtils.readFromClassPath(MotorControllerConfig.class, resourceId);
         WPI_TalonFX motor = new WPI_TalonFX(config.getPort());
@@ -175,7 +175,7 @@ public class RobotContainer {
   }
 
 
-  public SparkMax initSparkMaxDelegate(String resourceId){
+  public SparkMax createSparkMax(String resourceId){
     try{
       MotorControllerConfig config = configUtils.readFromClassPath(MotorControllerConfig.class, resourceId);
       MotorType motorType;
@@ -205,8 +205,8 @@ public class RobotContainer {
 
     try{
       ShiftingSwerveModuleConfig config = configUtils.readFromClassPath(ShiftingSwerveModuleConfig.class, ModuleConfig);
-      SOTAMotorController speedMotor = initFalconDelegate(speedConfig);
-    SOTAMotorController angleMotor = initSparkMaxDelegate(angleConfig);
+      SOTAMotorController speedMotor = createFalcon(speedConfig);
+    SOTAMotorController angleMotor = createSparkMax(angleConfig);
     SOTAEncoder encoder = new AnalogInputEncoder(config.getEncoderPort());
     SOTAMotorController angleComposite = new CompositeMotor(angleMotor, encoder);
       return new ShiftingSwerveModule(angleComposite,speedMotor, config);

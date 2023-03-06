@@ -4,7 +4,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.SuperStructure;
-import frc.robot.util.Control.SOTAXboxcontroller;
+import lib.Control.SOTAXboxcontroller;
 
 public class ArmPID2 extends CommandBase{
     private SuperStructure mArm;

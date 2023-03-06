@@ -4,8 +4,8 @@ package frc.robot.Commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsystems.SuperStructure;
-import frc.robot.util.Control.SOTAXboxcontroller;
-import frc.robot.util.MotorController.SOTAMotorController;
+import lib.Control.SOTAXboxcontroller;
+import lib.MotorController.SOTAMotorController;
 
 public class BasicArmExtension extends CommandBase{
     private SuperStructure mArm;

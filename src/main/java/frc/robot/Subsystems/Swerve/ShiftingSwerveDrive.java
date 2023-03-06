@@ -17,9 +17,9 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.Configs.ShiftingSwerveDriveConfig;
-import frc.robot.util.Gyro.SOTAGyro;
-import frc.robot.util.Pneumatics.GearShifter;
+import lib.Configs.ShiftingSwerveDriveConfig;
+import lib.Gyro.SOTAGyro;
+import lib.Pneumatics.GearShifter;
 
 public class ShiftingSwerveDrive extends SubsystemBase {
   private ShiftingSwerveModule[] mSwerveModules;
