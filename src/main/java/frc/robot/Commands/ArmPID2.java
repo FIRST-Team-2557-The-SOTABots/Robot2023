@@ -26,7 +26,7 @@ public class ArmPID2 extends CommandBase{
         double output = pidController.calculate(mArm.getRoll());
         mArm.setRotatorSpeed(output);
         mArm.setIntake(controller.getLeftTriggerAxis());
-        SmartDashboard.putNumber("", output)
+        SmartDashboard.putNumber("", output);
     }
     
 }

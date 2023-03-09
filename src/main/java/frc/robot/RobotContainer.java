@@ -106,7 +106,7 @@ public class RobotContainer {
       e.printStackTrace();
       throw new RuntimeException("Faild to create swerveDrive", e);
     }
-    MotorLimits motorLimits = new MotorLimits(0.45, 0.65);
+    MotorLimits motorLimits = new MotorLimits(0.71, 0.91);
     SOTAMotorController winchMotor = initSparkMaxDelegate("SuperStructure/WinchMotor");
     SOTAMotorController rotatorMotor = initSparkMaxDelegate("SuperStructure/RotatorMotor");
     SOTAEncoder rotatorEncoder = new SOTADutyCycleEncoder(1);
@@ -174,8 +174,12 @@ public class RobotContainer {
     }
   }
 
-
   public SparkMaxDelegate initSparkMaxDelegate(String resourceId){
+    return initSparkMaxDelegate(resourceId, null);
+  }
+
+
+  public SparkMaxDelegate initSparkMaxDelegate(String resourceId, MotorLimits limits){
     try{
       MotorControllerConfig config = configUtils.readFromClassPath(MotorControllerConfig.class, resourceId);
       MotorType motorType;
@@ -191,7 +195,7 @@ public class RobotContainer {
       }
       CANSparkMax motor = new CANSparkMax(config.getPort(), motorType);
       motor.setInverted(config.getInverted());
-      return new SparkMaxDelegate(motor, null, config.getCountsPerRevolution());
+      return new SparkMaxDelegate(motor, limits, config.getCountsPerRevolution());
     } catch(IOException e){
       throw new RuntimeException("Error Initialzing SparkMax", e);
     }

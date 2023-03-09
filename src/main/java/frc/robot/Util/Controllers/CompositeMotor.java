@@ -79,7 +79,7 @@ public class CompositeMotor implements SOTAMotorController{
 
     @Override
     public double getEncoder() {
-        return encoder.get();
+        return encoder.getAbsolutePosition();
     }
 
     @Override
@@ -104,11 +104,19 @@ public class CompositeMotor implements SOTAMotorController{
 
     @Override
     public double getLowerLimit() {
-        
-        return motorLimits.getLowerLimit();
+            return motorLimits.getLowerLimit();
     }
     @Override
     public double getUpperLimit() {
         return motorLimits.getUpperLimit();
+    }
+    @Override
+    public boolean atUpperLimit() {
+        
+        return getEncoder() > getUpperLimit();
+    }
+    @Override
+    public boolean atLowerLimit() {
+        return getEncoder() < getLowerLimit();
     }
 }

@@ -4,17 +4,10 @@
 
 package frc.robot.Subsystems;
 
-import javax.print.CancelablePrintJob;
-
-import com.ctre.phoenix.sensors.WPI_PigeonIMU;
-import com.revrobotics.CANSparkMax;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Util.Interfaces.SOTAEncoder;
 import frc.robot.Util.Interfaces.SOTAGyro;
 import frc.robot.Util.Interfaces.SOTAMotorController;
 
@@ -62,7 +55,8 @@ public class SuperStructure extends SubsystemBase {
     SmartDashboard.putNumber("Pigeon Pitch: ", pigeon.getPitch());
     SmartDashboard.putNumber("Pigeon Roll: ", pigeon.getRoll());
     SmartDashboard.putNumber("Motor Speed:", rotatorMotor.get());
-
+    SmartDashboard.putBoolean("at Upper Limit", rotatorMotor.atUpperLimit());
+    SmartDashboard.putBoolean("At lower limit", rotatorMotor.atLowerLimit());
     // This method will be called once per scheduler run
   }
 }

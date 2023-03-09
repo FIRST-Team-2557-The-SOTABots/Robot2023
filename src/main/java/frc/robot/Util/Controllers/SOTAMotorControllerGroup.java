@@ -155,4 +155,12 @@ public double getUpperLimit() throws RuntimeException {
     throw new RuntimeException("MotorControllerGroup Cannot return getUpperLimit");
 
 }
+@Override
+    public boolean atUpperLimit() {
+        return getEncoder() > getUpperLimit();
+    }
+    @Override
+    public boolean atLowerLimit() {
+        return getEncoder() < getUpperLimit();
+    }
 }

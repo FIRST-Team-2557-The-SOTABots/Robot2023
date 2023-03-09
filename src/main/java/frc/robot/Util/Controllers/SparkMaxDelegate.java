@@ -106,4 +106,13 @@ public class SparkMaxDelegate implements SOTAMotorController{
     public double getUpperLimit() {
         return motorLimits.getUpperLimit();
     }
+    @Override
+    public boolean atUpperLimit() {
+        return getEncoder() > getUpperLimit();
+    }
+    @Override
+    public boolean atLowerLimit() {
+        return getEncoder() < getLowerLimit();
+    }
+
 }
