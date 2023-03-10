@@ -20,10 +20,13 @@ public class ArmPID2 extends CommandBase{
 
     @Override
     public void execute() {
-        if(controller.getA()) setpoint = 0;
-        if(controller.getB()) setpoint = 23;
+        if(controller.getA()) setpoint = 60;
+        if(controller.getB()) setpoint = 150;
         pidController.setSetpoint(setpoint);
         double output = pidController.calculate(mArm.getRoll());
+        if(mArm.getRotatorEncoder() > 0.587 && mArm.getRotatorEncoder() < 0.701){
+            output = pidController.getSetpoint() > 90 ? 3 : -3;
+        }
         mArm.setRotatorSpeed(output);
         mArm.setIntake(controller.getLeftTriggerAxis());
         SmartDashboard.putNumber("", output);

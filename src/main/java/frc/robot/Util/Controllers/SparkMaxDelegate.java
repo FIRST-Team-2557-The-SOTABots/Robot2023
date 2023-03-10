@@ -22,7 +22,7 @@ public class SparkMaxDelegate implements SOTAMotorController{
     }
 
     @Override
-    public void set(double speed) {
+    public void set(double speed) { //TODO: make setVoltage
         if(motorLimits != null){
             try{
             if(speed < 0){

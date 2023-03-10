@@ -106,7 +106,7 @@ public class RobotContainer {
       e.printStackTrace();
       throw new RuntimeException("Faild to create swerveDrive", e);
     }
-    MotorLimits motorLimits = new MotorLimits(0.71, 0.91);
+    MotorLimits motorLimits = new MotorLimits(0.345, 0.8);
     SOTAMotorController winchMotor = initSparkMaxDelegate("SuperStructure/WinchMotor");
     SOTAMotorController rotatorMotor = initSparkMaxDelegate("SuperStructure/RotatorMotor");
     SOTAEncoder rotatorEncoder = new SOTADutyCycleEncoder(1);
@@ -120,7 +120,7 @@ public class RobotContainer {
 
     PIDController armController = new PIDController(0.03,0,0);
 
-    // this.mArmPID = new ArmPID2( mArm, armController, 0, mController);
+    this.mArmPID = new ArmPID2( mArm, armController, 0, mController);
 
     this.mDriveCommand = new DriveCommand(mSwerveDrive, dController);
 
@@ -132,7 +132,7 @@ public class RobotContainer {
 
   private void configureDefaultCommands(){
     mSwerveDrive.setDefaultCommand(mDriveCommand);
-    // mArm.setDefaultCommand(mArmPID);
+    mArm.setDefaultCommand(mArmPID);
   }
 
   private void configureBindings() {
@@ -153,7 +153,6 @@ public class RobotContainer {
       mSwerveDrive.setFieldCentricActive(false);
     }));
     
-      
   }
 
   public Command getAutonomousCommand() {
@@ -175,7 +174,7 @@ public class RobotContainer {
   }
 
   public SparkMaxDelegate initSparkMaxDelegate(String resourceId){
-    return initSparkMaxDelegate(resourceId, null);
+    return initSparkMaxDelegate(resourceId, new MotorLimits());
   }
 
 

@@ -5,6 +5,9 @@
 package frc.robot.Subsystems;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -31,6 +34,9 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public double getRoll(){
+    if(rotatorMotor.getEncoder() > 0.653){
+      return 180 - pigeon.getRoll();
+    }   //TODO: put in config
     return pigeon.getRoll();
   }
 
@@ -39,13 +45,22 @@ public class SuperStructure extends SubsystemBase {
     
   }
 
+  public double getRotatorEncoder(){
+    return rotatorMotor.getEncoder();
+  }
+
   public void setExtensionSpeed(double speed){
     if(limitSwitch.get() && speed < 0) winchMotor.set(0);
     winchMotor.setVoltage(speed);
   }
 
-  public void setIntake(double speed){
-    intakeMotors.setVoltage(speed);
+  public void setIntake(double voltage){
+    SmartDashboard.putNumber("IntakeSpeed", voltage);
+    intakeMotors.setVoltage(voltage); //TODO: make it set
+  }
+
+  public Pose3d getClawPose3d(){
+    return new Pose3d(new Translation3d(), new Rotation3d());
   }
 
   @Override
@@ -57,6 +72,7 @@ public class SuperStructure extends SubsystemBase {
     SmartDashboard.putNumber("Motor Speed:", rotatorMotor.get());
     SmartDashboard.putBoolean("at Upper Limit", rotatorMotor.atUpperLimit());
     SmartDashboard.putBoolean("At lower limit", rotatorMotor.atLowerLimit());
-    // This method will be called once per scheduler run
+    SmartDashboard.putNumber("NEO encoder", rotatorMotor.getTickPosition());
+    
   }
 }
