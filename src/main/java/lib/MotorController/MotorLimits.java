@@ -13,11 +13,11 @@ public class MotorLimits {
     }
 
     public double getLowerLimit(){
-        return lowerLimit;
+        return lowerLimit == null ? -Double.MAX_VALUE : lowerLimit;
     }
 
     public double getUpperLimit(){
-        return upperLimit;
+        return upperLimit == null ? Double.MAX_VALUE : upperLimit;
     }
 
     public void setLimits(double lower, double upper){
