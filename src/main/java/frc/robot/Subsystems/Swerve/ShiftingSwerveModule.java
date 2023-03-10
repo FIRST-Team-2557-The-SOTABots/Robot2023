@@ -8,6 +8,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lib.Configs.ShiftingSwerveModuleConfig;
+import lib.Encoder.SOTAAbsoulteEncoder;
 import lib.MotorController.SOTAMotorController;
 
 public class ShiftingSwerveModule extends SubsystemBase {
@@ -29,25 +30,24 @@ public class ShiftingSwerveModule extends SubsystemBase {
 
     public ShiftingSwerveModule(
       SOTAMotorController angleMotor, 
-            SOTAMotorController speedMotor, 
-            ShiftingSwerveModuleConfig config) {
+      SOTAMotorController speedMotor, 
+      ShiftingSwerveModuleConfig config) {
 
-        this.modulePosition = config.getEncoderPort();
-        this.mSpeedMotor = speedMotor; this.mAngleMotor = angleMotor;
+    this.modulePosition = config.getEncoderPort();
+    this.mSpeedMotor = speedMotor; this.mAngleMotor = angleMotor;
 
-        this.kAngleOffset = config.getAngleOffset();
-        this.kGearRatios = config.getGearRatios();
+    this.kGearRatios = config.getGearRatios();
 
-        this.kAngleCountsPerRevolution = config.getAngleEncoderCPR();
-        this.kWheelCircumference = config.getWheelCircumference();
+    this.kAngleCountsPerRevolution = config.getAngleEncoderCPR();
+    this.kWheelCircumference = config.getWheelCircumference();
 
-        this.mAngleFF = config.angleFF();
-        this.mSpeedFF = config.speedFF();
+    this.mAngleFF = config.angleFF();
+    this.mSpeedFF = config.speedFF();
 
-        this.mAnglePID = config.anglePID();
-        this.mSpeedPID = config.speedPID();
+    this.mAnglePID = config.anglePID();
+    this.mSpeedPID = config.speedPID();
                 
-    }
+  }
 
   /**
    * Drives the modules with a ShiftingSwerveModuleState
@@ -66,7 +66,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
     mAngleMotor.setVoltage(state.speedMetersPerSecond == 0.0 ? 0.0 : anglePIDOutput + angleFFOutput);
     
     double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[state.getGear()]);
-    double speedPIDOutput = speedSetpointNative == 0 ? 0.0 : mSpeedPID.calculate(mSpeedMotor.getSensorTickVelocity(), speedSetpointNative);
+    double speedPIDOutput = speedSetpointNative == 0 ? 0.0 : mSpeedPID.calculate(mSpeedMotor.getTickVelocity(), speedSetpointNative);
     double speedFFOutput = mSpeedFF.calculate(speedSetpointNative);
 
     mSpeedMotor.setVoltage(state.speedMetersPerSecond);
@@ -91,7 +91,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    */
   public double getSpeed(int gear) {
     return nativeToMetersPerSecond(
-      mSpeedMotor.getSensorTickVelocity(), 
+      mSpeedMotor.getTickVelocity(), 
       kGearRatios[gear]
     );
   }
@@ -101,11 +101,11 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * @return The angle of the module in absolute encoder ticks
    */
   public double getAngle() {
-    return -1 *(-1.0 * MathUtil.inputModulus(mAngleMotor.getEncoder() - kAngleOffset, 0, kAngleCountsPerRevolution) + kAngleCountsPerRevolution);
+    return -1 *(-1.0 * MathUtil.inputModulus(mAngleMotor.getEncoder().getPosition() - kAngleOffset, 0, kAngleCountsPerRevolution) + kAngleCountsPerRevolution);
   }
 
   public double getAngleNoOffset() {
-    return mAngleMotor.getEncoder();
+    return ((SOTAAbsoulteEncoder) mAngleMotor.getEncoder()).getPositionNoOffset();
   }
 
   /**
@@ -160,7 +160,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * @return The meters per count 
    */
   public double getMetersPerCount(double gearRatio) {
-    return kWheelCircumference / gearRatio / mSpeedMotor.getEncoderCountsPerRevolution();
+    return kWheelCircumference / gearRatio / mSpeedMotor.getEncoder().getCountsPerRevolution();
   }
 
   @Override

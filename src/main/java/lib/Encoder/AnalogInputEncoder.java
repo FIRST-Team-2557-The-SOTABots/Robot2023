@@ -1,49 +1,48 @@
 package lib.Encoder;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.AnalogInput;
+import lib.Configs.AbsouleEncoderConfig;
 
-public class AnalogInputEncoder extends AnalogInput implements SOTAEncoder{
-    double offset;
+public class AnalogInputEncoder implements SOTAAbsoulteEncoder {
+    private final AnalogInput mEncoder;
+    private final double kCountsPerRevolution;
+    private final double kOffset;
 
-    public AnalogInputEncoder(int port){
-        super(port);
-
+    public AnalogInputEncoder(AnalogInput encoder, AbsouleEncoderConfig config) {
+        this.mEncoder = encoder;
+        this.kCountsPerRevolution = config.getCountsPerRevolution();
+        this.kOffset = config.getCountsPerRevolution();
     }
 
-    public AnalogInputEncoder(int port, double offset){
-        super(port);
+    public double getPosition() {
+        return -1 * MathUtil.inputModulus(getPositionNoOffset() - kOffset, 0, kCountsPerRevolution);
     }
 
-    @Override
-    public double get() {
-        return super.getAverageVoltage() - offset;
+    public double getPositionNoOffset() {
+        return mEncoder.getAverageVoltage();
     }
 
-    @Override
-    public double getAbsolutePosition() {
-        return super.getAverageVoltage();
+    //TODO: you cant setposition on analog input
+    public void setPosition(double newPosition) {
+        
     }
 
-    @Override
+    //TODO: perhaps add this but it's not really important rn
+    public double getVelocity() {
+        return 0;
+    }
+
     public void reset() {
-        offset += super.getAverageVoltage();
+        mEncoder.resetAccumulator();        
     }
 
-    @Override
-    public void setPositionOffset(double offset) {
-        this.offset = offset;
-        
+    public double getCountsPerRevolution() {
+        return kCountsPerRevolution;
     }
 
-    @Override
     public double getPositionOffset() {
-        return offset;
+        return kOffset;
     }
 
-    @Override
-    public void close() {
-        super.close();
-        
-    }
-    
 }

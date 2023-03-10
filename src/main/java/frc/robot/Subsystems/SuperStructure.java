@@ -57,7 +57,7 @@ public class SuperStructure extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("encoder count: ", rotatorMotor.getEncoder());
+    // SmartDashboard.putNumber("encoder count: ", rotatorMotor.getEncoder());
     SmartDashboard.putNumber("Pigeon Yaw: ", pigeon.getYaw());
     SmartDashboard.putNumber("Pigeon Pitch: ", pigeon.getPitch());
     SmartDashboard.putNumber("Pigeon Roll: ", pigeon.getRoll());

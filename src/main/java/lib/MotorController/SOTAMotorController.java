@@ -1,16 +1,15 @@
 package lib.MotorController;
 
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import lib.Encoder.SOTAEncoder;
 
-public interface SOTAMotorController extends MotorController{
-    double getSensorTickVelocity();
+public interface SOTAMotorController {
+    void set(double speed);
+    void setVoltage(double voltage);
+    double get();
+    double getTickVelocity();
     double getTickPosition();
-    double getEncoder();
+    SOTAEncoder getEncoder();
     double getMotorCurrent();
-    double getEncoderCountsPerRevolution();
     double getMotorTemperature();
-    void setLimits(MotorLimits motorLimits);
-    double getLowerLimit();
-    double getUpperLimit();
     // void setIdleMode(); TODO: fix
 }

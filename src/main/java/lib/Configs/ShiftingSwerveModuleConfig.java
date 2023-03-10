@@ -12,7 +12,6 @@ public class ShiftingSwerveModuleConfig {
     
     private double[] gearRatios;
 
-    private double angleOffset;
     private double angleEncoderCPR;
 
     private double wheelDiameter;   
@@ -43,10 +42,6 @@ public class ShiftingSwerveModuleConfig {
 
     public double[] getGearRatios(){
         return gearRatios;
-    }
-
-    public double getAngleOffset() {
-        return angleOffset;
     }
 
     public double getAngleEncoderCPR() {
@@ -124,16 +119,19 @@ public class ShiftingSwerveModuleConfig {
     public double getAnglePIDTolerance() {
         return anglePIDTolerance;
     }
-    private double getSpeedPIDTolerance() {
+
+    public double getSpeedPIDTolerance() {
         return speedPIDTolerance;
     }
 
     public SimpleMotorFeedforward angleFF(){
         return new SimpleMotorFeedforward(angleKS, angleKV);
     }
+
     public SimpleMotorFeedforward speedFF(){
         return new SimpleMotorFeedforward(speedKS, speedKV);
     }
+    
     public ProfiledPIDController anglePID(){
         ProfiledPIDController pid = new ProfiledPIDController(angleKP, angleKI, angleKD, 
         new TrapezoidProfile.Constraints(getAngleMaxVel(), angleMaxAccel));

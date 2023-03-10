@@ -30,10 +30,10 @@ public class MotorLimits {
         this.lowerLimit = limits.getLowerLimit(); this.upperLimit = limits.getUpperLimit();
     }
     
-
     public void setUpperLimit(double limit){
         setLimits(this.lowerLimit, limit);
     }
+    
     public void setLowerLimit(double limit){
         setLimits(limit, this.upperLimit);
     }
