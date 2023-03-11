@@ -34,6 +34,9 @@ import frc.robot.Commands.ArmPID2;
 import frc.robot.Commands.BasicArmExtension;
 import frc.robot.Commands.DriveCommand;
 import frc.robot.Commands.ExtensionPID;
+import frc.robot.Subsystems.Extension;
+import frc.robot.Subsystems.Intake;
+import frc.robot.Subsystems.Rotation;
 import frc.robot.Subsystems.SuperStructure;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveModuleI2;
@@ -68,9 +71,12 @@ public class RobotContainer {
   private final SOTAXboxcontroller mController;
 
   private ShiftingSwerveDrive mSwerveDrive;
-  private SuperStructure mArm;
+  // private SuperStructure mArm;
+  private Extension mExtension;
+  private Rotation mRotation;
+  private Intake mIntake;
 
-  private ArmPID2 mArmPID;
+  private ArmPID2 rotationPID;
   private DriveCommand mDriveCommand;
   private BasicArmExtension armExtensionCommand;
   private ExtensionPID extensionPID;
@@ -135,19 +141,22 @@ public class RobotContainer {
     leftMotor.setInverted(true);
     MotorController intakeMotors = new MotorControllerGroup(rightMotor, leftMotor);
 
-    this.mArm = new SuperStructure(armGyro, winchMotor, rotatorComposite, limitSwitch, intakeMotors);
+    this.mIntake = new Intake(intakeMotors);
 
-    PIDController armController = new PIDController(0.03,0,0);
+    this.mExtension = new Extension(winchMotor, limitSwitch);
+    this.mRotation = new Rotation(rotatorComposite, armGyro);
 
-    armExtensionCommand = new BasicArmExtension(mArm, mController);
+    // this.mArm = new SuperStructure(armGyro, winchMotor, rotatorComposite, limitSwitch, intakeMotors);
 
-    // this.mArmPID = new ArmPID2( mArm, armController, 0, mController);
+    PIDController armRotationController = new PIDController(0.03,0,0);
 
-    TrapezoidProfile.Constraints trapezoidProfile = new TrapezoidProfile.Constraints(20, 40);
+    this.rotationPID = new ArmPID2( mRotation, armRotationController, 0, mController
+    , mExtension::getEncoder);
 
-    ProfiledPIDController extensController = new ProfiledPIDController(0.1, 0, 0, trapezoidProfile);
+    TrapezoidProfile.Constraints trapezoidProfile = new TrapezoidProfile.Constraints(40, 80);
+    ProfiledPIDController extensController = new ProfiledPIDController(0.8, 0, 0, trapezoidProfile);
 
-    this.extensionPID = new ExtensionPID(extensController, mArm, mController);
+    this.extensionPID = new ExtensionPID(extensController, mExtension, mController);
 
     this.mDriveCommand = new DriveCommand(mSwerveDrive, dController);
 
@@ -160,7 +169,9 @@ public class RobotContainer {
   private void configureDefaultCommands(){
     mSwerveDrive.setDefaultCommand(mDriveCommand);
 
-    mArm.setDefaultCommand(extensionPID);//mArmPID);
+    mExtension.setDefaultCommand(extensionPID);
+
+    mRotation.setDefaultCommand(rotationPID);
   }
 
   private void configureBindings() {
@@ -181,8 +192,8 @@ public class RobotContainer {
       mSwerveDrive.setFieldCentricActive(false);
     }));
 
-
-    mController.rightBumper().onTrue(new RunCommand(() -> mArm.setExtensionSpeed(-3), mArm));
+    mController.x().whileTrue(new RunCommand(mIntake::intake, mIntake)).onFalse(new InstantCommand(mIntake::stop));
+    mController.y().whileTrue(new RunCommand(mIntake::release, mIntake)).onFalse(new InstantCommand(mIntake::stop));
     
   }
 

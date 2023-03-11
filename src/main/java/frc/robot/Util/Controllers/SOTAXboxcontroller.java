@@ -20,6 +20,12 @@ public class SOTAXboxcontroller extends CommandXboxController{
     public boolean getY(){
         return super.y().getAsBoolean();
     }
+    public boolean getLeftBumper(){
+        return leftBumper().getAsBoolean();
+    } 
+    public boolean getRightBumper(){
+        return rightBumper().getAsBoolean();
+    }
     @Override
     public double getLeftX() {
         return Math.abs(super.getLeftX()) < 0.1 ? 0 : super.getLeftX();

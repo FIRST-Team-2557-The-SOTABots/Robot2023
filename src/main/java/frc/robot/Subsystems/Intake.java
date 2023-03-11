@@ -1,18 +1,23 @@
 package frc.robot.Subsystems;
 
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import frc.robot.Util.Interfaces.IntakeInterface;
 import frc.robot.Util.Interfaces.SOTAMotorController;
 
 public class Intake implements IntakeInterface{
-    SOTAMotorController motors;
+    MotorController motors;
 
-    public Intake(SOTAMotorController motors){
+    public Intake(MotorController motors){
         this.motors = motors;
+    }
+
+    public void release(){
+        set(-0.2);
     }
 
     @Override
     public void intake() {
-        motors.set(1);
+        motors.set(0.2);
         
     }
 
