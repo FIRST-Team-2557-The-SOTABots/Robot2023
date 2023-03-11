@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Util.Configs.MotorControllerConfig;
 import frc.robot.Util.Interfaces.SOTAGyro;
 import frc.robot.Util.Interfaces.SOTAMotorController;
+import frc.robot.util.Configs.SuperStructureConfig;
 
 public class SuperStructure extends SubsystemBase {
 
@@ -87,5 +88,26 @@ public class SuperStructure extends SubsystemBase {
     SmartDashboard.putNumber("Arm Extension:", winchMotor.getEncoder());
     SmartDashboard.putNumber("Extension power", winchMotor.get());
     SmartDashboard.putBoolean("limitSwitch", limitSwitch.get());
+  }
+  public boolean checkLimits(double angleCount, double winchCount, double offsetOffGround, SuperStructureConfig config){
+    double absoluteZero = config.getEncoderAtZeroDegrees();
+    double baseLength = config.getArmBaseLength();
+    double encoderPerInch = config.getEncoderPerInch();
+    double encoderPerAngle = config.getEncoderPerDegree();
+    double height = config.getHeight();
+    double length = baseLength + (winchCount/encoderPerInch);
+    double angle = getAngle(angleCount, absoluteZero, encoderPerAngle);
+    if(angle > 0 && angle < 180){
+      return true;
+    }
+    if(angle < 90){
+      
+    }else{
+
+    }
+
+  }
+  public double getAngle(double angleCount, double baseEncoderZero, double encoderPerAngle){
+    return (angleCount-baseEncoderZero)/encoderPerAngle;
   }
 }
