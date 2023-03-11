@@ -119,4 +119,8 @@ public class CompositeMotor implements SOTAMotorController{
     public boolean atLowerLimit() {
         return getEncoder() < getLowerLimit();
     }
+    @Override
+    public void resetEncoder() {
+        encoder.reset();
+    }
 }

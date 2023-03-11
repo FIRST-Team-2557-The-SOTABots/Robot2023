@@ -114,4 +114,8 @@ public class FalconDelegate implements SOTAMotorController{
     public boolean atLowerLimit() {
         return getEncoder() < getLowerLimit();
     }
+    @Override
+    public void resetEncoder() {
+        motor.setSelectedSensorPosition(0);
+    }
 }

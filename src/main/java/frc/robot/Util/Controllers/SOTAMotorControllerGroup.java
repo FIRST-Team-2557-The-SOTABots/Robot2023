@@ -163,4 +163,9 @@ public double getUpperLimit() throws RuntimeException {
     public boolean atLowerLimit() {
         return getEncoder() < getUpperLimit();
     }
+@Override
+  public void resetEncoder() {
+    throw new NullPointerException();
+  }    
 }
+

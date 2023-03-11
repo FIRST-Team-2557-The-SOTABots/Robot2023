@@ -9,8 +9,11 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Util.Configs.MotorControllerConfig;
 import frc.robot.Util.Interfaces.SOTAGyro;
 import frc.robot.Util.Interfaces.SOTAMotorController;
 
@@ -20,12 +23,12 @@ public class SuperStructure extends SubsystemBase {
   private SOTAMotorController rotatorMotor;
   private SOTAMotorController winchMotor;
   private DigitalInput limitSwitch;
-  private SOTAMotorController intakeMotors;
+  private MotorController intakeMotors;
 
   /** Creates a new ArmSubsystem. */
   public SuperStructure(SOTAGyro pigeon, SOTAMotorController winchMotor,
    SOTAMotorController rotatorMotor, DigitalInput limitSwitch,
-    SOTAMotorController intake) {
+    MotorController intake) {
     this.pigeon = pigeon;
     this.winchMotor = winchMotor;
     this.rotatorMotor = rotatorMotor;
@@ -50,29 +53,39 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public void setExtensionSpeed(double speed){
-    if(limitSwitch.get() && speed < 0) winchMotor.set(0);
+    if(limitSwitch.get() && speed < 0){
+       speed = 0;
+       winchMotor.resetEncoder();
+       
+    }
     winchMotor.setVoltage(speed);
   }
 
   public void setIntake(double voltage){
     SmartDashboard.putNumber("IntakeSpeed", voltage);
-    intakeMotors.setVoltage(voltage); //TODO: make it set
+    intakeMotors.set(voltage); //TODO: make it set
   }
 
   public Pose3d getClawPose3d(){
     return new Pose3d(new Translation3d(), new Rotation3d());
   }
 
+  public double getExtension(){
+    return winchMotor.getEncoder();
+  }
+
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("encoder count: ", rotatorMotor.getEncoder());
-    SmartDashboard.putNumber("Pigeon Yaw: ", pigeon.getYaw());
-    SmartDashboard.putNumber("Pigeon Pitch: ", pigeon.getPitch());
-    SmartDashboard.putNumber("Pigeon Roll: ", pigeon.getRoll());
-    SmartDashboard.putNumber("Motor Speed:", rotatorMotor.get());
-    SmartDashboard.putBoolean("at Upper Limit", rotatorMotor.atUpperLimit());
-    SmartDashboard.putBoolean("At lower limit", rotatorMotor.atLowerLimit());
-    SmartDashboard.putNumber("NEO encoder", rotatorMotor.getTickPosition());
-    
+    // SmartDashboard.putNumber("encoder count: ", rotatorMotor.getEncoder());
+    // SmartDashboard.putNumber("Pigeon Yaw: ", pigeon.getYaw());
+    // SmartDashboard.putNumber("Pigeon Pitch: ", pigeon.getPitch());
+    // SmartDashboard.putNumber("Pigeon Roll: ", pigeon.getRoll());
+    // SmartDashboard.putNumber("Motor Speed:", rotatorMotor.get());
+    // SmartDashboard.putBoolean("at Upper Limit", rotatorMotor.atUpperLimit());
+    // SmartDashboard.putBoolean("At lower limit", rotatorMotor.atLowerLimit());
+    // SmartDashboard.putNumber("NEO encoder", rotatorMotor.getTickPosition());
+    SmartDashboard.putNumber("Arm Extension:", winchMotor.getEncoder());
+    SmartDashboard.putNumber("Extension power", winchMotor.get());
+    SmartDashboard.putBoolean("limitSwitch", limitSwitch.get());
   }
 }

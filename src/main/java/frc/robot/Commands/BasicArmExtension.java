@@ -16,7 +16,7 @@ public class BasicArmExtension extends CommandBase{
         addRequirements(mArm);
     }
     @Override
-    public void execute() {
+    public void execute() { //TODO: create extension PID
         if(mController.getA()){
             mArm.setExtensionSpeed(-2);
         } else if(mController.getB()){
@@ -24,6 +24,7 @@ public class BasicArmExtension extends CommandBase{
         } else {
             mArm.setExtensionSpeed(0);
         }
+        mArm.setIntake(mController.getLeftTriggerAxis());
 
     }
 }

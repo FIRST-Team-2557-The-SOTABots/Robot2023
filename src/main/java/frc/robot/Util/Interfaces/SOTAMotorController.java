@@ -15,5 +15,6 @@ public interface SOTAMotorController extends MotorController{
     double getUpperLimit();
     boolean atUpperLimit();
     boolean atLowerLimit();
+    void resetEncoder();
     // void setIdleMode(); TODO: fix
 }

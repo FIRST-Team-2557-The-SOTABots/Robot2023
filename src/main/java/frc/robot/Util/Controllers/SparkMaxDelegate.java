@@ -114,5 +114,9 @@ public class SparkMaxDelegate implements SOTAMotorController{
     public boolean atLowerLimit() {
         return getEncoder() < getLowerLimit();
     }
+    @Override
+    public void resetEncoder() {
+        motor.getEncoder().setPosition(0);
+    }
 
 }

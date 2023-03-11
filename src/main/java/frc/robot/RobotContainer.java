@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.io.IOException;
 
+import javax.swing.plaf.nimbus.State;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -15,16 +16,24 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.Commands.ArmPID;
 import frc.robot.Commands.ArmPID2;
+import frc.robot.Commands.BasicArmExtension;
 import frc.robot.Commands.DriveCommand;
+import frc.robot.Commands.ExtensionPID;
 import frc.robot.Subsystems.SuperStructure;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveModuleI2;
@@ -63,6 +72,8 @@ public class RobotContainer {
 
   private ArmPID2 mArmPID;
   private DriveCommand mDriveCommand;
+  private BasicArmExtension armExtensionCommand;
+  private ExtensionPID extensionPID;
 
   public RobotContainer() {
     ObjectMapper mapper = new ObjectMapper();
@@ -106,21 +117,37 @@ public class RobotContainer {
       e.printStackTrace();
       throw new RuntimeException("Faild to create swerveDrive", e);
     }
-    MotorLimits motorLimits = new MotorLimits(0.345, 0.8);
-    SOTAMotorController winchMotor = initSparkMaxDelegate("SuperStructure/WinchMotor");
+    MotorLimits rotatorMotorLimits = new MotorLimits(0.345, 0.8); //TODO: 
+    MotorLimits extendLimit = new MotorLimits(null, 630.0);
+    SOTAMotorController winchMotor = initSparkMaxDelegate("SuperStructure/WinchMotor", extendLimit);
     SOTAMotorController rotatorMotor = initSparkMaxDelegate("SuperStructure/RotatorMotor");
     SOTAEncoder rotatorEncoder = new SOTADutyCycleEncoder(1);
-    SOTAMotorController rotatorComposite = new CompositeMotor(rotatorMotor, rotatorEncoder, motorLimits);
+    SOTAMotorController rotatorComposite = new CompositeMotor(rotatorMotor, rotatorEncoder, rotatorMotorLimits);
     SOTAGyro armGyro = new PigeonDelegate(4);
-    DigitalInput limitSwitch = new DigitalInput(0);
-    SOTAMotorController leftMotorIntake = initSparkMaxDelegate("SuperStructure/IntakeMotorLeft");
-    SOTAMotorController rightMotorIntake = initSparkMaxDelegate("SuperStructure/IntakeMotorRight");
-    SOTAMotorController intakeMotors = new SOTAMotorControllerGroup(rightMotorIntake, leftMotorIntake);
+    DigitalInput limitSwitch = new DigitalInput(3);
+    // SOTAMotorController leftMotorIntake = initSparkMaxDelegate("SuperStructure/IntakeMotorLeft");
+    // SOTAMotorController rightMotorIntake = initSparkMaxDelegate("SuperStructure/IntakeMotorRight");
+    // SOTAMotorController intakeMotors = new SOTAMotorControllerGroup(rightMotorIntake, leftMotorIntake);
+    // intakeMotors.setInverted(true);
+
+    MotorController leftMotor = new CANSparkMax(7, MotorType.kBrushless);
+    MotorController rightMotor = new CANSparkMax(8, MotorType.kBrushless);
+    leftMotor.setInverted(true);
+    MotorController intakeMotors = new MotorControllerGroup(rightMotor, leftMotor);
+
     this.mArm = new SuperStructure(armGyro, winchMotor, rotatorComposite, limitSwitch, intakeMotors);
 
     PIDController armController = new PIDController(0.03,0,0);
 
-    this.mArmPID = new ArmPID2( mArm, armController, 0, mController);
+    armExtensionCommand = new BasicArmExtension(mArm, mController);
+
+    // this.mArmPID = new ArmPID2( mArm, armController, 0, mController);
+
+    TrapezoidProfile.Constraints trapezoidProfile = new TrapezoidProfile.Constraints(20, 40);
+
+    ProfiledPIDController extensController = new ProfiledPIDController(0.1, 0, 0, trapezoidProfile);
+
+    this.extensionPID = new ExtensionPID(extensController, mArm, mController);
 
     this.mDriveCommand = new DriveCommand(mSwerveDrive, dController);
 
@@ -132,7 +159,8 @@ public class RobotContainer {
 
   private void configureDefaultCommands(){
     mSwerveDrive.setDefaultCommand(mDriveCommand);
-    mArm.setDefaultCommand(mArmPID);
+
+    mArm.setDefaultCommand(extensionPID);//mArmPID);
   }
 
   private void configureBindings() {
@@ -152,6 +180,9 @@ public class RobotContainer {
     dController.y().onTrue(new InstantCommand(() -> {
       mSwerveDrive.setFieldCentricActive(false);
     }));
+
+
+    mController.rightBumper().onTrue(new RunCommand(() -> mArm.setExtensionSpeed(-3), mArm));
     
   }
 
