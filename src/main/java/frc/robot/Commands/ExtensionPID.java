@@ -22,8 +22,9 @@ public class ExtensionPID extends CommandBase{
 
     @Override
     public void execute() {
-        if(mController.getLeftBumper()) extendPID.reset(300.0, 0.0);
-        if(mController.getRightBumper()) extendPID.reset(0.0,0.0);
+        // if(mController.getLeftBumper()) extendPID.reset(300.0, 0.0);
+        // if(mController.getRightBumper()) extendPID.reset(0.0,0.0);
+        extendPID.reset(SmartDashboard.getNumber("Extension Length", 0));
         double output = extendPID.calculate(mExtension.getEncoder());
         SmartDashboard.putNumber("extensionSpeed", output);
         mExtension.set(output);

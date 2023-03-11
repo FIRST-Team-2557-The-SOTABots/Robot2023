@@ -2,7 +2,10 @@ package frc.robot.Commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Rotation;
@@ -25,8 +28,13 @@ public class ArmPID2 extends CommandBase{
     @Override
     public void execute() {
         
-        if(controller.getA()) setpoint = 60;
-        if(controller.getB()) setpoint = 150;
+        // if(controller.getA()) setpoint = 60;
+        // if(controller.getB()) setpoint = 150;
+        double setSetpoint = SmartDashboard.getNumber("rotation setpoint", 0);
+        setpoint = setSetpoint;
+        
+        setpoint = MathUtil.clamp(setpoint, -20, 200);
+
         pidController.setSetpoint(setpoint);
         double output = pidController.calculate(mArm.getRoll());
         if(mArm.getRotatorEncoder() > 0.587 && mArm.getRotatorEncoder() < 0.701){
