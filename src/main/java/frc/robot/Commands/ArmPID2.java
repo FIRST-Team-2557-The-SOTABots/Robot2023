@@ -17,10 +17,16 @@ public class ArmPID2 extends CommandBase{
     private double setpoint;
     private PIDController pidController;
     private SOTAXboxcontroller controller;
-    private DoubleSupplier length;
+    private DoubleSupplier minAngle;
+    private DoubleSupplier maxAngle;
 
-    public ArmPID2(Rotation mArm, PIDController pidController, double setpoint, SOTAXboxcontroller controller, DoubleSupplier length){
-        this.mArm = mArm; this.setpoint = setpoint; this.pidController = pidController; this.controller = controller; this.length = length;
+    public ArmPID2(Rotation mArm,
+            PIDController pidController,
+            double setpoint,
+            SOTAXboxcontroller controller,
+            DoubleSupplier minAngle,
+            DoubleSupplier maxAngle){
+        this.mArm = mArm; this.setpoint = setpoint; this.pidController = pidController; this.controller = controller; this.minAngle = minAngle; this.maxAngle = maxAngle;
         addRequirements(mArm);
     }
     
@@ -33,16 +39,18 @@ public class ArmPID2 extends CommandBase{
         double setSetpoint = SmartDashboard.getNumber("rotation setpoint", 0);
         setpoint = setSetpoint;
         
-        setpoint = MathUtil.clamp(setpoint, -20, 200);
+        setpoint = MathUtil.clamp(setpoint, minAngle.getAsDouble(), maxAngle.getAsDouble());
 
         pidController.setSetpoint(setpoint);
-        double output = pidController.calculate(mArm.getRoll());
+        double output = pidController.calculate(mArm.getRotationDegrees());
         if(mArm.getRotatorEncoder() > 0.587 && mArm.getRotatorEncoder() < 0.701){
             output = pidController.getSetpoint() > 90 ? 3 : -3;
         }
         mArm.set(output);
 
         SmartDashboard.putNumber("Angle Output", output);
+        SmartDashboard.putNumber("MinAngle", minAngle.getAsDouble());
+        SmartDashboard.putNumber("maxAngle", maxAngle.getAsDouble());
     }
     
 }

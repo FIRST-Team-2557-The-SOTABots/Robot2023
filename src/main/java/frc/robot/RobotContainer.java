@@ -45,6 +45,7 @@ import frc.robot.Util.Configs.DoubleSolenoidConfig;
 import frc.robot.Util.Configs.MotorControllerConfig;
 import frc.robot.Util.Configs.ShiftingSwerveDriveConfig;
 import frc.robot.Util.Configs.ShiftingSwerveModuleConfig;
+import frc.robot.Util.Configs.SuperStructureConfig;
 import frc.robot.Util.Controllers.AnalogInputEncoder;
 import frc.robot.Util.Controllers.CompositeMotor;
 import frc.robot.Util.Controllers.DoubleSolenoidShifter;
@@ -119,7 +120,7 @@ public class RobotContainer {
         "Swerve/DoubleSolenoidSwerveShifter"));
       mSwerveDrive = new ShiftingSwerveDrive(swerveModules, shifter, gyro, 
       configUtils.readFromClassPath(ShiftingSwerveDriveConfig.class, "Swerve/ShiftingSwerveDrive"));
-
+      
     } catch (IOException e) {
       e.printStackTrace();
       throw new RuntimeException("Faild to create swerveDrive", e);
@@ -143,21 +144,25 @@ public class RobotContainer {
     MotorController intakeMotors = new MotorControllerGroup(rightMotor, leftMotor);
 
     this.mIntake = new Intake(intakeMotors);
+    TrapezoidProfile.Constraints trapezoidProfile = new TrapezoidProfile.Constraints(40, 80);
 
-    this.mExtension = new Extension(winchMotor, limitSwitch);
-    this.mRotation = new Rotation(rotatorComposite, armGyro);
-
-    // this.mArm = new SuperStructure(armGyro, winchMotor, rotatorComposite, limitSwitch, intakeMotors);
-
+    ProfiledPIDController extensController = new ProfiledPIDController(0.8, 0, 0, trapezoidProfile);
     PIDController armRotationController = new PIDController(0.03,0,0);
 
-    this.rotationPID = new ArmPID2( mRotation, armRotationController, 0, mController
-    , mExtension::getEncoder);
+    try{
+      SuperStructureConfig superStructureConfig = configUtils.readFromClassPath(SuperStructureConfig.class, "SuperStructure/SuperStructure");
+      this.mExtension = new Extension(winchMotor, limitSwitch, superStructureConfig);
+      this.mRotation = new Rotation(rotatorComposite, armGyro, superStructureConfig);
+      SuperStructure superStructure = new SuperStructure(mExtension::getEncoder,mRotation::getRotationDegrees, superStructureConfig);
+      this.rotationPID = new ArmPID2( mRotation, armRotationController, 0, mController
+      , superStructure::minRotation, superStructure::maxRotation);
+      this.extensionPID = new ExtensionPID(extensController, mExtension, mController, superStructure::maxExtension);
+    } catch(IOException e){
+      e.printStackTrace();
+      throw new RuntimeException("Faild to create SuperStructure", e);      
+    }
 
-    TrapezoidProfile.Constraints trapezoidProfile = new TrapezoidProfile.Constraints(40, 80);
-    ProfiledPIDController extensController = new ProfiledPIDController(0.8, 0, 0, trapezoidProfile);
-
-    this.extensionPID = new ExtensionPID(extensController, mExtension, mController);
+    // this.mArm = new SuperStructure(armGyro, winchMotor, rotatorComposite, limitSwitch, intakeMotors);
 
     this.mDriveCommand = new DriveCommand(mSwerveDrive, dController);
 

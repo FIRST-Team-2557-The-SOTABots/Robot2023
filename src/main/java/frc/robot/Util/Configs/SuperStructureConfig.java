@@ -1,4 +1,4 @@
-package frc.robot.util.Configs;
+package frc.robot.Util.Configs;
 
 public class SuperStructureConfig {
     private double encoderAtZeroDegrees;
@@ -6,6 +6,7 @@ public class SuperStructureConfig {
     private int armBaseLength;
     private double encoderPerInch;
     private double height;
+    private double offset;
 
     public double getEncoderAtZeroDegrees(){
         return encoderAtZeroDegrees;
@@ -21,5 +22,8 @@ public class SuperStructureConfig {
     }
     public double getHeight(){
         return height;
+    }
+    public double getOffest(){
+        return offset;
     }
 }
