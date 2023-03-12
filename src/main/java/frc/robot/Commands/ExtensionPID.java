@@ -17,6 +17,7 @@ public class ExtensionPID extends CommandBase{
 
     public ExtensionPID(ProfiledPIDController PID, Extension mArm, SOTAXboxcontroller mController, DoubleSupplier maxLength){
         this.extendPID = PID; this.mExtension = mArm; this.mController = mController; this.maxLength = maxLength;
+        SmartDashboard.putNumber("maxLength2", maxLength.getAsDouble());
         addRequirements(mArm);
     }
 
@@ -32,6 +33,11 @@ public class ExtensionPID extends CommandBase{
         extendPID.reset(SmartDashboard.getNumber("Extension Length", 0));
         double output = extendPID.calculate(mExtension.getEncoder());
         SmartDashboard.putNumber("extensionSpeed", output);
+        // mExtension.set(output);
+        if(mController.getLeftBumper()) output = 2;
+        else if(mController.getRightBumper()) output = -3;
+        else output = 0;
+
         mExtension.set(output);
 
         SmartDashboard.putNumber("Max Extension", maxLength.getAsDouble());

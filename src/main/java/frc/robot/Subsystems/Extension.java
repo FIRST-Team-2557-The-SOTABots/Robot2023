@@ -22,7 +22,7 @@ public class Extension extends SubsystemBase{
            motor.resetEncoder();
            
         }
-        // motor.setVoltage(speed);
+        motor.setVoltage(speed);
       }
  
 

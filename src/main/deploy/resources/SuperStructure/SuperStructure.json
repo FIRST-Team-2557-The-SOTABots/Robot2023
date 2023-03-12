@@ -1,8 +1,10 @@
 {
     "encoderAtZeroDegrees": 0.149,
     "encoderPerDegree": 0.002744444,
-    "armBaseLength": 33,
-    "encoderPerInch": 27.5652,
+    "armBaseLength": 32,
+    "encoderPerInch": 13.2,
     "height": 23,
-    "offset": 10
+    "boffset": 3,
+    "foffset": 3,
+    "absoluteoffset": 3
 }

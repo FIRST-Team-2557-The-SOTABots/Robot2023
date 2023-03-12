@@ -31,30 +31,38 @@ public class SuperStructure extends SubsystemBase {
   private DoubleSupplier extensionLength;
   private DoubleSupplier CurrentAngle;
   private double height;
-  private double offest;
+  private double boffset;
+  private double foffset;
+  private double armLength;
+  private double absoluteoffset;
 
   /** Creates a new ArmSubsystem. */
   public SuperStructure(DoubleSupplier extensionLength, DoubleSupplier CurrentAngle, SuperStructureConfig config) {
-    this.extensionLength = extensionLength; this.CurrentAngle = CurrentAngle; this.height = config.getHeight(); this.offest = config.getOffest();
+    this.extensionLength = extensionLength; this.CurrentAngle = CurrentAngle;
+     this.height = config.getHeight(); this.boffset = config.getbOffset(); 
+     this.foffset = config.getfOffset(); this.armLength = config.getArmBaseLength();
+     this.absoluteoffset = config.getAbsoluteOffset();
 
   }
 
   public double maxExtension(){
+    SmartDashboard.putNumber("angle", CurrentAngle.getAsDouble());
     if(CurrentAngle.getAsDouble() >= 90 && CurrentAngle.getAsDouble() <= 270){
-      return 300;
+      return 31;
     }
-    double heightOffset = CurrentAngle.getAsDouble() < 90 ? offest: -offest;
-    return (height + heightOffset) / Math.sin(Math.toRadians(CurrentAngle.getAsDouble()));
+    double heightOffset = CurrentAngle.getAsDouble() < 90 ? absoluteoffset: -absoluteoffset;
+    return MathUtil.clamp((((height + heightOffset) / Math.cos(Math.toRadians(CurrentAngle.getAsDouble()))) - (armLength + heightOffset)), 0, 31);
   }
 
   public double minRotation(){
-    double heightOffset = offest;
-    return Math.toDegrees(Math.asin((height + heightOffset) / extensionLength.getAsDouble()));
+    SmartDashboard.putNumber("extensionLength", extensionLength.getAsDouble());
+    double heightOffset = foffset;
+    return Math.toDegrees(Math.acos((height + heightOffset) / extensionLength.getAsDouble()));
   }
 
   public double maxRotation(){
-    double heightOffset = -offest;
-    return 360 - Math.toDegrees(Math.asin((height + heightOffset) / extensionLength.getAsDouble()));
+    double heightOffset = -boffset;
+    return 360 - Math.toDegrees(Math.acos((height + heightOffset) / extensionLength.getAsDouble()));
   }
 
   // public double getRoll(){

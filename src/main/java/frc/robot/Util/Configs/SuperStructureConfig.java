@@ -6,7 +6,9 @@ public class SuperStructureConfig {
     private int armBaseLength;
     private double encoderPerInch;
     private double height;
-    private double offset;
+    private double boffset;
+    private double foffset;
+    private double absoluteoffset;
 
     public double getEncoderAtZeroDegrees(){
         return encoderAtZeroDegrees;
@@ -23,7 +25,14 @@ public class SuperStructureConfig {
     public double getHeight(){
         return height;
     }
-    public double getOffest(){
-        return offset;
+    public double getbOffset(){
+        return boffset;
+    }
+    public double getfOffset(){
+        return foffset;
+    }
+    public double getAbsoluteOffset(){
+        return absoluteoffset;
     }
 }
+

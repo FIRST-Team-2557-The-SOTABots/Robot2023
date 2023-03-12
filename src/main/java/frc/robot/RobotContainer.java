@@ -153,7 +153,7 @@ public class RobotContainer {
       SuperStructureConfig superStructureConfig = configUtils.readFromClassPath(SuperStructureConfig.class, "SuperStructure/SuperStructure");
       this.mExtension = new Extension(winchMotor, limitSwitch, superStructureConfig);
       this.mRotation = new Rotation(rotatorComposite, armGyro, superStructureConfig);
-      SuperStructure superStructure = new SuperStructure(mExtension::getEncoder,mRotation::getRotationDegrees, superStructureConfig);
+      SuperStructure superStructure = new SuperStructure(mExtension::getLength,mRotation::getRotationDegrees, superStructureConfig);
       this.rotationPID = new ArmPID2( mRotation, armRotationController, 0, mController
       , superStructure::minRotation, superStructure::maxRotation);
       this.extensionPID = new ExtensionPID(extensController, mExtension, mController, superStructure::maxExtension);
