@@ -8,7 +8,9 @@ public class SuperStructureConfig {
     private double height;
     private double boffset;
     private double foffset;
-    private double absoluteoffset;
+    private double fabsoluteoffset;
+    private double babsoluteoffset;
+    private double maxExtension;
 
     public double getEncoderAtZeroDegrees(){
         return encoderAtZeroDegrees;
@@ -31,8 +33,15 @@ public class SuperStructureConfig {
     public double getfOffset(){
         return foffset;
     }
-    public double getAbsoluteOffset(){
-        return absoluteoffset;
+    public double getfAbsoluteOffset(){
+        return fabsoluteoffset;
     }
+    public double getbAbsoluteOffset(){
+        return babsoluteoffset;
+    }
+    public double getMaxExtension(){
+        return maxExtension;
+    }
+
 }
 

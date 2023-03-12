@@ -34,14 +34,17 @@ public class SuperStructure extends SubsystemBase {
   private double boffset;
   private double foffset;
   private double armLength;
-  private double absoluteoffset;
+  private double fabsoluteoffset;
+  private double babsoluteoffset;
+  private double maxExtension;
 
   /** Creates a new ArmSubsystem. */
   public SuperStructure(DoubleSupplier extensionLength, DoubleSupplier CurrentAngle, SuperStructureConfig config) {
     this.extensionLength = extensionLength; this.CurrentAngle = CurrentAngle;
      this.height = config.getHeight(); this.boffset = config.getbOffset(); 
      this.foffset = config.getfOffset(); this.armLength = config.getArmBaseLength();
-     this.absoluteoffset = config.getAbsoluteOffset();
+     this.fabsoluteoffset = config.getfAbsoluteOffset(); this.babsoluteoffset = config.getbAbsoluteOffset();
+     this.maxExtension = config.getMaxExtension();
 
   }
 
@@ -50,19 +53,21 @@ public class SuperStructure extends SubsystemBase {
     if(CurrentAngle.getAsDouble() >= 90 && CurrentAngle.getAsDouble() <= 270){
       return 31;
     }
-    double heightOffset = CurrentAngle.getAsDouble() < 90 ? absoluteoffset: -absoluteoffset;
-    return MathUtil.clamp((((height + heightOffset) / Math.cos(Math.toRadians(CurrentAngle.getAsDouble()))) - (armLength + heightOffset)), 0, 31);
+    double heightOffset = CurrentAngle.getAsDouble() < 180 ? fabsoluteoffset: babsoluteoffset; 
+    return MathUtil.clamp(((height / (Math.cos(Math.toRadians(CurrentAngle.getAsDouble() + heightOffset)))) - armLength), 0, this.maxExtension); 
   }
 
+  //GOOD
   public double minRotation(){
     SmartDashboard.putNumber("extensionLength", extensionLength.getAsDouble());
     double heightOffset = foffset;
-    return Math.toDegrees(Math.acos((height + heightOffset) / extensionLength.getAsDouble()));
+    return Math.max(Math.toDegrees(Math.acos((height) / extensionLength.getAsDouble()) + heightOffset), 44);
   }
 
   public double maxRotation(){
-    double heightOffset = -boffset;
-    return 360 - Math.toDegrees(Math.acos((height + heightOffset) / extensionLength.getAsDouble()));
+    double heightOffset = -6.9;
+    SmartDashboard.putNumber("extension length in m", foffset);
+    return Math.min((360 - Math.toDegrees(Math.acos((height + heightOffset) / extensionLength.getAsDouble()))), 297);
   }
 
   // public double getRoll(){
