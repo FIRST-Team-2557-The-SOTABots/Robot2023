@@ -146,7 +146,7 @@ public class RobotContainer {
     this.mIntake = new Intake(intakeMotors);
     TrapezoidProfile.Constraints trapezoidProfile = new TrapezoidProfile.Constraints(40, 80);
 
-    ProfiledPIDController extensController = new ProfiledPIDController(0.8, 0, 0, trapezoidProfile);
+    ProfiledPIDController extensController = new ProfiledPIDController(1, 0, 0, trapezoidProfile);
     PIDController armRotationController = new PIDController(0.03,0,0);
 
     try{

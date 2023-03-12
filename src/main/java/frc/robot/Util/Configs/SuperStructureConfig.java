@@ -6,10 +6,10 @@ public class SuperStructureConfig {
     private int armBaseLength;
     private double encoderPerInch;
     private double height;
-    private double boffset;
-    private double foffset;
-    private double fabsoluteoffset;
-    private double babsoluteoffset;
+    private double bOffset;
+    private double fOffset;
+    private double fAbsoluteOffset;
+    private double bAbsoluteOffset;
     private double maxExtension;
 
     public double getEncoderAtZeroDegrees(){
@@ -28,16 +28,16 @@ public class SuperStructureConfig {
         return height;
     }
     public double getbOffset(){
-        return boffset;
+        return bOffset;
     }
     public double getfOffset(){
-        return foffset;
+        return fOffset;
     }
     public double getfAbsoluteOffset(){
-        return fabsoluteoffset;
+        return fAbsoluteOffset;
     }
     public double getbAbsoluteOffset(){
-        return babsoluteoffset;
+        return bAbsoluteOffset;
     }
     public double getMaxExtension(){
         return maxExtension;

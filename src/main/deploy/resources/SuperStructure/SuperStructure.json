@@ -4,10 +4,10 @@
     "armBaseLength": 30,
     "encoderPerInch": 13.2,
     "height": 23,
-    "boffset": -6.9,
-    "foffset": 2,
-    "fabsoluteoffset": 0,
-    "babsoluteoffset": 19,
+    "bOffset": -6,
+    "fOffset": -3,
+    "fAbsoluteOffset": -3,
+    "bAbsoluteOffset": -6,
     "maxExtension": 34
     
 }

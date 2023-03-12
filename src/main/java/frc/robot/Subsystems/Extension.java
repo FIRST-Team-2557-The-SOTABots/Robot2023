@@ -19,8 +19,6 @@ public class Extension extends SubsystemBase{
     public void set(double speed){
         if(limitswitch.get() && speed < 0){
            speed = 0;
-           motor.resetEncoder();
-           
         }
         motor.setVoltage(speed);
       }
@@ -36,7 +34,9 @@ public class Extension extends SubsystemBase{
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("extensionEncoder", getEncoder());
+        if(limitswitch.get()) motor.resetEncoder();
+        // SmartDashboard.putNumber("extensionEncoder", getEncoder());
+        SmartDashboard.putNumber("Extension length", getLength());
         SmartDashboard.putBoolean("limitswitch", limitswitch.get());
     }
 
