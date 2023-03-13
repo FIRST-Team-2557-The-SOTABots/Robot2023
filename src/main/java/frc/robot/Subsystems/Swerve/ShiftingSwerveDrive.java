@@ -211,9 +211,9 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     );
     updateModuleTranslation(mGyro.getRotation2d());
     
-    SmartDashboard.putNumber("inHighGear", mShifter.getGear());
-    SmartDashboard.putBoolean("FieldCentric", mFieldCentricActive);
-    SmartDashboard.putNumber("Bot angle", getRotation2d().getDegrees());
+    // SmartDashboard.putNumber("inHighGear", mShifter.getGear());
+    // SmartDashboard.putBoolean("FieldCentric", mFieldCentricActive);
+    // SmartDashboard.putNumber("Bot angle", getRotation2d().getDegrees());
   }
   
 }

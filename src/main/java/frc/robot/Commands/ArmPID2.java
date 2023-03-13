@@ -4,12 +4,9 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Rotation;
-import frc.robot.Subsystems.SuperStructure;
 import frc.robot.Util.Controllers.SOTAXboxcontroller;
 
 public class ArmPID2 extends CommandBase{
@@ -19,14 +16,18 @@ public class ArmPID2 extends CommandBase{
     private SOTAXboxcontroller controller;
     private DoubleSupplier minAngle;
     private DoubleSupplier maxAngle;
+    private DoubleSupplier extensionlength;
 
     public ArmPID2(Rotation mArm,
             PIDController pidController,
             double setpoint,
             SOTAXboxcontroller controller,
             DoubleSupplier minAngle,
-            DoubleSupplier maxAngle){
-        this.mArm = mArm; this.setpoint = setpoint; this.pidController = pidController; this.controller = controller; this.minAngle = minAngle; this.maxAngle = maxAngle;
+            DoubleSupplier maxAngle,
+            DoubleSupplier extensionLength){
+        this.mArm = mArm; this.setpoint = setpoint; this.pidController = pidController;
+         this.controller = controller; this.minAngle = minAngle; this.maxAngle = maxAngle;
+         this.extensionlength = extensionLength;
         addRequirements(mArm);
     }
     
@@ -42,15 +43,20 @@ public class ArmPID2 extends CommandBase{
         setpoint = MathUtil.clamp(setpoint, minAngle.getAsDouble(), maxAngle.getAsDouble());
 
         pidController.setSetpoint(setpoint);
-        double output = pidController.calculate(mArm.getRotationDegrees());
-        if(mArm.getRotatorEncoder() > 0.587 && mArm.getRotatorEncoder() < 0.701){
-            output = pidController.getSetpoint() > 90 ? 3 : -3;
-        }
+        pidController.setP(0.05 - (0.02 * extensionlength.getAsDouble() / 31));
+
+        double output = Math.sin(mArm.getRotationRadians()) * (0.01 + (0.02 * extensionlength.getAsDouble() / 31))//SmartDashboard.getNumber("Test delta", 0) TODO: change to full length 
+        + pidController.calculate(mArm.getRotationDegrees());
+
         mArm.set(output);
 
         SmartDashboard.putNumber("Angle Output", output);
         SmartDashboard.putNumber("MinAngle", minAngle.getAsDouble());
         SmartDashboard.putNumber("maxAngle", maxAngle.getAsDouble());
+        SmartDashboard.putNumber("Rotation goal", setpoint);
+
+
+
     }
     
 }

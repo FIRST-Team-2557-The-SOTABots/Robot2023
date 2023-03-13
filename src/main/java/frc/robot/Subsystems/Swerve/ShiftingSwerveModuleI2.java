@@ -63,7 +63,7 @@ public class ShiftingSwerveModuleI2 extends SubsystemBase implements ShiftingSwe
     double angleFFOutput = mAngleFF.calculate(mAnglePID.getSetpoint().velocity);
 
     // SmartDashboard.putNumber("state speed", state.angle.getRadians());
-    SmartDashboard.putNumber("Angle error" + modulePosition, mAnglePID.getPositionError());
+    // SmartDashboard.putNumber("Angle error" + modulePosition, mAnglePID.getPositionError());
 
     mAngleMotor.setVoltage(state.speedMetersPerSecond == 0.0 ? 0.0 : anglePIDOutput + angleFFOutput);
     
@@ -167,6 +167,6 @@ public class ShiftingSwerveModuleI2 extends SubsystemBase implements ShiftingSwe
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Angle no offset " + modulePosition, getAngleNoOffset());
+    // SmartDashboard.putNumber("Angle no offset " + modulePosition, getAngleNoOffset());
   }
 }

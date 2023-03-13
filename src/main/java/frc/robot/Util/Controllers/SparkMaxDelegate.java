@@ -80,7 +80,7 @@ public class SparkMaxDelegate implements SOTAMotorController{
 
     @Override
     public double getMotorCurrent() {
-        return motor.getOutputCurrent();
+        return motor.getAppliedOutput();
     }
 
     @Override

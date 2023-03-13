@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -35,6 +36,7 @@ import frc.robot.Commands.ArmPID2;
 import frc.robot.Commands.BasicArmExtension;
 import frc.robot.Commands.DriveCommand;
 import frc.robot.Commands.ExtensionPID;
+import frc.robot.Commands.ResetExtension;
 import frc.robot.Subsystems.Extension;
 import frc.robot.Subsystems.Intake;
 import frc.robot.Subsystems.Rotation;
@@ -82,6 +84,7 @@ public class RobotContainer {
   private DriveCommand mDriveCommand;
   private BasicArmExtension armExtensionCommand;
   private ExtensionPID extensionPID;
+  private ResetExtension mResetExtension;
 
   public RobotContainer() {
     ObjectMapper mapper = new ObjectMapper();
@@ -125,7 +128,7 @@ public class RobotContainer {
       e.printStackTrace();
       throw new RuntimeException("Faild to create swerveDrive", e);
     }
-    MotorLimits rotatorMotorLimits = new MotorLimits(0.345, 0.8); //TODO: 
+    MotorLimits rotatorMotorLimits = new MotorLimits(0.262, 0.97); //TODO: 
     MotorLimits extendLimit = new MotorLimits(null, 630.0);
     SOTAMotorController winchMotor = initSparkMaxDelegate("SuperStructure/WinchMotor", extendLimit);
     SOTAMotorController rotatorMotor = initSparkMaxDelegate("SuperStructure/RotatorMotor");
@@ -146,7 +149,7 @@ public class RobotContainer {
     this.mIntake = new Intake(intakeMotors);
     TrapezoidProfile.Constraints trapezoidProfile = new TrapezoidProfile.Constraints(40, 80);
 
-    ProfiledPIDController extensController = new ProfiledPIDController(1, 0, 0, trapezoidProfile);
+    ProfiledPIDController extensController = new ProfiledPIDController(3, 0, 0, trapezoidProfile);
     PIDController armRotationController = new PIDController(0.03,0,0);
 
     try{
@@ -154,9 +157,10 @@ public class RobotContainer {
       this.mExtension = new Extension(winchMotor, limitSwitch, superStructureConfig);
       this.mRotation = new Rotation(rotatorComposite, armGyro, superStructureConfig);
       SuperStructure superStructure = new SuperStructure(mExtension::getLength,mRotation::getRotationDegrees, superStructureConfig);
-      this.rotationPID = new ArmPID2( mRotation, armRotationController, 0, mController
-      , superStructure::minRotation, superStructure::maxRotation);
+      this.rotationPID = new ArmPID2( mRotation, armRotationController, 90, mController
+      , superStructure::minRotation, superStructure::maxRotation, mExtension::getLength);
       this.extensionPID = new ExtensionPID(extensController, mExtension, mController, superStructure::maxExtension);
+      this.mResetExtension = new ResetExtension(mExtension);
     } catch(IOException e){
       e.printStackTrace();
       throw new RuntimeException("Faild to create SuperStructure", e);      
@@ -175,6 +179,8 @@ public class RobotContainer {
   private void configureDefaultCommands(){
     SmartDashboard.putNumber("rotation setpoint", 0.0);
     SmartDashboard.putNumber("Extension Length", 0.0);
+    SmartDashboard.putNumber("Test delta", 0);
+    SmartDashboard.putNumber("Angle kp", 0);
 
 
     mSwerveDrive.setDefaultCommand(mDriveCommand);
@@ -204,7 +210,7 @@ public class RobotContainer {
 
     mController.x().whileTrue(new RunCommand(mIntake::intake, mIntake)).onFalse(new InstantCommand(mIntake::stop));
     mController.y().whileTrue(new RunCommand(mIntake::release, mIntake)).onFalse(new InstantCommand(mIntake::stop));
-    
+    mController.start().onTrue(mResetExtension);
   }
 
   public Command getAutonomousCommand() {
@@ -244,8 +250,20 @@ public class RobotContainer {
           default:
               throw new IllegalArgumentException("Illegal motor type");
       }
+      CANSparkMax.IdleMode idleMode;
+      switch(config.getIdleMode()){
+        case("BRAKE"):
+          idleMode = IdleMode.kBrake;
+          break;
+        case("COAST"):
+          idleMode = IdleMode.kCoast;
+          break;
+        default:
+          throw new IllegalArgumentException("Illegal  idle mode");
+      }
       CANSparkMax motor = new CANSparkMax(config.getPort(), motorType);
       motor.setInverted(config.getInverted());
+      motor.setIdleMode(idleMode);
       return new SparkMaxDelegate(motor, limits, config.getCountsPerRevolution());
     } catch(IOException e){
       throw new RuntimeException("Error Initialzing SparkMax", e);

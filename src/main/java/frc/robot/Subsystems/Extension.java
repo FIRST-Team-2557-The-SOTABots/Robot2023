@@ -11,6 +11,7 @@ public class Extension extends SubsystemBase{
     private SOTAMotorController motor;
     private DigitalInput limitswitch;
     private SuperStructureConfig config;
+    private boolean hasReset = false;
 
     public Extension(SOTAMotorController motor, DigitalInput limitSwitch, SuperStructureConfig config){
         this.motor = motor; this.limitswitch = limitSwitch; this.config = config;
@@ -20,6 +21,7 @@ public class Extension extends SubsystemBase{
         if(limitswitch.get() && speed < 0){
            speed = 0;
         }
+        if(!hasReset && speed > 0) speed = 0;
         motor.setVoltage(speed);
       }
  
@@ -32,9 +34,20 @@ public class Extension extends SubsystemBase{
         return config.getArmBaseLength() + (getEncoder()/config.getEncoderPerInch());
     }   
 
+    public double getLengthFromStart() {
+        return (getEncoder()/config.getEncoderPerInch());
+    }
+
+    public boolean isFullyRetracted(){
+        return limitswitch.get();
+    }
+
     @Override
     public void periodic() {
-        if(limitswitch.get()) motor.resetEncoder();
+        if(limitswitch.get()) {
+            motor.resetEncoder();
+            hasReset = true;
+        }
         // SmartDashboard.putNumber("extensionEncoder", getEncoder());
         SmartDashboard.putNumber("Extension length", getLength());
         SmartDashboard.putBoolean("limitswitch", limitswitch.get());

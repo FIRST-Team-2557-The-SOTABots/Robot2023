@@ -24,14 +24,14 @@ public class ExtensionPID extends CommandBase{
     @Override
     public void execute() {
         double setPoint = 0;
-        if(mController.getLeftBumper()) setPoint = 31;
-        if(mController.getRightBumper()) setPoint = 0;
+        // if(mController.getLeftBumper()) setPoint = 31;
+        // if(mController.getRightBumper()) setPoint = 0;
+        setPoint = SmartDashboard.getNumber("Extension Length", 0.0);
         setPoint = Math.min(setPoint, maxLength.getAsDouble());
 
         extendPID.reset(setPoint, 0.0);
 
-        double output = extendPID.calculate(mExtension.getLength());
-        SmartDashboard.putNumber("extend setpoint", setPoint);
+        double output = extendPID.calculate(mExtension.getLengthFromStart());
         SmartDashboard.putNumber("extensionSpeed", output);
         
 

@@ -16,7 +16,7 @@ public class Rotation extends SubsystemBase{
     }
 
     public void set(double speed){
-        // motor.set(speed);
+        motor.set(speed);
     }
 
     public double getRotatorEncoder(){
@@ -26,9 +26,14 @@ public class Rotation extends SubsystemBase{
     public double getRotationDegrees(){
         return (getRotatorEncoder()-config.getEncoderAtZeroDegrees())/config.getEncoderPerDegree();
       }
+
+    public double getRotationRadians(){
+        return ((2*Math.PI) / 360) * getRotationDegrees();  
+    }
       @Override
       public void periodic() {
-          SmartDashboard.putNumber("angle", getRotationDegrees());
+          SmartDashboard.putNumber("Arm Angle", getRotationDegrees());
           SmartDashboard.putNumber("Angle Encoder", getRotatorEncoder());
+          SmartDashboard.putNumber("angle supplied voltage", motor.get());
       }
 }
