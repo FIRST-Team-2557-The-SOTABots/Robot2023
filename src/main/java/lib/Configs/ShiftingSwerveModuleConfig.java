@@ -12,8 +12,6 @@ public class ShiftingSwerveModuleConfig {
     
     private double[] gearRatios;
 
-    private double angleEncoderCPR;
-
     private double wheelDiameter;   
 
     private double speedKP;
@@ -42,10 +40,6 @@ public class ShiftingSwerveModuleConfig {
 
     public double[] getGearRatios(){
         return gearRatios;
-    }
-
-    public double getAngleEncoderCPR() {
-        return angleEncoderCPR;
     }
 
     /**
@@ -104,8 +98,8 @@ public class ShiftingSwerveModuleConfig {
         return angleMaxAccel;
     }
 
-    public double getAngleMaxVel() {
-        return angleMaxAccel * Math.sqrt((angleEncoderCPR / 4) / angleMaxAccel);
+    public double getAngleMaxVel(double encoderCountsPerRevolution) {
+        return angleMaxAccel * Math.sqrt((encoderCountsPerRevolution / 4) / angleMaxAccel);
     }
 
     public double getAngleKS() {
@@ -131,20 +125,54 @@ public class ShiftingSwerveModuleConfig {
     public SimpleMotorFeedforward speedFF(){
         return new SimpleMotorFeedforward(speedKS, speedKV);
     }
+
+    public ProfiledPIDController generateAnglePID(double countsPerRevolution) {
+        TrapezoidProfile.Constraints constraints = 
+            new TrapezoidProfile.Constraints(
+                getAngleMaxVel(countsPerRevolution),
+                getAngleMaxAccel()
+        );
+        ProfiledPIDController pid = 
+            new ProfiledPIDController(
+                getAngleKP(), 
+                getAngleKI(),
+                getAngleKD(), 
+                constraints
+        );
+        pid.setTolerance(getAnglePIDTolerance());
+        pid.enableContinuousInput(0, countsPerRevolution);
+        return pid;
+    }
     
-    public ProfiledPIDController anglePID(){
-        ProfiledPIDController pid = new ProfiledPIDController(angleKP, angleKI, angleKD, 
-        new TrapezoidProfile.Constraints(getAngleMaxVel(), angleMaxAccel));
-        pid.setTolerance(anglePIDTolerance);
-        pid.enableContinuousInput(0, angleEncoderCPR);
+    public ProfiledPIDController generateSpeedPID() {
+        TrapezoidProfile.Constraints constraints =
+            new TrapezoidProfile.Constraints(
+                getSpeedMaxVel(),
+                getSpeedMaxAccel()
+        );
+        ProfiledPIDController pid =
+            new ProfiledPIDController(
+                getSpeedKP(),
+                getSpeedKI(), 
+                getSpeedKD(), 
+                constraints
+        );
         return pid;
     }
-    public ProfiledPIDController speedPID(){
-        ProfiledPIDController pid = new ProfiledPIDController(speedKP, speedKI, speedKD,
-        new TrapezoidProfile.Constraints(speedMaxVel, speedMaxAccel));
-        pid.setTolerance(speedPIDTolerance);
-        return pid;
-    }
+
+    // public ProfiledPIDController anglePID(){
+    //     ProfiledPIDController pid = new ProfiledPIDController(angleKP, angleKI, angleKD, 
+    //     new TrapezoidProfile.Constraints(getAngleMaxVel(), angleMaxAccel));
+    //     pid.setTolerance(anglePIDTolerance);
+    //     pid.enableContinuousInput(0, angleEncoderCPR);
+    //     return pid;
+    // }
+    // public ProfiledPIDController speedPID(){
+    //     ProfiledPIDController pid = new ProfiledPIDController(speedKP, speedKI, speedKD,
+    //     new TrapezoidProfile.Constraints(speedMaxVel, speedMaxAccel));
+    //     pid.setTolerance(speedPIDTolerance);
+    //     return pid;
+    // }
 
     
 }

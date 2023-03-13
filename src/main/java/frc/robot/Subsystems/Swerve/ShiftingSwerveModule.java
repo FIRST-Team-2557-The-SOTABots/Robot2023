@@ -33,19 +33,22 @@ public class ShiftingSwerveModule extends SubsystemBase {
       SOTAMotorController speedMotor, 
       ShiftingSwerveModuleConfig config) {
 
+    this.mSpeedMotor = speedMotor;
+    this.mAngleMotor = angleMotor;
+
     this.modulePosition = config.getEncoderPort();
     this.mSpeedMotor = speedMotor; this.mAngleMotor = angleMotor;
 
     this.kGearRatios = config.getGearRatios();
 
-    this.kAngleCountsPerRevolution = config.getAngleEncoderCPR();
+    this.kAngleCountsPerRevolution = angleMotor.getEncoder().getCountsPerRevolution();
     this.kWheelCircumference = config.getWheelCircumference();
 
     this.mAngleFF = config.angleFF();
     this.mSpeedFF = config.speedFF();
 
-    this.mAnglePID = config.anglePID();
-    this.mSpeedPID = config.speedPID();
+    this.mAnglePID = config.generateAnglePID(kAngleCountsPerRevolution);
+    this.mSpeedPID = config.generateSpeedPID();
                 
   }
 
