@@ -59,8 +59,8 @@ public class Falcon implements SOTAMotorController {
         return mEncoder.getPosition();
     }
 
-    public SOTAEncoder getEncoder() {
-        return mEncoder;
+    public double getEncoder() {
+        return mEncoder.getPosition();
     }
 
     public double getMotorCurrent() {

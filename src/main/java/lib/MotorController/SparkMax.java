@@ -56,8 +56,8 @@ public class SparkMax implements SOTAMotorController{
         return mMotor.getEncoder().getPosition();
     }
 
-    public SOTAEncoder getEncoder() {
-        return mEncoder;
+    public double getEncoder() {
+        return mEncoder.getPosition();
     }
 
     public double getMotorCurrent() {

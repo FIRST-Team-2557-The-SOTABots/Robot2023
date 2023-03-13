@@ -2,14 +2,14 @@ package lib.Encoder;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.AnalogInput;
-import lib.Configs.AbsouleEncoderConfig;
+import lib.Configs.EncoderConfig;
 
 public class AnalogInputEncoder implements SOTAAbsoulteEncoder {
     private final AnalogInput mEncoder;
     private final double kCountsPerRevolution;
     private final double kOffset;
 
-    public AnalogInputEncoder(AnalogInput encoder, AbsouleEncoderConfig config) {
+    public AnalogInputEncoder(AnalogInput encoder, EncoderConfig config) {
         this.mEncoder = encoder;
         this.kCountsPerRevolution = config.getCountsPerRevolution();
         this.kOffset = config.getCountsPerRevolution();

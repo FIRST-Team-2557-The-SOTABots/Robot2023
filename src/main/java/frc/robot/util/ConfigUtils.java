@@ -36,7 +36,6 @@ public class ConfigUtils{
 
       String fileContent = fileContentBuilder.toString();
     //   JSONObject json = (JSONObject) new JSONParser().parse(fileContent);
-
         return mapper.readValue(fileContent, clazz);
         // PathPlanner.loadPath(resource, null);
     } catch (Exception e) {
