@@ -30,14 +30,13 @@ import frc.robot.Subsystems.SuperStructure;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveModule;
 import frc.robot.util.ConfigUtils;
-import lib.Configs.AbsouleEncoderConfig;
 import lib.Configs.DoubleSolenoidConfig;
+import lib.Configs.EncoderConfig;
 import lib.Configs.MotorControllerConfig;
 import lib.Configs.ShiftingSwerveDriveConfig;
 import lib.Configs.ShiftingSwerveModuleConfig;
 import lib.Control.SOTAXboxcontroller;
 import lib.Encoder.AnalogInputEncoder;
-import lib.Encoder.DutyCycleEncoder;
 import lib.Encoder.SOTAEncoder;
 import lib.Gyro.NavX;
 import lib.Gyro.Pigeon;
@@ -209,7 +208,7 @@ public class RobotContainer {
   public SparkMax createCompositeSparkMax(String motorResource, String encoderResource) {
     try{
       MotorControllerConfig motorConfig = configUtils.readFromClassPath(MotorControllerConfig.class, motorResource);
-      AbsouleEncoderConfig encoderConfig = configUtils.readFromClassPath(AbsouleEncoderConfig.class, encoderResource);
+      EncoderConfig encoderConfig = configUtils.readFromClassPath(EncoderConfig.class, encoderResource);
       MotorType motorType;
       switch(motorConfig.getMotorType()) {
           case("BRUSHLESS"):
@@ -231,7 +230,7 @@ public class RobotContainer {
 
   public SOTAEncoder createAnalogInputEncoder(String resourceId) {
     try {
-      AbsouleEncoderConfig config = configUtils.readFromClassPath(AbsouleEncoderConfig.class, resourceId);
+      EncoderConfig config = configUtils.readFromClassPath(EncoderConfig.class, resourceId);
       AnalogInputEncoder encoder = new AnalogInputEncoder(new AnalogInput(config.getPort()), config);
       return encoder;
     } catch(IOException e) {

@@ -11,6 +11,7 @@ import lib.Encoder.SOTAEncoder;
 public class Falcon implements SOTAMotorController {
     private final TalonFX mMotor;
     private final SOTAEncoder mEncoder;
+    private final SOTAEncoder mNativeEncoder;
 
     public Falcon(TalonFX motor, MotorControllerConfig config){
         this(
@@ -24,6 +25,7 @@ public class Falcon implements SOTAMotorController {
     public Falcon(TalonFX motor, SOTAEncoder encoder, MotorControllerConfig config) {
         this.mMotor = motor;
         this.mEncoder = encoder;
+        this.mNativeEncoder = new FalconIntegratedEncoder(mMotor.getSensorCollection());
     }
 
     public void set(double speed) {
@@ -59,8 +61,20 @@ public class Falcon implements SOTAMotorController {
         return mEncoder.getPosition();
     }
 
-    public double getEncoder() {
-        return mEncoder.getPosition();
+    public SOTAEncoder getEncoder() {
+        return mEncoder;
+    }
+
+    public double getNativeVelocity() {
+        return mNativeEncoder.getVelocity();
+    }
+
+    public double getNativePosition() {
+        return mNativeEncoder.getPosition();
+    }
+
+    public SOTAEncoder getNativeEncoder() {
+        return mNativeEncoder;
     }
 
     public double getMotorCurrent() {

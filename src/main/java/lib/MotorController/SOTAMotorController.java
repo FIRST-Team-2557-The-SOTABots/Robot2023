@@ -8,7 +8,10 @@ public interface SOTAMotorController {
     double get();
     double getTickVelocity();
     double getTickPosition();
-    double getEncoder();
+    SOTAEncoder getEncoder();
+    double getNativeVelocity();
+    double getNativePosition();
+    SOTAEncoder getNativeEncoder();
     double getMotorCurrent();
     double getMotorTemperature();
     // void setIdleMode(); TODO: fix

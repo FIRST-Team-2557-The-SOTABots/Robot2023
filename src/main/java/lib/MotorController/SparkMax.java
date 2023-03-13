@@ -9,6 +9,7 @@ import lib.Encoder.SparkMaxIntegratedEncoder;
 public class SparkMax implements SOTAMotorController{
     private final CANSparkMax mMotor;
     private final SOTAEncoder mEncoder;
+    private final SOTAEncoder mNativeEncoder;
 
     public SparkMax(CANSparkMax motor, MotorControllerConfig config){
         this(
@@ -22,6 +23,7 @@ public class SparkMax implements SOTAMotorController{
     public SparkMax(CANSparkMax motor, SOTAEncoder encoder, MotorControllerConfig config) {
         this.mMotor = motor;
         this.mEncoder = encoder;
+        this.mNativeEncoder = new SparkMaxIntegratedEncoder(mMotor.getEncoder());
     }
 
     public void set(double speed) {
@@ -49,15 +51,26 @@ public class SparkMax implements SOTAMotorController{
     }
 
     public double getTickVelocity() {
-        return mMotor.getEncoder().getVelocity();
+        return mEncoder.getVelocity();
     }
 
     public double getTickPosition() {
-        return mMotor.getEncoder().getPosition();
+        return mEncoder.getPosition();
     }
 
-    public double getEncoder() {
-        return mEncoder.getPosition();
+    public SOTAEncoder getEncoder() {
+        return mEncoder;
+    }
+
+    public double getNativeVelocity() {
+        return mNativeEncoder.getVelocity();
+    }
+    public double getNativePosition() {
+        return mNativeEncoder.getPosition();
+    }
+
+    public SOTAEncoder getNativeEncoder() {
+        return mNativeEncoder;
     }
 
     public double getMotorCurrent() {
@@ -67,6 +80,5 @@ public class SparkMax implements SOTAMotorController{
     public double getMotorTemperature() {
         return mMotor.getMotorTemperature();
     }
-
 
 }
