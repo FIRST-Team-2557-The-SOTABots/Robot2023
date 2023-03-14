@@ -7,7 +7,7 @@ package frc.robot.Subsystems.Swerve;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import lib.Component.GearShifter;
+import lib.Pneumatics.GearShifter;
 import lib.Config.DoubleSolenoidSwerveShifterConfig;
 
 /** Add your docs here. */
@@ -23,13 +23,11 @@ public class DoubleSolenoidSwerveShifter implements GearShifter {
         kLoGearValue = config.getLoGearValue();
     }
 
-    @Override
     public void shift(int gear) {
         MathUtil.clamp(gear, 0, 1);
         mShifter.set(gear == 0 ? kLoGearValue : kHiGearValue);        
     }
 
-    @Override
     public int getGear() {
         return mShifter.get() == kLoGearValue ? 0 : 1;
     }

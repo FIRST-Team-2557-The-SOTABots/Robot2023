@@ -1,7 +1,6 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.Subsystems.Swerve;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -28,8 +27,8 @@ public class ShiftingSwerveModuleState extends SwerveModuleState {
         return shiftingStates;
     }
     
-    public static ShiftingSwerveModuleState optimize(ShiftingSwerveModuleState state, Rotation2d angle) {
-        SwerveModuleState.optimize(state, angle);
-        return new ShiftingSwerveModuleState(state, state.gear);
+    public static ShiftingSwerveModuleState optimize(ShiftingSwerveModuleState state, Rotation2d rotation){
+        return new ShiftingSwerveModuleState(SwerveModuleState.optimize(state, rotation), state.gear);
     }
+    
 }

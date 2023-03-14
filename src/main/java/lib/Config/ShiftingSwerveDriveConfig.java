@@ -5,7 +5,12 @@
 package lib.Config;
 
 import static frc.robot.Constants.*;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 /** Add your docs here. */
 public class ShiftingSwerveDriveConfig {
@@ -44,6 +49,14 @@ public class ShiftingSwerveDriveConfig {
             new Translation2d(-getWheelBase() / 2, getTrackWidth() / 2)
         };
         return moduleTranslations;
+    }
+
+    public SwerveDriveKinematics generateKinematics() {
+        return new SwerveDriveKinematics(getModuleTranslations());
+    }
+
+    public SwerveDriveOdometry generateOdometry(SwerveDriveKinematics kinematics, Rotation2d gyroAngle, SwerveModulePosition[] modulePositions) {
+        return new SwerveDriveOdometry(kinematics, gyroAngle, modulePositions);
     }
 
     public double getMaxWheelSpeed() {

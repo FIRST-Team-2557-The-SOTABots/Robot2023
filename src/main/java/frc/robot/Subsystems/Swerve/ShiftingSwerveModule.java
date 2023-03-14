@@ -9,78 +9,51 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import lib.Config.ShiftingSwerveModuleConfig;
-import lib.MotorController.SotaMotorController;
+import lib.Configs.ShiftingSwerveModuleConfig;
+import lib.Encoder.SOTAAbsoulteEncoder;
+import lib.MotorController.SOTAMotorController;
 
 public class ShiftingSwerveModule extends SubsystemBase {
 
-  private SotaMotorController mSpeedMotor;
-  private SotaMotorController mAngleMotor;
-  private AnalogInput mAngleEncoder;
+  private int modulePosition; 
 
+  private SOTAMotorController mAngleMotor; // TODO: Change to a SOTACompositeMotor
+  private SOTAMotorController mSpeedMotor;
+
+  private ProfiledPIDController mAnglePID;
+  private ProfiledPIDController mSpeedPID;
+  private SimpleMotorFeedforward mAngleFF;
+  private SimpleMotorFeedforward mSpeedFF;
+
+  private double[] kGearRatios;
   private double kAngleOffset;
   private double kAngleCountsPerRevolution;
-  private double[] kGearRatios;
-  private double kWheelCircumference;
-  
-  private ProfiledPIDController mSpeedPID;
-  private SimpleMotorFeedforward mSpeedFF;
-  private ProfiledPIDController mAnglePID;
-  private SimpleMotorFeedforward mAngleFF;
+  private double kWheelCircumference; 
 
-  /** Creates a new ShiftingSwerveModule. */
   public ShiftingSwerveModule(
-      SotaMotorController speedMotor, 
-      SotaMotorController angleMotor, 
-      AnalogInput angleEncoder,
-      ShiftingSwerveModuleConfig config) {
-    mSpeedMotor = speedMotor;
-    mAngleMotor = angleMotor;
-    mAngleEncoder = angleEncoder;
-    
-    kAngleOffset = config.getAngleOffset();
-    kGearRatios = new double[2];
-    kGearRatios[0] = config.getLoGearRatio();
-    kGearRatios[1] = config.getHiGearRatio();
+    SOTAMotorController angleMotor, 
+    SOTAMotorController speedMotor, 
+    ShiftingSwerveModuleConfig config) {
 
-    kWheelCircumference = config.getWheelCircumference();
+    this.mSpeedMotor = speedMotor;
+    this.mAngleMotor = angleMotor;
 
-    mSpeedFF = new SimpleMotorFeedforward(
-      config.getSpeedKS(),
-      config.getSpeedKV()
-    );
-    mSpeedPID = new ProfiledPIDController(
-      config.getSpeedKP(), 
-      config.getSpeedKI(),
-      config.getSpeedKP(),
-      new TrapezoidProfile.Constraints(
-        config.getSpeedMaxVel(),
-        config.getSpeedMaxAccel()
-      )
-    );
+    this.modulePosition = config.getEncoderPort();
+    this.mSpeedMotor = speedMotor; this.mAngleMotor = angleMotor;
 
-    mSpeedPID.setTolerance(config.getSpeedPIDTolerance());
+    this.kGearRatios = config.getGearRatios();
 
-    mAngleFF = new SimpleMotorFeedforward(
-      config.getAngleKS(),
-      config.getAngleKV()
-    );
-    mAnglePID = new ProfiledPIDController(
-      config.getSpeedKP(),
-      config.getAngleKI(),
-      config.getAngleKD(),
-      new TrapezoidProfile.Constraints(
-        config.getAngleMaxVel(),
-        config.getAngleMaxAccel()
-      )
-    );
+    this.kAngleCountsPerRevolution = angleMotor.getEncoder().getCountsPerRevolution();
+    this.kWheelCircumference = config.getWheelCircumference();
 
-    mAnglePID.setTolerance(config.getAnglePIDTolerance());
-    mAnglePID.enableContinuousInput(0.0, config.getAngleEncoderCPR());
+    this.mAngleFF = config.angleFF();
+    this.mSpeedFF = config.speedFF();
+
+    this.mAnglePID = config.generateAnglePID(kAngleCountsPerRevolution);
+    this.mSpeedPID = config.generateSpeedPID();
+                
   }
 
   /**
@@ -130,7 +103,11 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * @return The angle of the module in absolute encoder ticks
    */
   public double getAngle() {
-    return -1 * MathUtil.inputModulus(mAngleEncoder.getAverageVoltage() - kAngleOffset, 0, kAngleCountsPerRevolution) + kAngleCountsPerRevolution;
+    return -1 *(-1.0 * MathUtil.inputModulus(mAngleMotor.getEncoder().getPosition() - kAngleOffset, 0, kAngleCountsPerRevolution) + kAngleCountsPerRevolution);
+  }
+
+  public double getAngleNoOffset() {
+    return ((SOTAAbsoulteEncoder) mAngleMotor.getEncoder()).getPositionNoOffset();
   }
 
   /**
@@ -185,7 +162,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * @return The meters per count 
    */
   public double getMetersPerCount(double gearRatio) {
-    return kWheelCircumference / gearRatio / mSpeedMotor.getEncoderCountsPerRevolution();
+    return kWheelCircumference / gearRatio / mSpeedMotor.getEncoder().getCountsPerRevolution();
   }
 
   @Override
@@ -194,5 +171,4 @@ public class ShiftingSwerveModule extends SubsystemBase {
     SmartDashboard.putNumber("Speed set", mSpeedMotor.get());
     SmartDashboard.putNumber("Angle get", mAngleMotor.get());
   }
-
 }

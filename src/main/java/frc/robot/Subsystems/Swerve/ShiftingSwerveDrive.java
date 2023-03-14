@@ -17,14 +17,14 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import lib.Component.GearShifter;
-import lib.Component.Gyro;
+import lib.Pneumatics.GearShifter;
 import lib.Config.ShiftingSwerveDriveConfig;
+import lib.Gyro.SOTAGyro;
 
 public class ShiftingSwerveDrive extends SubsystemBase {
   private ShiftingSwerveModule[] mSwerveModules;
   private GearShifter mShifter;
-  private Gyro mGyro;
+  private SOTAGyro mGyro;
 
   private Translation2d[] mModuleTranslation;
   private SwerveDriveKinematics mSwerveDriveKinematics;
@@ -35,20 +35,19 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   private double kMaxWheelSpeed;
   private double kMaxAngularVelocity;
 
-// Note I kept the old way of handling dependancy injection because it would keep things more inline with other subsystems by injecting a config also
   /** Creates a new ShiftingSwerveDrive. */
-  public ShiftingSwerveDrive(ShiftingSwerveModule[] swerveModules, GearShifter shifter, Gyro gyro, ShiftingSwerveDriveConfig config) {
+  public ShiftingSwerveDrive(
+    ShiftingSwerveModule[] swerveModules, 
+    GearShifter shifter, 
+    SOTAGyro gyro, 
+    ShiftingSwerveDriveConfig config) {
     mSwerveModules = swerveModules;
     mShifter = shifter;
     mGyro = gyro;
 
     mModuleTranslation = config.getModuleTranslations();
-    mSwerveDriveKinematics = new SwerveDriveKinematics(mModuleTranslation);
-    mSwerveDriveOdometry = new SwerveDriveOdometry(
-      mSwerveDriveKinematics,
-      mGyro.getAngleRotation2d(),
-      getModulePositions()
-    );
+    mSwerveDriveKinematics = config.generateKinematics();
+    mSwerveDriveOdometry = config.generateOdometry(mSwerveDriveKinematics, getRotation2d(), getModulePositions());
 
     kMaxWheelSpeed = config.getMaxWheelSpeed();
     kMaxAngularVelocity = config.getMaxAngularVelocity();
@@ -186,7 +185,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
    * @return The rotation2d of the drivetrain
    */
   public Rotation2d getRotation2d() {
-    return mGyro.getAngleRotation2d();
+    return mGyro.getRotation2d();
   }
 
   @Override
@@ -194,9 +193,14 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     // This method will be called once per scheduler run
     updatePose(
       getModulePositions(), 
-      mGyro.getAngleRotation2d()
+      mGyro.getRotation2d()
     );
-    updateModuleTranslation(mGyro.getAngleRotation2d());
+    updateModuleTranslation(mGyro.getRotation2d());
+    updateModuleTranslation(mGyro.getRotation2d());
+    
+    SmartDashboard.putNumber("inHighGear", mShifter.getGear());
+    SmartDashboard.putBoolean("FieldCentric", mFieldCentricActive);
+    SmartDashboard.putNumber("Bot angle", getRotation2d().getDegrees());
   }
   
 }

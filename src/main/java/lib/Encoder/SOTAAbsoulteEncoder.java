@@ -2,10 +2,10 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package lib.Component;
+package lib.Encoder;
 
 /** Add your docs here. */
-public interface GearShifter {
-    public void shift(int gear);
-    public int getGear();
+public interface SOTAAbsoulteEncoder extends SOTAEncoder {
+    public double getPositionNoOffset();
+    public double getPositionOffset();
 }

@@ -1,25 +1,46 @@
 package frc.robot.util;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
-import java.io.InputStream;
+import edu.wpi.first.wpilibj.Filesystem;
 
-public class ConfigUtils {
 
-    private ObjectMapper objectMapper;
+public class ConfigUtils{
+    private ObjectMapper mapper;
 
-    public ConfigUtils() {
+    public ConfigUtils(){
         this(new ObjectMapper());
-
-    }
-    public ConfigUtils(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
     }
 
-    public <T> T readConfigFromClasspath(String classpathLocation, Class<T> clazz) throws IOException {
-        try(InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(classpathLocation)) {
-            return objectMapper.readValue(in, clazz);
-        }
+    public ConfigUtils(ObjectMapper mapper){
+        this.mapper = mapper;
+    }
+
+    public <T> T readFromClassPath(Class<T> clazz, String resource)throws IOException{
+        try (BufferedReader br =
+        new BufferedReader(
+            new FileReader(
+                new File(Filesystem.getDeployDirectory(), "resources/" + resource + ".json")))) {
+      StringBuilder fileContentBuilder = new StringBuilder();
+      String line;
+      while ((line = br.readLine()) != null) {
+        
+        fileContentBuilder.append(line);
+      }
+
+      String fileContent = fileContentBuilder.toString();
+    //   JSONObject json = (JSONObject) new JSONParser().parse(fileContent);
+        return mapper.readValue(fileContent, clazz);
+        // PathPlanner.loadPath(resource, null);
+    } catch (Exception e) {
+        e.printStackTrace();
+        throw new RuntimeException("Failed to read values", e);
+      }
     }
 }
