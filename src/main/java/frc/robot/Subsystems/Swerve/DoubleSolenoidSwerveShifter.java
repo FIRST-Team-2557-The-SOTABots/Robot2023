@@ -7,8 +7,8 @@ package frc.robot.Subsystems.Swerve;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import lib.Pneumatics.GearShifter;
 import lib.Config.DoubleSolenoidSwerveShifterConfig;
+import lib.Pneumatics.GearShifter;
 
 /** Add your docs here. */
 public class DoubleSolenoidSwerveShifter implements GearShifter {

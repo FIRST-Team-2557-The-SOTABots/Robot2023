@@ -2,7 +2,7 @@ package lib.MotorController;
 
 import com.revrobotics.CANSparkMax;
 
-import lib.Configs.MotorControllerConfig;
+import lib.Config.MotorControllerConfig;
 import lib.Encoder.SOTAEncoder;
 import lib.Encoder.SparkMaxIntegratedEncoder;
 

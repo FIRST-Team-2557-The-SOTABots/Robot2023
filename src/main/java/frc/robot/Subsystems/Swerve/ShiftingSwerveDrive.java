@@ -45,7 +45,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     mShifter = shifter;
     mGyro = gyro;
 
-    mModuleTranslation = config.getModuleTranslations();
+    mModuleTranslation = config.generateModuleTranslations();
     mSwerveDriveKinematics = config.generateKinematics();
     mSwerveDriveOdometry = config.generateOdometry(mSwerveDriveKinematics, getRotation2d(), getModulePositions());
 

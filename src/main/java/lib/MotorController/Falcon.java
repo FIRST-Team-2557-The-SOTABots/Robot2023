@@ -4,7 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.RobotController;
-import lib.Configs.MotorControllerConfig;
+import lib.Config.MotorControllerConfig;
 import lib.Encoder.FalconIntegratedEncoder;
 import lib.Encoder.SOTAEncoder;
 

@@ -2,7 +2,7 @@ package lib.Encoder;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.AnalogInput;
-import lib.Configs.EncoderConfig;
+import lib.Config.EncoderConfig;
 
 public class AnalogInputEncoder implements SOTAAbsoulteEncoder {
     private final AnalogInput mEncoder;

@@ -1,28 +1,22 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package lib.Config;
 
-import frc.robot.Constants;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
-/** Add your docs here. */
 public class ShiftingSwerveModuleConfig {
-    private double loGearRatio;
-    private double hiGearRatio;
 
-    private double angleOffset;
-    private double angleEncoderCPR;
+    private int moduleNumber;
 
-    private double wheelDiameter;
+    private double[] gearRatios;
+
+    private double wheelDiameter;   
 
     private double speedKP;
     private double speedKI;
     private double speedKD;
     private double speedMaxAccel;
     private double speedMaxVel;
-
-    private double speedPIDTolerance;
 
     private double speedKS;
     private double speedKV;
@@ -31,75 +25,31 @@ public class ShiftingSwerveModuleConfig {
     private double angleKI;
     private double angleKD;
     private double angleMaxAccel;
-    private double angleMaxVel;
-
-    private double anglePIDTolerance;
 
     private double angleKS;
     private double angleKV;
 
-    public ShiftingSwerveModuleConfig(
-        double loGearRatio, 
-        double hiGearRatio, 
-        double angleOffset, 
-        double angleEncoderCPR, 
-        double wheelDiameter, 
-        double speedKP,
-        double speedKI,
-        double speedKD,
-        double speedPIDTolerance,
-        double speedMaxAccel,
-        double speedMaxVel,
-        double speedKS,
-        double speedKV,
-        double angleKP,
-        double angleKI,
-        double angleKD,
-        double anglePIDTolerance,
-        double angleMaxAccel,
-        double angleKS,
-        double angleKV) {
-        this.loGearRatio = loGearRatio;
-        this.hiGearRatio = hiGearRatio;
-        this.angleOffset = angleOffset;
-        this.angleEncoderCPR = angleEncoderCPR;
-        this.wheelDiameter = wheelDiameter;
-        this.speedKP = speedKP;
-        this.speedKI = speedKI;
-        this.speedKD = speedKD;
-        this.speedPIDTolerance = speedPIDTolerance;
-        this.speedMaxAccel = speedMaxAccel;
-        this.speedMaxVel = speedMaxVel;
-        this.speedKS = speedKS;
-        this.speedKV = speedKV;
-        this.angleKP = angleKP;
-        this.angleKI = angleKI;
-        this.angleKD = angleKD;
-        this.anglePIDTolerance = anglePIDTolerance;
-        this.angleMaxAccel = angleMaxAccel;
-        this.angleKS = angleKS;
-        this.angleKV = angleKV;
+    private double anglePIDTolerance;
+    private double speedPIDTolerance;
 
+    public int getModuleNumber() {
+        return moduleNumber;
     }
 
-    public double getLoGearRatio() {
-        return loGearRatio;
+    public double[] getGearRatios(){
+        return gearRatios;
     }
 
-    public double getHiGearRatio() {
-        return hiGearRatio;
-    }
-
-    public double getAngleOffset() {
-        return angleOffset;
-    }
-
-    public double getAngleEncoderCPR() {
-        return angleEncoderCPR;
+    /**
+     * This needs to exist so that wheelDiameter is assigned a value with objectMapper
+     * for now this is not used and would prefer to use getWheelCircumference
+     */
+    public double getwheelDiameter() {
+        return wheelDiameter;
     }
 
     public double getWheelCircumference() {
-        return wheelDiameter * Constants.METERS_PER_INCH * Math.PI;
+        return wheelDiameter * Math.PI;
     }
 
     public double getSpeedKP() {
@@ -120,10 +70,6 @@ public class ShiftingSwerveModuleConfig {
 
     public double getSpeedMaxVel() {
         return speedMaxVel;
-    }
-
-    public double getSpeedPIDTolerance() {
-        return speedPIDTolerance;
     }
 
     public double getSpeedKS() {
@@ -150,12 +96,8 @@ public class ShiftingSwerveModuleConfig {
         return angleMaxAccel;
     }
 
-    public double getAngleMaxVel() {
-        return angleMaxVel;
-    }
-
-    public double getAnglePIDTolerance() {
-        return angleMaxAccel * Math.sqrt((angleEncoderCPR / 4) / angleMaxAccel);
+    public double getAngleMaxVel(double encoderCountsPerRevolution) {
+        return angleMaxAccel * Math.sqrt((encoderCountsPerRevolution / 4) / angleMaxAccel);
     }
 
     public double getAngleKS() {
@@ -166,4 +108,69 @@ public class ShiftingSwerveModuleConfig {
         return angleKV;
     }
 
+    public double getAnglePIDTolerance() {
+        return anglePIDTolerance;
+    }
+
+    public double getSpeedPIDTolerance() {
+        return speedPIDTolerance;
+    }
+
+    public SimpleMotorFeedforward angleFF(){
+        return new SimpleMotorFeedforward(angleKS, angleKV);
+    }
+
+    public SimpleMotorFeedforward speedFF(){
+        return new SimpleMotorFeedforward(speedKS, speedKV);
+    }
+
+    public ProfiledPIDController generateAnglePID(double countsPerRevolution) {
+        TrapezoidProfile.Constraints constraints = 
+            new TrapezoidProfile.Constraints(
+                getAngleMaxVel(countsPerRevolution),
+                getAngleMaxAccel()
+        );
+        ProfiledPIDController pid = 
+            new ProfiledPIDController(
+                getAngleKP(), 
+                getAngleKI(),
+                getAngleKD(), 
+                constraints
+        );
+        pid.setTolerance(getAnglePIDTolerance());
+        pid.enableContinuousInput(0, countsPerRevolution);
+        return pid;
+    }
+    
+    public ProfiledPIDController generateSpeedPID() {
+        TrapezoidProfile.Constraints constraints =
+            new TrapezoidProfile.Constraints(
+                getSpeedMaxVel(),
+                getSpeedMaxAccel()
+        );
+        ProfiledPIDController pid =
+            new ProfiledPIDController(
+                getSpeedKP(),
+                getSpeedKI(), 
+                getSpeedKD(), 
+                constraints
+        );
+        return pid;
+    }
+
+    // public ProfiledPIDController anglePID(){
+    //     ProfiledPIDController pid = new ProfiledPIDController(angleKP, angleKI, angleKD, 
+    //     new TrapezoidProfile.Constraints(getAngleMaxVel(), angleMaxAccel));
+    //     pid.setTolerance(anglePIDTolerance);
+    //     pid.enableContinuousInput(0, angleEncoderCPR);
+    //     return pid;
+    // }
+    // public ProfiledPIDController speedPID(){
+    //     ProfiledPIDController pid = new ProfiledPIDController(speedKP, speedKI, speedKD,
+    //     new TrapezoidProfile.Constraints(speedMaxVel, speedMaxAccel));
+    //     pid.setTolerance(speedPIDTolerance);
+    //     return pid;
+    // }
+
+    
 }

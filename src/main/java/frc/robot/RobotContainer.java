@@ -19,18 +19,16 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.Commands.ArmPID2;
 import frc.robot.Commands.DefaultDrive;
-import frc.robot.Subsystems.SuperStructure;
 import frc.robot.Subsystems.Swerve.DoubleSolenoidSwerveShifter;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveModule;
 import frc.robot.util.ConfigUtils;
 import lib.Config.DoubleSolenoidSwerveShifterConfig;
+import lib.Config.EncoderConfig;
+import lib.Config.MotorControllerConfig;
 import lib.Config.ShiftingSwerveDriveConfig;
-import lib.Configs.EncoderConfig;
-import lib.Configs.MotorControllerConfig;
-import lib.Configs.ShiftingSwerveModuleConfig;
+import lib.Config.ShiftingSwerveModuleConfig;
 import lib.Control.SOTAXboxcontroller;
 import lib.Encoder.AnalogInputEncoder;
 import lib.Encoder.SOTAEncoder;
@@ -49,10 +47,10 @@ public class RobotContainer {
   private final SOTAXboxcontroller mController;
 
   private ShiftingSwerveDrive mSwerveDrive;
-  private SuperStructure mArm;
+  // private SuperStructure mArm;
 
   private DefaultDrive mDriveCommand;
-  private ArmPID2 mArmPID;
+  // private ArmPID2 mArmPID;
 
   public RobotContainer() {
     ObjectMapper mapper = new ObjectMapper();

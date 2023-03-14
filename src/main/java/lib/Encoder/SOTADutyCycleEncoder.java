@@ -1,10 +1,7 @@
 package lib.Encoder;
 
-import edu.wpi.first.wpilibj.DutyCycle;
-// import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.Encoder;
-import lib.Configs.EncoderConfig;
+import lib.Config.EncoderConfig;
 
 public class SOTADutyCycleEncoder implements SOTAAbsoulteEncoder {
     private final DutyCycleEncoder mEncoder;

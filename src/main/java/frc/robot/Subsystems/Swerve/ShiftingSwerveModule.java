@@ -4,20 +4,19 @@
 
 package frc.robot.Subsystems.Swerve;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import lib.Configs.ShiftingSwerveModuleConfig;
+import lib.Config.ShiftingSwerveModuleConfig;
 import lib.Encoder.SOTAAbsoulteEncoder;
 import lib.MotorController.SOTAMotorController;
 
 public class ShiftingSwerveModule extends SubsystemBase {
 
-  private int modulePosition; 
+  // private int modulePosition; 
 
   private SOTAMotorController mAngleMotor; // TODO: Change to a SOTACompositeMotor
   private SOTAMotorController mSpeedMotor;
@@ -28,7 +27,6 @@ public class ShiftingSwerveModule extends SubsystemBase {
   private SimpleMotorFeedforward mSpeedFF;
 
   private double[] kGearRatios;
-  private double kAngleOffset;
   private double kAngleCountsPerRevolution;
   private double kWheelCircumference; 
 
@@ -40,12 +38,12 @@ public class ShiftingSwerveModule extends SubsystemBase {
     this.mSpeedMotor = speedMotor;
     this.mAngleMotor = angleMotor;
 
-    this.modulePosition = config.getEncoderPort();
+    // this.modulePosition = config.getEncoderPort();
     this.mSpeedMotor = speedMotor; this.mAngleMotor = angleMotor;
 
     this.kGearRatios = config.getGearRatios();
 
-    this.kAngleCountsPerRevolution = angleMotor.getEncoder().getCountsPerRevolution();
+    this.kAngleCountsPerRevolution = mAngleMotor.getEncoder().getCountsPerRevolution();
     this.kWheelCircumference = config.getWheelCircumference();
 
     this.mAngleFF = config.angleFF();
@@ -103,9 +101,13 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * @return The angle of the module in absolute encoder ticks
    */
   public double getAngle() {
-    return -1 *(-1.0 * MathUtil.inputModulus(mAngleMotor.getEncoder().getPosition() - kAngleOffset, 0, kAngleCountsPerRevolution) + kAngleCountsPerRevolution);
+    return ((SOTAAbsoulteEncoder) mAngleMotor.getEncoder()).getPosition();
   }
 
+  /**
+   * Gets the angle of the absolute encoder
+   * @return The angle of the absolute encoders ticks 
+   */
   public double getAngleNoOffset() {
     return ((SOTAAbsoulteEncoder) mAngleMotor.getEncoder()).getPositionNoOffset();
   }

@@ -13,7 +13,6 @@ public class SparkMaxIntegratedEncoder implements SOTAEncoder {
 
     public SparkMaxIntegratedEncoder(RelativeEncoder encoder) {
         this.mEncoder = encoder;
-
     }
 
     public double getPosition() {

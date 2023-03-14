@@ -1,25 +1,16 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package lib.Config;
 
-/** Add your docs here. */
-public class MotorControllerConfig {
+import lib.Encoder.SOTAEncoder;
+import lib.MotorController.MotorLimits;
 
+public class MotorControllerConfig  {
+    private int port;
     private boolean isInverted;
-    private String idleMode;
     private String motorType;
-    private int encoderCountsPerRevolution;
-
-    //TODO: Temp please remove once json problem is fixed
-    public MotorControllerConfig(boolean isInverted, String idleMode, String motorType, int encoderCountsPerRevolution) {
-        this.isInverted = isInverted;
-        this.encoderCountsPerRevolution = encoderCountsPerRevolution;
-        this.idleMode = idleMode;
-        this.motorType = motorType;
-        
-    }
+    private int countsPerRevolution;
+    private String idleMode;
+    private EncoderConfig encoder;
+    private MotorLimits motorLimits;
 
     public boolean getInverted() {
         return isInverted;
@@ -33,8 +24,19 @@ public class MotorControllerConfig {
         return motorType;
     }
 
-    public int getEncoderCountsPerRevolution() {
-        return encoderCountsPerRevolution;
+    public double getCountsPerRevolution() {
+        return (double)countsPerRevolution;
     }
 
+    public int getPort(){
+        return this.port;
+    }
+    public SOTAEncoder getEncoder(){
+        return encoder.getEncoder();
+    }
+
+    public MotorLimits getMotorLimits(){
+        return motorLimits;
+    }
+    
 }

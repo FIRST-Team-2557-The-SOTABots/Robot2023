@@ -1,4 +1,4 @@
-package lib.Configs;
+package lib.Config;
 
 import lib.MotorController.MotorLimits;
 

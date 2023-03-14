@@ -1,58 +1,45 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package lib.Config;
-
-import static frc.robot.Constants.*;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import frc.robot.Constants;
 
-/** Add your docs here. */
 public class ShiftingSwerveDriveConfig {
-    
     private double wheelBase;
     private double trackWidth;
     
     private double maxWheelSpeed;
     private double maxAngularVelocity;
-
-    //TODO: temp remove once json problem is fixed
-    public ShiftingSwerveDriveConfig(double wheelBase, double trackWidth, double maxWheelSpeed, double maxAngularVelocity) {
-        this.wheelBase = wheelBase;
-        this.trackWidth = trackWidth;
-        this.maxWheelSpeed = maxWheelSpeed;
-        this.maxAngularVelocity = maxAngularVelocity;
-        
+    
+    public double getWheelBase() {
+        return wheelBase * Constants.METERS_PER_INCH;
     }
     
-    private double getWheelBase() {
-        return wheelBase * METERS_PER_INCH;
-    }
-    
-    private double getTrackWidth() {
-        return trackWidth * METERS_PER_INCH;
+    public double getTrackWidth() {
+        return trackWidth * Constants.METERS_PER_INCH;
     }
 
     /**
      * Order Front right, Front left, Back Left, Back Right
      */
-    public Translation2d[] getModuleTranslations() {
+    public Translation2d[] generateModuleTranslations() {
         Translation2d[] moduleTranslations = {
-            new Translation2d(getWheelBase() / 2, -getTrackWidth() / 2),
             new Translation2d(getWheelBase() / 2, getTrackWidth() / 2),
+            new Translation2d(-getWheelBase() / 2, getTrackWidth() / 2),
             new Translation2d(-getWheelBase() / 2, -getTrackWidth() / 2),
-            new Translation2d(-getWheelBase() / 2, getTrackWidth() / 2)
+            new Translation2d(getWheelBase() / 2, -getTrackWidth() / 2)
         };
         return moduleTranslations;
     }
 
+    /*
+     * Generates it's own module translations so that nothing else can disturb them
+     */
     public SwerveDriveKinematics generateKinematics() {
-        return new SwerveDriveKinematics(getModuleTranslations());
+        return new SwerveDriveKinematics(generateModuleTranslations());
     }
 
     public SwerveDriveOdometry generateOdometry(SwerveDriveKinematics kinematics, Rotation2d gyroAngle, SwerveModulePosition[] modulePositions) {
