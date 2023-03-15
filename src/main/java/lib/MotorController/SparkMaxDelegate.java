@@ -1,38 +1,43 @@
 package lib.MotorController;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import lib.Config.MotorControllerConfig;
-import lib.Encoder.FalconIntegratedEncoder;
 import lib.Encoder.SOTAEncoder;
+import lib.Encoder.SparkMaxIntegratedEncoder;
 
-public class Falcon implements SOTAMotorController {
-    private final TalonFX mMotor;
+public class SparkMaxDelegate implements SOTAMotorController{
+    private final CANSparkMax mMotor;
     private final SOTAEncoder mEncoder;
     private final SOTAEncoder mNativeEncoder;
     private MotorLimits motorLimits;
-
-    public Falcon(TalonFX motor, MotorControllerConfig config){
+    public SparkMaxDelegate(CANSparkMax motor){
         this(
             motor, 
-            new FalconIntegratedEncoder(motor.getSensorCollection())
+            new SparkMaxIntegratedEncoder(motor.getEncoder())
         );
     }
 
-    public Falcon(TalonFX motor, SOTAEncoder encoder ) {
-        this(motor, encoder, new MotorLimits(null, null));
+    public SparkMaxDelegate(CANSparkMax motor, MotorLimits limits){
+        this(
+            motor, 
+            new SparkMaxIntegratedEncoder(motor.getEncoder()),
+            limits
+        );
     }
-
-    public Falcon(TalonFX motor, MotorLimits limits){
-        this(motor,  new FalconIntegratedEncoder(motor.getSensorCollection()), limits);
-    }
-
-    public Falcon(TalonFX motor, SOTAEncoder encoder, MotorLimits limits){
+    
+    public SparkMaxDelegate(CANSparkMax motor, SOTAEncoder encoder) {
         this.mMotor = motor;
         this.mEncoder = encoder;
-        this.mNativeEncoder = new FalconIntegratedEncoder(mMotor.getSensorCollection());
+        this.mNativeEncoder = new SparkMaxIntegratedEncoder(mMotor.getEncoder());
+        this.motorLimits = new MotorLimits(null, null);
+    }
+    public SparkMaxDelegate(CANSparkMax motor, SOTAEncoder encoder, MotorLimits limits){
+        this.mMotor = motor;
+        this.mEncoder = encoder;
+        this.mNativeEncoder = new SparkMaxIntegratedEncoder(mMotor.getEncoder());
+        this.motorLimits = limits;
     }
 
     public void set(double speed) {
@@ -45,25 +50,25 @@ public class Falcon implements SOTAMotorController {
             }
             
         }
-        mMotor.set(ControlMode.PercentOutput, speed);        
+        mMotor.set(speed);          
     }
 
     public void setVoltage(double voltage) {
-        if(motorLimits != null){
-            
-            if(voltage < 0){
-                if(motorLimits.getLowerLimit() > getPose()) voltage = 0;
-            }else if(voltage > 0){
-                if(motorLimits.getUpperLimit() < getPose()) voltage = 0;
+            if(motorLimits != null){
+                
+                if(voltage < 0){
+                    if(motorLimits.getLowerLimit() > getPose()) voltage = 0;
+                }else if(voltage > 0){
+                    if(motorLimits.getUpperLimit() < getPose()) voltage = 0;
+                }
+                
             }
-            
-        }
-        set(voltage / RobotController.getBatteryVoltage());
+        
+        mMotor.setVoltage(voltage);
     }
 
-
     public double get() {
-        return mMotor.getMotorOutputPercent();
+        return mMotor.get();
     }
 
     public void setInverted(boolean isInverted) {
@@ -75,15 +80,11 @@ public class Falcon implements SOTAMotorController {
     }
 
     public void disable() {
-        mMotor.neutralOutput();        
+        mMotor.disable();        
     }
 
     public double getTickVelocity() {
         return mEncoder.getVelocity();
-    }
-
-    public double getTickPosition() {
-        return mEncoder.get();
     }
 
     public SOTAEncoder getEncoder() {
@@ -93,7 +94,6 @@ public class Falcon implements SOTAMotorController {
     public double getNativeVelocity() {
         return mNativeEncoder.getVelocity();
     }
-
     public double getNativePosition() {
         return mNativeEncoder.get();
     }
@@ -103,22 +103,21 @@ public class Falcon implements SOTAMotorController {
     }
 
     public double getMotorCurrent() {
-        return mMotor.getSupplyCurrent();
+        return mMotor.getOutputCurrent();
     }
 
     public double getMotorTemperature() {
-        return mMotor.getTemperature();
+        return mMotor.getMotorTemperature();
     }
 
     @Override
     public void stopMotor() {
-        mMotor.DestroyObject();
+        mMotor.stopMotor();;
         
     }
 
     @Override
     public double getPose() {
-        // TODO Auto-generated method stub
         return mEncoder.get();
     }
 

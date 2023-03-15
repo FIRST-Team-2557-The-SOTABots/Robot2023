@@ -6,17 +6,24 @@ package lib.Encoder;
 
 import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
+
 /** Add your docs here. */
 public class FalconIntegratedEncoder implements SOTAEncoder {
     private static final double kCountsPerRevolution = 2048;
     private TalonFXSensorCollection mEncoder;
+    private double offset;
 
     public FalconIntegratedEncoder(TalonFXSensorCollection encoder) {
         mEncoder = encoder;
+        offset = 0;
+    }
+    public FalconIntegratedEncoder(TalonFXSensorCollection encoder, double offset){
+        this.offset = offset;
     }
 
-    public double getPosition() {
-        return mEncoder.getIntegratedSensorPosition();
+    public double get() {
+        return mEncoder.getIntegratedSensorPosition() - offset;
     }
     
     public void setPosition(double newPosition) {
@@ -34,5 +41,27 @@ public class FalconIntegratedEncoder implements SOTAEncoder {
     public void reset() {
         mEncoder.setIntegratedSensorPosition(0.0, 0);
     }
+
+    @Override
+    public double getAbsolutePosition() {
+        return mEncoder.getIntegratedSensorAbsolutePosition();
+    }
+
+    @Override
+    public void setPositionOffset(double offset) {
+        this.offset = offset;
+    }
+
+    @Override
+    public double getPositionOffset() {
+        return offset;
+    }
+
+    @Override
+    public void close() {
+                
+    }
+
+    
     
 }

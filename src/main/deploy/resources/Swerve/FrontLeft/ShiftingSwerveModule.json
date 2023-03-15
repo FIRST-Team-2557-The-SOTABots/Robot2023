@@ -1,4 +1,6 @@
-{    
+{
+    "encoderPort": 0,
+    
     "gearRatios": [5.07,10.40],
 
     "angleOffset": 1.883544729,

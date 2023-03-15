@@ -4,60 +4,60 @@
 
 package frc.robot.Subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import lib.Encoder.SOTAEncoder;
-import lib.Gyro.SOTAGyro;
-import lib.MotorController.SOTAMotorController;
+import lib.Config.SuperStructureConfig;
 
 public class SuperStructure extends SubsystemBase {
 
-  private SOTAGyro pigeon;
-  private SOTAMotorController rotatorMotor;
-  private SOTAMotorController winchMotor;
-  private DigitalInput limitSwitch;
-  private SOTAMotorController intakeMotors;
+  // private SOTAGyro pigeon;
+  // private SOTAMotorController rotatorMotor;
+  // private SOTAMotorController winchMotor;
+  // private DigitalInput limitSwitch;
+  // private MotorController intakeMotors;
+
+  private DoubleSupplier extensionLength;
+  private DoubleSupplier CurrentAngle;
+  private double height;
+  private double bOffset;
+  private double fOffset;
+  private double armLength;
+  private double fAbsoluteOffset;
+  private double bAbsoluteOffset;
+  private double maxExtension;
 
   /** Creates a new ArmSubsystem. */
-  public SuperStructure(SOTAGyro pigeon, SOTAMotorController winchMotor,
-   SOTAMotorController rotatorMotor, DigitalInput limitSwitch,
-    SOTAMotorController intake) {
-    this.pigeon = pigeon;
-    this.winchMotor = winchMotor;
-    this.rotatorMotor = rotatorMotor;
-    this.limitSwitch = limitSwitch;
-    this.intakeMotors = intake;
+  public SuperStructure(DoubleSupplier extensionLength, DoubleSupplier CurrentAngle, SuperStructureConfig config) {
+    this.extensionLength = extensionLength; this.CurrentAngle = CurrentAngle;
+     this.height = config.getHeight(); this.bOffset = config.getbOffset(); 
+     this.fOffset = config.getfOffset(); this.armLength = config.getArmBaseLength();
+     this.fAbsoluteOffset = config.getfAbsoluteOffset(); this.bAbsoluteOffset = config.getbAbsoluteOffset();
+     this.maxExtension = config.getMaxExtension();
+
   }
 
-  public double getRoll(){
-    return pigeon.getRoll();
+  public double maxExtension(){
+    if(CurrentAngle.getAsDouble() >= 90 && CurrentAngle.getAsDouble() <= 270){
+      return 31;
+    }
+    double heightOffset = CurrentAngle.getAsDouble() < 180 ? fAbsoluteOffset: bAbsoluteOffset; 
+    return MathUtil.clamp((((height + heightOffset) / (Math.cos(Math.toRadians(CurrentAngle.getAsDouble())))) - armLength), 0, this.maxExtension); 
   }
 
-  public void setRotatorSpeed(double spd){
-      rotatorMotor.set(MathUtil.clamp(spd, -0.5, 0.5));
-    
+  //GOOD
+  public double minRotation(){
+    double heightOffset = fOffset;
+    return Math.max(Math.toDegrees(Math.acos((height + heightOffset) / extensionLength.getAsDouble())), 44);
   }
 
-  public void setExtensionSpeed(double speed){
-    if(limitSwitch.get() && speed < 0) winchMotor.set(0);
-    winchMotor.setVoltage(speed);
+  public double maxRotation(){
+    double heightOffset = bOffset;
+    return Math.min((360 - Math.toDegrees(Math.acos((height + heightOffset) / extensionLength.getAsDouble()))), 297);
   }
 
-  public void setIntake(double speed){
-    intakeMotors.setVoltage(speed);
-  }
-
-  @Override
-  public void periodic() {
-    // SmartDashboard.putNumber("encoder count: ", rotatorMotor.getEncoder());
-    SmartDashboard.putNumber("Pigeon Yaw: ", pigeon.getYaw());
-    SmartDashboard.putNumber("Pigeon Pitch: ", pigeon.getPitch());
-    SmartDashboard.putNumber("Pigeon Roll: ", pigeon.getRoll());
-    SmartDashboard.putNumber("Motor Speed:", rotatorMotor.get());
-    // SmartDashboard.putBoolean("at Upper Limit", rotatorMotor.atUpperLimit());
-    // SmartDashboard.putBoolean("At lower limit", rotatorMotor.atLowerLimit());
-    // This method will be called once per scheduler run
-  }
+  
+ 
+  
 }

@@ -1,0 +1,14 @@
+{
+    "encoderAtZeroDegrees": 0.15,
+    "encoderPerDegree": 0.002744444,
+    "armBaseLength": 28.5,
+    "encoderPerInch": 7.357,
+    "height": 23,
+    "bOffset": -6,
+    "fOffset": -3,
+    "fAbsoluteOffset": -3,
+    "bAbsoluteOffset": -6,
+    "maxExtension": 35,
+    "roatationEncoderOffset": 0.16 
+    
+}

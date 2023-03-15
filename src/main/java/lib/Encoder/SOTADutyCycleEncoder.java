@@ -1,49 +1,101 @@
 package lib.Encoder;
 
+
+import java.time.OffsetTime;
+
+import edu.wpi.first.wpilibj.DigitalSource;
+import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import lib.Config.EncoderConfig;
 
-public class SOTADutyCycleEncoder implements SOTAAbsoulteEncoder {
-    private final DutyCycleEncoder mEncoder;
-    private final EncoderConfig encoderConfig;
-
-    public SOTADutyCycleEncoder(DutyCycleEncoder encoder, EncoderConfig config) {
-        this.mEncoder = encoder; this.encoderConfig = config;
+public class SOTADutyCycleEncoder implements SOTAEncoder{
+    private double offset;
+    private double distancePerRot = 1;
+    private DutyCycleEncoder encoder;
+    public SOTADutyCycleEncoder(DutyCycle dutyCycle) {
+        encoder = new DutyCycleEncoder(dutyCycle);
     }
 
-    //TODO: jon code this 
-    public double getPosition() {
-        return 0;
+    public SOTADutyCycleEncoder(int channel) {
+        encoder = new DutyCycleEncoder(channel);
     }
 
-    public void setPosition(double newPosition) {
-        // TODO Auto-generated method stub
+
+    public SOTADutyCycleEncoder(DigitalSource source) {
+        encoder = new DutyCycleEncoder(source);
         
     }
-
-    public double getVelocity() {
-        // TODO Auto-generated method stub
-        return 0;
+    public SOTADutyCycleEncoder(DutyCycle dutyCycle, double positionOffset) {
+        encoder = new DutyCycleEncoder(dutyCycle);
+        setPositionOffset(positionOffset);
     }
 
-    public void reset() {
-        // TODO Auto-generated method stub
+    public SOTADutyCycleEncoder(int channel, double positionOffset) {
+        encoder = new DutyCycleEncoder(channel);
+        setPositionOffset(positionOffset);
         
     }
+    public SOTADutyCycleEncoder(DigitalSource source, double positionOffset) {
+        encoder = new DutyCycleEncoder(source);
+        setPositionOffset(positionOffset);
 
-    public double getPositionOffset() {
-        // TODO Auto-generated method stub
-        return 0;
     }
 
-    public double getPositionNoOffset() {
-        // TODO Auto-generated method stub
-        return 0;
+
+    public SOTADutyCycleEncoder(DigitalSource source, double positionOffset, double distance_per_rot) {
+        encoder = new DutyCycleEncoder(source);
+        setPositionOffset(positionOffset);
+        setDistancePerRotation(distance_per_rot);
+        
+    }public SOTADutyCycleEncoder(DutyCycle dutyCycle, double positionOffset, double distance_per_rot) {
+        encoder = new DutyCycleEncoder(dutyCycle);
+        setPositionOffset(positionOffset);
+        setDistancePerRotation(distance_per_rot);
+    }
+
+    public SOTADutyCycleEncoder(int channel, double positionOffset, double distance_per_rot) {
+        encoder = new DutyCycleEncoder(channel);
+        setPositionOffset(positionOffset);
+        setDistancePerRotation(distance_per_rot);
+
+    }
+
+    public void setDistancePerRotation(double distancePerRot) {
+        this.distancePerRot = distancePerRot;
+    }
+
+    public void setPositionOffset(double offset){
+        this.offset = offset;
+    }
+    
+    @Override
+    public double get() {
+        return  (getAbsolutePosition() - offset < 0 ? 1 + (getAbsolutePosition() - offset) : getAbsolutePosition() - offset) * distancePerRot;
     }
 
     @Override
-    public double getCountsPerRevolution() {
-        // TODO Auto-generated method stub
+    public double getAbsolutePosition() {
+        return encoder.getAbsolutePosition();
+    }
+
+    @Override
+    public void reset() {
+        encoder.reset();
+        
+    }
+
+    @Override
+    public double getPositionOffset() {
+        return offset;
+    }
+
+    @Override
+    public void close() {
+        encoder.close();
+        
+    }
+    //TODO: FIX
+    @Override
+    public double getVelocity() {
         return 0;
     }
     

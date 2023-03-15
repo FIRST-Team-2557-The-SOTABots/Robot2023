@@ -29,21 +29,13 @@ public class EncoderConfig {
     public double getEncoderOffset() {
         return encoderOffset;
     }
+    
     public String getPortType(){
         return portType;
     }
+    
     public String getEncoderType(){
         return encoderType;
     }
-    public SOTAEncoder getEncoder(){
-        switch(encoderType){
-            case("ANALOG"): 
-                return new AnalogInputEncoder(new AnalogInput(port), this);
-            case("DUTYCYCLE"):
-                DutyCycleEncoder encoder = new DutyCycleEncoder(port);
-                return new SOTADutyCycleEncoder(encoder, this);
-            default:
-                throw new IllegalArgumentException("Illegal Encoder Type");
-        }
-    }
+    
 }

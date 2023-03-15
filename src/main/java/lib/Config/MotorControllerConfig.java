@@ -1,7 +1,5 @@
 package lib.Config;
 
-import lib.Encoder.SOTAEncoder;
-import lib.MotorController.MotorLimits;
 
 public class MotorControllerConfig  {
     private int port;
@@ -9,8 +7,8 @@ public class MotorControllerConfig  {
     private String motorType;
     private int countsPerRevolution;
     private String idleMode;
-    private EncoderConfig encoder;
-    private MotorLimits motorLimits;
+    private EncoderConfig encoderConfig;
+    private MotorLimitsConfig motorLimitsConfig;
 
     public boolean getInverted() {
         return isInverted;
@@ -31,12 +29,12 @@ public class MotorControllerConfig  {
     public int getPort(){
         return this.port;
     }
-    public SOTAEncoder getEncoder(){
-        return encoder.getEncoder();
+    public EncoderConfig getEncoderConfig(){
+        return encoderConfig;
     }
 
-    public MotorLimits getMotorLimits(){
-        return motorLimits;
+    public MotorLimitsConfig getMotorLimitsConfig(){
+        return motorLimitsConfig;
     }
     
 }

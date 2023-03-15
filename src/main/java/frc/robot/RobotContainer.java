@@ -24,7 +24,7 @@ import frc.robot.Subsystems.Swerve.DoubleSolenoidSwerveShifter;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveModule;
 import frc.robot.util.ConfigUtils;
-import lib.Config.DoubleSolenoidSwerveShifterConfig;
+import lib.Config.DoubleSolenoidConfig;
 import lib.Config.EncoderConfig;
 import lib.Config.MotorControllerConfig;
 import lib.Config.ShiftingSwerveDriveConfig;
@@ -36,7 +36,7 @@ import lib.Gyro.NavX;
 import lib.Gyro.SOTAGyro;
 import lib.MotorController.Falcon;
 import lib.MotorController.SOTAMotorController;
-import lib.MotorController.SparkMax;
+import lib.MotorController.SparkMaxDelegate;
 import lib.Pneumatics.GearShifter;
 
 public class RobotContainer {
@@ -94,7 +94,7 @@ public class RobotContainer {
       SOTAGyro gyro = new NavX(new AHRS(Port.kMXP));
       DoubleSolenoid solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 8, 9);
       GearShifter shifter = new DoubleSolenoidSwerveShifter(solenoid, 
-        configUtils.readFromClassPath(DoubleSolenoidSwerveShifterConfig.class, 
+        configUtils.readFromClassPath(DoubleSolenoidConfig.class, 
         "Swerve/DoubleSolenoidSwerveShifter"));
       mSwerveDrive = new ShiftingSwerveDrive(swerveModules, shifter, gyro, configUtils.readFromClassPath(ShiftingSwerveDriveConfig.class, "Swerve/ShiftingSwerveDrive"));
 
@@ -151,61 +151,9 @@ public class RobotContainer {
     return null;
   }
 
+  
 
-  private Falcon createFalcon(String resourceId){
-    try{
-        MotorControllerConfig config = configUtils.readFromClassPath(MotorControllerConfig.class, resourceId);
-        WPI_TalonFX motor = new WPI_TalonFX(config.getPort());
-        return new Falcon(motor, config);
-    } catch(IOException e) {
-      throw new RuntimeException("Error Initializing Talon", e);
-    }
-  }
-
-  public SparkMax createSparkMax(String resourceId){
-    try{
-      MotorControllerConfig config = configUtils.readFromClassPath(MotorControllerConfig.class, resourceId);
-      MotorType motorType;
-      switch(config.getMotorType()) {
-          case("BRUSHLESS"):
-              motorType = MotorType.kBrushless;
-              break;
-          case("BRUSHED"):
-              motorType = MotorType.kBrushed;
-              break;
-          default:
-              throw new IllegalArgumentException("Illegal motor type");
-      }
-      CANSparkMax motor = new CANSparkMax(config.getPort(), motorType);
-      return new SparkMax(motor, config);
-    } catch(IOException e){
-      throw new RuntimeException("Error Initialzing SparkMax", e);
-    }
-  }
-
-  public SparkMax createCompositeSparkMax(String motorResource, String encoderResource) {
-    try{
-      MotorControllerConfig motorConfig = configUtils.readFromClassPath(MotorControllerConfig.class, motorResource);
-      EncoderConfig encoderConfig = configUtils.readFromClassPath(EncoderConfig.class, encoderResource);
-      MotorType motorType;
-      switch(motorConfig.getMotorType()) {
-          case("BRUSHLESS"):
-              motorType = MotorType.kBrushless;
-              break;
-          case("BRUSHED"):
-              motorType = MotorType.kBrushed;
-              break;
-          default:
-              throw new IllegalArgumentException("Illegal motor type");
-      }
-      CANSparkMax motor = new CANSparkMax(motorConfig.getPort(), motorType);
-      AnalogInputEncoder encoder = new AnalogInputEncoder(new AnalogInput(encoderConfig.getPort()), encoderConfig);
-      return new SparkMax(motor, encoder, motorConfig);
-    } catch(IOException e){
-      throw new RuntimeException("Error Initialzing SparkMax", e);
-    }
-  } 
-
+  
   public SOTAEncoder createAnalogInputEncoder(String resourceId) {
     try {
       EncoderConfig config = configUtils.readFromClassPath(EncoderConfig.class, resourceId);
@@ -224,6 +172,7 @@ public class RobotContainer {
 
     try{
       ShiftingSwerveModuleConfig config = configUtils.readFromClassPath(ShiftingSwerveModuleConfig.class, moduleConfig);
+      
       SOTAMotorController speedMotor = createFalcon(speedConfig);
       SOTAMotorController angleMotor = createCompositeSparkMax(angleConfig, encoderConfig);
       return new ShiftingSwerveModule(angleMotor, speedMotor, config);

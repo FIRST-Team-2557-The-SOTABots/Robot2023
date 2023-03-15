@@ -3,5 +3,5 @@
     "idleMode": "BRAKE",
     "motorType": "BRUSHLESS",
     "countsPerRevolution": 2048,
-    "port": 10
+    "port": 7
 }

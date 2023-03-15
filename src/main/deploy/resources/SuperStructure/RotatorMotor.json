@@ -1,18 +1,7 @@
 {
-    "port": 14,
+    "port": 13,
     "isInverted": false,
-    "idleMode": "BRAKE",
+    "idleMode": "COAST",
     "motorType": "BRUSHLESS",
-    "countsPerRevolution": 2048,
-    "encoder": {
-        "port": 1,
-        "portType": "CAN",
-        "angleOffset": 0,
-        "angleEncoderCPR": 0
-    },
-    "motorLimits": {
-        "lowerLimit": 0,
-        "upperLimit": 0,
-        "finalLimits": true
-    }
+    "countsPerRevolution": 2048
 }

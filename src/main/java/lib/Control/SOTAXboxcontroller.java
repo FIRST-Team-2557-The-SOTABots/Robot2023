@@ -1,5 +1,7 @@
 package lib.Control;
 
+
+
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class SOTAXboxcontroller extends CommandXboxController{
@@ -18,6 +20,12 @@ public class SOTAXboxcontroller extends CommandXboxController{
     }
     public boolean getY(){
         return super.y().getAsBoolean();
+    }
+    public boolean getLeftBumper(){
+        return leftBumper().getAsBoolean();
+    } 
+    public boolean getRightBumper(){
+        return rightBumper().getAsBoolean();
     }
     @Override
     public double getLeftX() {

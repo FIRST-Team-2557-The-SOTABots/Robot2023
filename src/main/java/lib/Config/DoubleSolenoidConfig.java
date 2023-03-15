@@ -2,7 +2,7 @@ package lib.Config;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class DoubleSolenoidSwerveShifterConfig {
+public class DoubleSolenoidConfig {
     private String hiGearValue;
     private String loGearValue;
     private int[] gearRatios;

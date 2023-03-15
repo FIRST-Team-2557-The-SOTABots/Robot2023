@@ -1,5 +1,5 @@
 {
-    "port": 7,
+    "port": 2,
     "isInverted": true,
     "idleMode": "BRAKE",
     "motorType": "BRUSHLESS",

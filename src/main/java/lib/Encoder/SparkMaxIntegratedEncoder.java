@@ -10,13 +10,20 @@ import com.revrobotics.RelativeEncoder;
 public class SparkMaxIntegratedEncoder implements SOTAEncoder {
     
     private final RelativeEncoder mEncoder;
+    private double offset;
 
     public SparkMaxIntegratedEncoder(RelativeEncoder encoder) {
         this.mEncoder = encoder;
+        this.offset = 0;
     }
 
-    public double getPosition() {
-        return mEncoder.getPosition();
+    public SparkMaxIntegratedEncoder(RelativeEncoder encoder, double offset){
+        this.mEncoder = encoder;
+        this.offset = offset;
+    }
+    @Override
+    public double get() {
+        return mEncoder.getPosition() - offset;
     }
 
     public void setPosition(double newPosition) {
@@ -33,5 +40,28 @@ public class SparkMaxIntegratedEncoder implements SOTAEncoder {
 
     public void reset() {
         mEncoder.setPosition(0.0);
+    }
+
+    
+
+    @Override
+    public double getAbsolutePosition() {
+        return mEncoder.getPosition();
+    }
+
+    @Override
+    public void setPositionOffset(double offset) {
+        this.offset = offset;
+        
+    }
+
+    @Override
+    public double getPositionOffset() {
+        return offset;
+    }
+
+    @Override
+    public void close() {
+                
     }
 }

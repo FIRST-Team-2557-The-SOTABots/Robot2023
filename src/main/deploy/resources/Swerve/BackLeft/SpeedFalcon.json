@@ -1,1 +1,7 @@
-{"isInverted": false, "idleMode": "BRAKE", "motorType": "BRUSHLESS", "countsPerRevolution": 2048,"port": 13}
+{
+    "isInverted": false, 
+    "idleMode": "BRAKE", 
+    "motorType": "BRUSHLESS", 
+    "countsPerRevolution": 2048,
+    "port": 3
+}

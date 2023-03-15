@@ -1,5 +1,7 @@
 package lib.Encoder;
 
+import com.pathplanner.lib.auto.MecanumAutoBuilder;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.AnalogInput;
 import lib.Config.EncoderConfig;
@@ -7,7 +9,7 @@ import lib.Config.EncoderConfig;
 public class AnalogInputEncoder implements SOTAAbsoulteEncoder {
     private final AnalogInput mEncoder;
     private final double kCountsPerRevolution;
-    private final double kOffset;
+    private double kOffset;
 
     public AnalogInputEncoder(AnalogInput encoder, EncoderConfig config) {
         this.mEncoder = encoder;
@@ -15,13 +17,11 @@ public class AnalogInputEncoder implements SOTAAbsoulteEncoder {
         this.kOffset = config.getCountsPerRevolution();
     }
 
-    public double getPosition() {
+    public double get() {
         return -1 * MathUtil.inputModulus(getPositionNoOffset() - kOffset, 0, kCountsPerRevolution);
     }
 
-    public double getPositionNoOffset() {
-        return mEncoder.getAverageVoltage();
-    }
+    
 
     //TODO: you cant setposition on analog input
     public void setPosition(double newPosition) {
@@ -43,6 +43,27 @@ public class AnalogInputEncoder implements SOTAAbsoulteEncoder {
 
     public double getPositionOffset() {
         return kOffset;
+    }
+
+    @Override
+    public double getAbsolutePosition() {
+        return mEncoder.getAverageVoltage();
+    }
+
+    @Override
+    public void setPositionOffset(double offset) {
+        kOffset = offset;        
+    }
+
+    @Override
+    public void close() {
+        mEncoder.close();        
+    }
+
+    @Override
+    public double getPositionNoOffset() {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
 }
