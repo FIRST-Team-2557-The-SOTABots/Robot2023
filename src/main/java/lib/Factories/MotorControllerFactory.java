@@ -19,12 +19,14 @@ import lib.MotorController.SOTAMotorController;
 import lib.MotorController.SparkMaxDelegate;
 
 public class MotorControllerFactory {
-    public SOTAMotorController generateFalconDelegate(MotorControllerConfig config){
+    
+    public static SOTAMotorController generateFalconDelegate(MotorControllerConfig config){
         WPI_TalonFX motor = new WPI_TalonFX(config.getPort());
         motor.setInverted(config.getInverted());
         return new Falcon(motor, generateEncoder(config.getEncoderConfig()), generaLimits(config.getMotorLimitsConfig()));
     }
-    public SOTAMotorController generateSparkDelegate(MotorControllerConfig config){
+
+    public static SOTAMotorController generateSparkDelegate(MotorControllerConfig config){
         MotorType motorType;
       switch(config.getMotorType()) {
           case("BRUSHLESS"):
@@ -40,11 +42,11 @@ public class MotorControllerFactory {
         return new SparkMaxDelegate(sparkMax, generateEncoder(config.getEncoderConfig()), generaLimits(config.getMotorLimitsConfig()));
     }
 
-    public MotorLimits generaLimits(MotorLimitsConfig config){
+    public static MotorLimits generaLimits(MotorLimitsConfig config){
         return new MotorLimits(config.getLowerLimit(), config.getUpperLimit(), config.getFinalLimits());
     }
 
-    public SOTAEncoder generateEncoder(EncoderConfig encoderConfig){
+    public static SOTAEncoder generateEncoder(EncoderConfig encoderConfig){
         switch(encoderConfig.getEncoderType()){
             case "ANALOG":
                 AnalogInput input = new AnalogInput(encoderConfig.getPort());

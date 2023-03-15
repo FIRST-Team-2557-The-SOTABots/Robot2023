@@ -101,7 +101,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * @return The angle of the module in absolute encoder ticks
    */
   public double getAngle() {
-    return ((SOTAAbsoulteEncoder) mAngleMotor.getEncoder()).getPosition();
+    return ((SOTAAbsoulteEncoder) mAngleMotor.getEncoder()).getPose();
   }
 
   /**

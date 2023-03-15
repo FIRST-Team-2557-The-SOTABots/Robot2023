@@ -32,6 +32,7 @@ import lib.Config.ShiftingSwerveModuleConfig;
 import lib.Control.SOTAXboxcontroller;
 import lib.Encoder.AnalogInputEncoder;
 import lib.Encoder.SOTAEncoder;
+import lib.Factories.MotorControllerFactory;
 import lib.Gyro.NavX;
 import lib.Gyro.SOTAGyro;
 import lib.MotorController.Falcon;
@@ -154,27 +155,16 @@ public class RobotContainer {
   
 
   
-  public SOTAEncoder createAnalogInputEncoder(String resourceId) {
-    try {
-      EncoderConfig config = configUtils.readFromClassPath(EncoderConfig.class, resourceId);
-      AnalogInputEncoder encoder = new AnalogInputEncoder(new AnalogInput(config.getPort()), config);
-      return encoder;
-    } catch(IOException e) {
-      throw new RuntimeException("Error Initialzing AnalongInputEncoder", e);
-    }
-  }
+  
 
   public ShiftingSwerveModule initSwerveModule(String speedConfig, String angleConfig, String encoderConfig, String moduleConfig){
-    // SOTAMotorController speedMotor = initFalconDelegate(speedConfig);
-    // SOTAMotorController angleMotor = initSparkMaxDelegate(angleConfig);
-    // SOTAEncoder encoder = new AnalogInputEncoder();
-    // SOTAMotorController angleComposite = new CompositeMotor(angleMotor, encoder);
 
     try{
       ShiftingSwerveModuleConfig config = configUtils.readFromClassPath(ShiftingSwerveModuleConfig.class, moduleConfig);
-      
-      SOTAMotorController speedMotor = createFalcon(speedConfig);
-      SOTAMotorController angleMotor = createCompositeSparkMax(angleConfig, encoderConfig);
+      MotorControllerConfig speedMotorConfig = configUtils.readFromClassPath(MotorControllerConfig.class, speedConfig);
+      MotorControllerConfig rotatorConfig = configUtils.readFromClassPath(MotorControllerConfig.class, angleConfig);
+      SOTAMotorController speedMotor = MotorControllerFactory.generateFalconDelegate(speedMotorConfig);
+      SOTAMotorController angleMotor = MotorControllerFactory.generateSparkDelegate(rotatorConfig);
       return new ShiftingSwerveModule(angleMotor, speedMotor, config);
     } catch(IOException e){
       throw new RuntimeException("Could not create config", e);
