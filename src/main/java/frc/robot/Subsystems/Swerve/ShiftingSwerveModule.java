@@ -71,7 +71,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
     mAngleMotor.setVoltage(state.speedMetersPerSecond == 0.0 ? 0.0 : angleFFOutput + anglePIDOutput);
 
     double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[state.gear]);
-    double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getNativeTickVelocity(), speedSetpointNative);
+    double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getNativeVelocity(), speedSetpointNative);
     double speedFFOutput = mSpeedFF.calculate(speedSetpointNative);
     SmartDashboard.putNumber("Wheel Circumference", kWheelCircumference);
     SmartDashboard.putNumber("Speed CPR", kSpeedCountsPerRevolution);

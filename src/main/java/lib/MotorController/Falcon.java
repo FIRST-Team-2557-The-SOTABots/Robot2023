@@ -67,11 +67,11 @@ public class Falcon implements SOTAMotorController {
         return mEncoder;
     }
 
-    public double getNativeTickVelocity() {
+    public double getNativeVelocity() {
         return mMotor.getSelectedSensorVelocity();
     }
 
-    public double getNativeTickPosition() {
+    public double getNativePosition() {
         return mNativeEncoder.getPosition();
     }
 

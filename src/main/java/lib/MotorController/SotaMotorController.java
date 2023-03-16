@@ -9,8 +9,8 @@ public interface SOTAMotorController {
     double getTickVelocity();
     double getTickPosition();
     SOTAEncoder getEncoder();
-    double getNativeTickVelocity();
-    double getNativeTickPosition();
+    double getNativeVelocity();
+    double getNativePosition();
     SOTAEncoder getNativeEncoder();
     double getMotorCurrent();
     double getMotorTemperature();
