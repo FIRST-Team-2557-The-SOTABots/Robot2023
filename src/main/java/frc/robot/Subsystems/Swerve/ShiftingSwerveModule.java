@@ -4,9 +4,6 @@
 
 package frc.robot.Subsystems.Swerve;
 
-import com.fasterxml.jackson.core.StreamWriteCapability;
-
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,7 +22,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
   private SOTAMotorController mSpeedMotor;
 
   private ProfiledPIDController mAnglePID;
-  private PIDController mSpeedPID;
+  private ProfiledPIDController mSpeedPID;
   private SimpleMotorFeedforward mAngleFF;
   private SimpleMotorFeedforward mSpeedFF;
 
@@ -57,7 +54,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
 
     this.mAnglePID = config.generateAnglePID(kAngleCountsPerRevolution);
     this.mSpeedPID = config.generateSpeedPID();
-                
+
   }
 
   /**
@@ -76,10 +73,10 @@ public class ShiftingSwerveModule extends SubsystemBase {
     double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[state.gear]);
     double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getNativeTickVelocity(), speedSetpointNative);
     double speedFFOutput = mSpeedFF.calculate(speedSetpointNative);
-
-    SmartDashboard.putNumber("speedSetpointNative", speedSetpointNative);
-    // SmartDashboard.putNumber("PID Output", speedPIDOutput);
-    // SmartDashboard.putNumber("FF Output", speedFFOutput);
+    SmartDashboard.putNumber("Wheel Circumference", kWheelCircumference);
+    SmartDashboard.putNumber("Speed CPR", kSpeedCountsPerRevolution);
+    SmartDashboard.putNumber("Gear Ratio", kGearRatios[state.gear]);
+    SmartDashboard.putNumber("Meters Per Count", getMetersPerCount(kGearRatios[state.gear]));
 
     mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
   }
@@ -156,7 +153,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * @return The equivalent speed motor encoder velocity in counts per 100 ms
    */
   public double metersPerSecondToNative(double metersPerSecond, double gearRatio) {
-    return metersPerSecond / getMetersPerCount(gearRatio) / 10;
+    return metersPerSecond / getMetersPerCount(gearRatio) / 10.0;
   }
 
   /**
@@ -180,13 +177,5 @@ public class ShiftingSwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    // SmartDashboard.putNumber("Speed set", mSpeedMotor.get());
-    // SmartDashboard.putNumber("Angle get", mAngleMotor.get());
-    // SmartDashboard.putNumber("No Offset " + mModuleNum , ((SOTAAbsoulteEncoder)mAngleMotor.getEncoder()).getPositionNoOffset());
-    // SmartDashboard.putNumber("Offset " + mModuleNum, mAngleMotor.getTickPosition());
-    // SmartDashboard.putNumber("CPR", mAngleMotor.getEncoder().getCountsPerRevolution());
-    // SmartDashboard.putNumber("offset", ((SOTAAbsoulteEncoder)mAngleMotor.getEncoder()).getOffset());
-
-    SmartDashboard.putNumber("Speed " + mModuleNum, mSpeedMotor.getTickVelocity());
   }
 }

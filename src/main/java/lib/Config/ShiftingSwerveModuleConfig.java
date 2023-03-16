@@ -1,10 +1,10 @@
 package lib.Config;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import static frc.robot.Constants.*;
 
 public class ShiftingSwerveModuleConfig {
 
@@ -47,11 +47,11 @@ public class ShiftingSwerveModuleConfig {
      * for now this is not used and would prefer to use getWheelCircumference
      */
     public double getwheelDiameter() {
-        return wheelDiameter;
+        return wheelDiameter * METERS_PER_INCH;
     }
 
     public double getWheelCircumference() {
-        return wheelDiameter * Math.PI;
+        return getwheelDiameter() * Math.PI;
     }
 
     public double getSpeedKP() {
@@ -144,7 +144,7 @@ public class ShiftingSwerveModuleConfig {
         return pid;
     }
     
-    public ProfiledPIDController generateSpeedProfiledPID() {
+    public ProfiledPIDController generateSpeedPID() {
         TrapezoidProfile.Constraints constraints =
             new TrapezoidProfile.Constraints(
                 getSpeedMaxVel(),
@@ -156,16 +156,6 @@ public class ShiftingSwerveModuleConfig {
                 getSpeedKI(), 
                 getSpeedKD(), 
                 constraints
-        );
-        return pid;
-    }
-
-    public PIDController generateSpeedPID() {
-        PIDController pid = 
-            new PIDController(
-                getSpeedKP(),
-                getSpeedKP(), 
-                getSpeedKD()
         );
         return pid;
     }

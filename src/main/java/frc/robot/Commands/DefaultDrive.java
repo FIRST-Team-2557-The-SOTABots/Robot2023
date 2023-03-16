@@ -35,10 +35,6 @@ public class DefaultDrive extends CommandBase {
     str = -Math.signum(str) * str * str;
     rot = -Math.signum(rot) * rot * rot;
 
-    SmartDashboard.putNumber("fwd", fwd);
-    SmartDashboard.putNumber("str", str);
-    SmartDashboard.putNumber("rot", rot);
-
     shift(
       mDriveStick.getLeftTriggerAxis(), 
       mDriveStick.getRightTriggerAxis()

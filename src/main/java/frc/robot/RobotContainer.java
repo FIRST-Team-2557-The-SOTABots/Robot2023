@@ -133,11 +133,14 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-    dController.x().onTrue(new InstantCommand(() -> {
+    dController.a().onTrue(new InstantCommand(() -> {
       mSwerveDrive.setFieldCentricActive(true);
     }));
-    dController.y().onTrue(new InstantCommand(() -> {
+    dController.b().onTrue(new InstantCommand(() -> {
       mSwerveDrive.setFieldCentricActive(false);
+    }));
+    dController.start().onTrue(new InstantCommand(() -> {
+      mSwerveDrive.resetGyro();
     }));
     
       

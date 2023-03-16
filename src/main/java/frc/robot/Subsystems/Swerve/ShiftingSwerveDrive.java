@@ -45,6 +45,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     mSwerveModules = swerveModules;
     mShifter = shifter;
     mGyro = gyro;
+    mFieldCentricActive = true;
 
     mModuleTranslation = config.generateModuleTranslations();
     mSwerveDriveKinematics = config.generateKinematics();
@@ -189,6 +190,10 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     return mGyro.getRotation2d();
   }
 
+  public void resetGyro() {
+    mGyro.resetAngle();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -196,10 +201,11 @@ public class ShiftingSwerveDrive extends SubsystemBase {
       getModulePositions(), 
       mGyro.getRotation2d()
     );
-    updateModuleTranslation(mGyro.getRotation2d());
-    updateModuleTranslation(mGyro.getRotation2d());
+    // updateModuleTranslation(mGyro.getRotation2d());
     
-    SmartDashboard.putNumber("max wheel speed", kMaxWheelSpeed);
+    SmartDashboard.putBoolean("field centric active", mFieldCentricActive);
+    SmartDashboard.putNumber("angle", mGyro.getAngle());
+
   }
   
 }
