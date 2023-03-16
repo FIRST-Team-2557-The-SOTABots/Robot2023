@@ -2,7 +2,6 @@ package frc.robot.Commands;
 
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -26,17 +25,20 @@ public class ExtensionPID extends CommandBase{
         double setPoint = 0;
         // if(mController.getLeftBumper()) setPoint = 31;
         // if(mController.getRightBumper()) setPoint = 0;
+       // if(mController.getLeftBumper()) setPoint = maxLength.getAsDouble();
+        // else if(mController.getRightBumper()) setPoint = 0;
         setPoint = SmartDashboard.getNumber("Extension Length", 0.0);
-        setPoint = Math.min(setPoint, maxLength.getAsDouble());
 
+        setPoint = Math.min(setPoint, maxLength.getAsDouble());
         extendPID.reset(setPoint, 0.0);
 
         double output = extendPID.calculate(mExtension.getLengthFromStart());
-        SmartDashboard.putNumber("extensionSpeed", output);
+
+        // SmartDashboard.putNumber("extensionSpeed", output);
         
-        if(mController.getLeftBumper()) output = 3;
-        else if(mController.getRightBumper()) output = -3;
-        else output = 0;
+        // if(mController.getLeftBumper()) setPoint = 3;
+        // if(mController.getRightBumper()) setPoint = -3;
+        // else setPoint = 0;
         mExtension.set(output);
 
         SmartDashboard.putNumber("Max Extension", maxLength.getAsDouble());

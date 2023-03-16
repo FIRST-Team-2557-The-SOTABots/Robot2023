@@ -2,8 +2,6 @@ package lib.MotorController;
 
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
-import lib.Config.MotorControllerConfig;
 import lib.Encoder.SOTAEncoder;
 import lib.Encoder.SparkMaxIntegratedEncoder;
 
@@ -119,6 +117,15 @@ public class SparkMaxDelegate implements SOTAMotorController{
     @Override
     public double getPose() {
         return mEncoder.get();
+    }
+
+    @Override
+    public double getNativeEncoderPose() {
+        return mNativeEncoder.get();
+    }
+    @Override
+    public MotorLimits getMotorLimits() {
+        return motorLimits;
     }
 
 }

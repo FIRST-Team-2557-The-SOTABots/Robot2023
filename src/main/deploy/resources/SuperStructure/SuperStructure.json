@@ -6,9 +6,10 @@
     "height": 23,
     "bOffset": -6,
     "fOffset": -3,
-    "fAbsoluteOffset": -3,
-    "bAbsoluteOffset": -6,
-    "maxExtension": 35,
-    "roatationEncoderOffset": 0.16 
+    "fAbsoluteOffset": -2.5,
+    "bAbsoluteOffset": -5.5,
+    "maxExtension": 27,
+    "rotationEncoderOffset": 0.16,
+    "delta": 0.01 
     
 }

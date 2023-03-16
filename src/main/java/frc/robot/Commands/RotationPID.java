@@ -21,9 +21,11 @@ public class RotationPID extends CommandBase{
             PIDController pidController,
             double setpoint,
             SOTAXboxcontroller controller,
-            DoubleSupplier extensionLength){
+            DoubleSupplier extensionLength,
+            DoubleSupplier minAngle, 
+            DoubleSupplier maxAngle){
         this.mArm = mArm; this.setpoint = setpoint; this.pidController = pidController;
-         this.extensionlength = extensionLength;
+         this.extensionlength = extensionLength; this.minAngle = minAngle; this.maxAngle = maxAngle;
         addRequirements(mArm);
     }
     
@@ -33,18 +35,19 @@ public class RotationPID extends CommandBase{
         
         // if(controller.getA()) setpoint = 60;
         // if(controller.getB()) setpoint = 150;
-        double setSetpoint = SmartDashboard.getNumber("rotation setpoint", 0);
+        double setSetpoint = SmartDashboard.getNumber("rotation setpoint", 180);
         setpoint = setSetpoint;
         
         setpoint = MathUtil.clamp(setpoint, minAngle.getAsDouble(), maxAngle.getAsDouble());
 
         pidController.setSetpoint(setpoint);
-        pidController.setP(0.05 - (0.02 * extensionlength.getAsDouble() / 31));
 
-        double output = Math.sin(mArm.getRotationRadians()) * (0.01 + (0.02 * extensionlength.getAsDouble() / 31))//SmartDashboard.getNumber("Test delta", 0) TODO: change to full length 
+        pidController.setP(0.05 - ((0.03 * extensionlength.getAsDouble()) / 27));
+        //SmartDashboard.getNumber("Test delta", 0);
+        double output = Math.sin(mArm.getRotationRadians()) * (0.01 + (0.02 * extensionlength.getAsDouble() / 27)) 
         + pidController.calculate(mArm.getRotationDegrees());
 
-        // mArm.set(output);
+        mArm.set(output);
 
         SmartDashboard.putNumber("Angle Output", output);
         SmartDashboard.putNumber("MinAngle", minAngle.getAsDouble());

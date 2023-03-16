@@ -17,7 +17,7 @@ public class DefaultDrive extends CommandBase {
 
   /** Creates a new DefaultDrive. */
   public DefaultDrive(ShiftingSwerveDrive swerveDrive, CommandXboxController driveStick) {
-    mSwerveDrive = swerveDrive; this.mDriveStick = mDriveStick;
+    mSwerveDrive = swerveDrive; this.mDriveStick = driveStick;
     addRequirements(mSwerveDrive);
   }
 

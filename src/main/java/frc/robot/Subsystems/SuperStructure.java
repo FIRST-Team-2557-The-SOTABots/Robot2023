@@ -27,6 +27,8 @@ public class SuperStructure extends SubsystemBase {
   private double fAbsoluteOffset;
   private double bAbsoluteOffset;
   private double maxExtension;
+  private double rotationEncoderOffset;
+  private double delta;
 
   /** Creates a new ArmSubsystem. */
   public SuperStructure(DoubleSupplier extensionLength, DoubleSupplier CurrentAngle, SuperStructureConfig config) {
@@ -40,7 +42,7 @@ public class SuperStructure extends SubsystemBase {
 
   public double maxExtension(){
     if(CurrentAngle.getAsDouble() >= 90 && CurrentAngle.getAsDouble() <= 270){
-      return 31;
+      return maxExtension;
     }
     double heightOffset = CurrentAngle.getAsDouble() < 180 ? fAbsoluteOffset: bAbsoluteOffset; 
     return MathUtil.clamp((((height + heightOffset) / (Math.cos(Math.toRadians(CurrentAngle.getAsDouble())))) - armLength), 0, this.maxExtension); 
@@ -57,7 +59,12 @@ public class SuperStructure extends SubsystemBase {
     return Math.min((360 - Math.toDegrees(Math.acos((height + heightOffset) / extensionLength.getAsDouble()))), 297);
   }
 
-  
+  public double getRotationEncoderOffset(){
+    return rotationEncoderOffset;
+}
+public double getDelta(){
+    return delta;
+}
  
   
 }

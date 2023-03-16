@@ -3,7 +3,6 @@ package frc.robot.Commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Extension;
-import frc.robot.Subsystems.SuperStructure;
 import lib.Control.SOTAXboxcontroller;
 
 public class BasicArmExtension extends CommandBase{

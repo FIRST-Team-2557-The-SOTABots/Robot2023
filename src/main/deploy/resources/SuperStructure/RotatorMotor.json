@@ -1,6 +1,6 @@
 {
     "port": 13,
-    "isInverted": false,
+    "isInverted": true,
     "idleMode": "COAST",
     "motorType": "BRUSHLESS",
     "countsPerRevolution": 2048,
@@ -9,5 +9,10 @@
         "encoderOffset": 0.16,
         "countsPerRevolution": 5,
         "encoderType": "DUTYCYCLE"
+    },
+    "motorLimitsConfig":{
+        "lowerLimit": 0.2645, 
+        "upperLimit": 0.972,
+        "finalLimits": true
     }
 }

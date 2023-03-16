@@ -65,13 +65,13 @@ public class ShiftingSwerveModule extends SubsystemBase {
     double anglePIDOutput = mAnglePID.calculate(getAngle(), angleSetpointNative);
     double angleFFOutput = mAngleFF.calculate(mAnglePID.getSetpoint().velocity);
 
-    mAngleMotor.setVoltage(state.speedMetersPerSecond == 0.0 ? 0.0 : anglePIDOutput + angleFFOutput);
+    // mAngleMotor.setVoltage(state.speedMetersPerSecond == 0.0 ? 0.0 : anglePIDOutput + angleFFOutput);
 
     double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, state.gear);
     double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getTickVelocity(), speedSetpointNative);
     double speedFFOutput = mSpeedFF.calculate(speedSetpointNative);
 
-    mSpeedMotor.setVoltage(speedPIDOutput + speedFFOutput);
+    // mSpeedMotor.setVoltage(3);//speedPIDOutput + speedFFOutput);
   }
 
   /** 
@@ -171,5 +171,6 @@ public class ShiftingSwerveModule extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Angle No offset" + modulePosition, mAngleMotor.getPose());
+    SmartDashboard.putNumber("Speed" + modulePosition, mSpeedMotor.getTickVelocity());
   }
 }

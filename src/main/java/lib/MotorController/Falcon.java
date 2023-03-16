@@ -122,4 +122,14 @@ public class Falcon implements SOTAMotorController {
         return mEncoder.get();
     }
 
+    @Override
+    public double getNativeEncoderPose() {
+        return mNativeEncoder.get();
+    }
+
+    @Override
+    public MotorLimits getMotorLimits() {
+        return motorLimits;
+    }
+
 }

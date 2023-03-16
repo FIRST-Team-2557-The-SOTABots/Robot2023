@@ -1,6 +1,5 @@
 package lib.Config;
 
-import lib.MotorController.MotorLimits;
 
 public class MotorLimitsConfig {
     private Double upperLimit;
@@ -17,9 +16,5 @@ public class MotorLimitsConfig {
 
     public boolean getFinalLimits(){
         return finalLimits;
-    }
-    
-    public MotorLimits getMotorLimits(){
-        return new MotorLimits(lowerLimit, upperLimit, finalLimits);
     }
 }

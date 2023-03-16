@@ -32,6 +32,7 @@ public class Rotation extends SubsystemBase{
       public void periodic() {
           SmartDashboard.putNumber("Arm Angle", getRotationDegrees());
           SmartDashboard.putNumber("Angle Encoder", getRotatorEncoder());
-          SmartDashboard.putNumber("angle supplied voltage", motor.get());
+          SmartDashboard.putNumber("angle from native", motor.getNativeEncoderPose());
+          SmartDashboard.putNumber("Rotation motor limit", motor.getMotorLimits().getUpperLimit());
       }
 }

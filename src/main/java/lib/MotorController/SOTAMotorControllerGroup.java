@@ -2,10 +2,6 @@ package lib.MotorController;
 
 import java.util.Arrays;
 
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.util.sendable.SendableRegistry;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import lib.Encoder.SOTAEncoder;
 
 public class SOTAMotorControllerGroup implements SOTAMotorController {
@@ -95,5 +91,14 @@ public double getPose() {
     return 0;
 }
 
+@Override
+public double getNativeEncoderPose() {
+    // TODO Auto-generated method stub
+    return 0;
+}
+@Override
+    public MotorLimits getMotorLimits() {
+        return null;
+    }
 
 }

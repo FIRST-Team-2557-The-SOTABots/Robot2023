@@ -1,7 +1,5 @@
 package lib.Factories;
 
-import javax.management.RuntimeErrorException;
-
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -12,10 +10,8 @@ import lib.Config.EncoderConfig;
 import lib.Config.MotorControllerConfig;
 import lib.Config.MotorLimitsConfig;
 import lib.Encoder.AnalogInputEncoder;
-import lib.Encoder.FalconIntegratedEncoder;
 import lib.Encoder.SOTADutyCycleEncoder;
 import lib.Encoder.SOTAEncoder;
-import lib.Encoder.SparkMaxIntegratedEncoder;
 import lib.MotorController.Falcon;
 import lib.MotorController.MotorLimits;
 import lib.MotorController.SOTAMotorController;
@@ -69,7 +65,7 @@ public class MotorControllerFactory {
                 AnalogInput input = new AnalogInput(encoderConfig.getPort());
                 return new AnalogInputEncoder(input, encoderConfig);
             case "DUTYCYCLE":
-                return new SOTADutyCycleEncoder(encoderConfig.getPort());
+                return new SOTADutyCycleEncoder(encoderConfig.getPort(), encoderConfig.getEncoderOffset());
         
         }
     } catch(NullPointerException e){}

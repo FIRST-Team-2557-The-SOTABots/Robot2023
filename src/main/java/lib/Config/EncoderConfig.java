@@ -4,12 +4,6 @@
 
 package lib.Config;
 
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import lib.Encoder.AnalogInputEncoder;
-import lib.Encoder.SOTADutyCycleEncoder;
-import lib.Encoder.SOTAEncoder;
-
 /** Add your docs here. */
 public class EncoderConfig {
     private int port;

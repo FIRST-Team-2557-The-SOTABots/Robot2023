@@ -45,12 +45,14 @@ public class Extension extends SubsystemBase{
     @Override
     public void periodic() {
         if(limitswitch.get()) {
-            motor.getPose();
+            motor.getEncoder().reset();;
             hasReset = true;
         }
-        SmartDashboard.putNumber("extensionEncoder", getEncoder());
-        SmartDashboard.putNumber("Extension length", getLength());
-        SmartDashboard.putBoolean("limitswitch", limitswitch.get());
+        // SmartDashboard.putNumber("extensionEncoder", getEncoder());
+        // SmartDashboard.putNumber("Extension length", getLength());
+        // SmartDashboard.putBoolean("limitswitch", limitswitch.get());
+        SmartDashboard.putNumber("extension motor limit", motor.getMotorLimits().getUpperLimit());
+
     }
 
 }

@@ -59,6 +59,10 @@ public class RobotContainer {
   private ResetExtension mResetExtension;
 
   public RobotContainer() {
+    
+    SmartDashboard.putNumber("rotation setpoint", 180);
+    SmartDashboard.putNumber("Extension Length", 0);
+
     ObjectMapper mapper = new ObjectMapper();
     mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     this.configUtils = new ConfigUtils(mapper);
@@ -126,7 +130,7 @@ public class RobotContainer {
       PIDController armRotationController = new PIDController(0.03,0,0);
       ProfiledPIDController extensController = new ProfiledPIDController(3, 0, 0, new TrapezoidProfile.Constraints(40.0,80.0));
 
-      this.rotationPID = new RotationPID(mRotation, armRotationController, 180, mController, mExtension::getLength);
+      this.rotationPID = new RotationPID(mRotation, armRotationController, 180, mController, mExtension::getLength, superStructure::minRotation, superStructure::maxRotation);
       this.extensionPID = new ExtensionPID(extensController, mExtension,  mController, superStructure::maxExtension);
       this.mResetExtension = new ResetExtension(mExtension);
     
@@ -143,6 +147,8 @@ public class RobotContainer {
   }
 
   private void configureDefaultCommands(){
+    
+
     mSwerveDrive.setDefaultCommand(mDriveCommand);
     mExtension.setDefaultCommand(extensionPID);
     mRotation.setDefaultCommand(rotationPID);
@@ -150,11 +156,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     // TODO: add reset gyro
-    dController.b().onTrue(new InstantCommand(
-      () -> {
-
-      }
-    ));
+    mController.a().onTrue(mResetExtension);
     dController.x().onTrue(new InstantCommand(() -> {
       mSwerveDrive.setFieldCentricActive(true);
     }));
