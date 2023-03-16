@@ -7,12 +7,15 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import lib.Config.EncoderConfig;
 import lib.Config.MotorControllerConfig;
 import lib.Config.MotorLimitsConfig;
 import lib.Encoder.AnalogInputEncoder;
+import lib.Encoder.FalconIntegratedEncoder;
 import lib.Encoder.SOTADutyCycleEncoder;
 import lib.Encoder.SOTAEncoder;
+import lib.Encoder.SparkMaxIntegratedEncoder;
 import lib.MotorController.Falcon;
 import lib.MotorController.MotorLimits;
 import lib.MotorController.SOTAMotorController;
@@ -23,10 +26,13 @@ public class MotorControllerFactory {
     public static SOTAMotorController generateFalconDelegate(MotorControllerConfig config){
         WPI_TalonFX motor = new WPI_TalonFX(config.getPort());
         motor.setInverted(config.getInverted());
-        return new Falcon(motor, generateEncoder(config.getEncoderConfig()), generaLimits(config.getMotorLimitsConfig()));
+        SOTAEncoder encoder =  generateEncoder(config.getEncoderConfig()) ;
+        return encoder == null ? new Falcon(motor, generateLimits(config.getMotorLimitsConfig())) : 
+        new Falcon(motor, encoder , generateLimits(config.getMotorLimitsConfig()));
     }
 
     public static SOTAMotorController generateSparkDelegate(MotorControllerConfig config){
+        if(config == null) return null;
         MotorType motorType;
       switch(config.getMotorType()) {
           case("BRUSHLESS"):
@@ -39,14 +45,25 @@ public class MotorControllerFactory {
               throw new IllegalArgumentException("Illegal motor type");
       }
         CANSparkMax sparkMax = new CANSparkMax(config.getPort(), motorType);
-        return new SparkMaxDelegate(sparkMax, generateEncoder(config.getEncoderConfig()), generaLimits(config.getMotorLimitsConfig()));
+        SOTAEncoder encoder = (generateEncoder(config.getEncoderConfig()));
+        if(encoder == null){
+            SmartDashboard.putBoolean("Failed to create encoder" +  config.getPort(), true);
+        return new SparkMaxDelegate(sparkMax
+        , generateLimits(config.getMotorLimitsConfig()));
+        }
+        return new SparkMaxDelegate(sparkMax, encoder, generateLimits(config.getMotorLimitsConfig()));
     }
 
-    public static MotorLimits generaLimits(MotorLimitsConfig config){
-        return new MotorLimits(config.getLowerLimit(), config.getUpperLimit(), config.getFinalLimits());
+    public static MotorLimits generateLimits(MotorLimitsConfig config){
+            if(config == null) return new MotorLimits(null, null);
+
+            return new MotorLimits(config.getLowerLimit(), config.getUpperLimit(), config.getFinalLimits());
+        
     }
 
     public static SOTAEncoder generateEncoder(EncoderConfig encoderConfig){
+        try{
+        if (encoderConfig == null ) return null;
         switch(encoderConfig.getEncoderType()){
             case "ANALOG":
                 AnalogInput input = new AnalogInput(encoderConfig.getPort());
@@ -55,6 +72,7 @@ public class MotorControllerFactory {
                 return new SOTADutyCycleEncoder(encoderConfig.getPort());
         
         }
-        throw new IllegalArgumentException("Error Initializing Encoder");
+    } catch(NullPointerException e){}
+        return null;
     }
 }

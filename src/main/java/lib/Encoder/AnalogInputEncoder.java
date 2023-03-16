@@ -62,8 +62,7 @@ public class AnalogInputEncoder implements SOTAAbsoulteEncoder {
 
     @Override
     public double getPositionNoOffset() {
-        // TODO Auto-generated method stub
-        return 0;
+        return mEncoder.getAverageVoltage();
     }
 
 }

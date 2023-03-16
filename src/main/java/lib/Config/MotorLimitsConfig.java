@@ -3,15 +3,15 @@ package lib.Config;
 import lib.MotorController.MotorLimits;
 
 public class MotorLimitsConfig {
-    private double upperLimit;
-    private double lowerLimit;
+    private Double upperLimit;
+    private Double lowerLimit;
     private boolean finalLimits;
 
-    public double getUpperLimit(){
+    public Double getUpperLimit(){
         return upperLimit;
     }
 
-    public double getLowerLimit(){
+    public Double getLowerLimit(){
         return lowerLimit;
     }
 

@@ -1,4 +1,5 @@
 {
+    "modulePosition": "BackRight",
     "encoderPort": 2,
     
     "gearRatios": [5.07,10.40],

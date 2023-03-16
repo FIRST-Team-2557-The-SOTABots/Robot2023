@@ -1,6 +1,5 @@
 {
-    "encoderPort": 3,
-
+    "modulePosition": "FrontRight",
     "gearRatios": [5.07,10.40],
 
     "angleOffset": 4.16,

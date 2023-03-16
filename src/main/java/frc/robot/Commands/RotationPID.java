@@ -13,7 +13,6 @@ public class RotationPID extends CommandBase{
     private Rotation mArm;
     private double setpoint;
     private PIDController pidController;
-    private SOTAXboxcontroller controller;
     private DoubleSupplier minAngle;
     private DoubleSupplier maxAngle;
     private DoubleSupplier extensionlength;
@@ -22,11 +21,8 @@ public class RotationPID extends CommandBase{
             PIDController pidController,
             double setpoint,
             SOTAXboxcontroller controller,
-            DoubleSupplier minAngle,
-            DoubleSupplier maxAngle,
             DoubleSupplier extensionLength){
         this.mArm = mArm; this.setpoint = setpoint; this.pidController = pidController;
-         this.controller = controller; this.minAngle = minAngle; this.maxAngle = maxAngle;
          this.extensionlength = extensionLength;
         addRequirements(mArm);
     }

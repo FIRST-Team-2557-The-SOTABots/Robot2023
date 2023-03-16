@@ -2,5 +2,11 @@
     "isInverted": false,
     "idleMode": "BRAKE",
     "motorType": "BRUSHLESS",
-    "countsPerRevolution": 2048
+    "countsPerRevolution": 2048,
+    "encoderConfig": {
+        "port": 3,
+        "encoderOffset": 0,
+        "countsPerRevolution": 5,
+        "encoderType": "ANALOG"
+    }
 }

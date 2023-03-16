@@ -16,7 +16,7 @@ import lib.MotorController.SOTAMotorController;
 
 public class ShiftingSwerveModule extends SubsystemBase {
 
-  // private int modulePosition; 
+  private String modulePosition; 
 
   private SOTAMotorController mAngleMotor; // TODO: Change to a SOTACompositeMotor
   private SOTAMotorController mSpeedMotor;
@@ -38,7 +38,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
     this.mSpeedMotor = speedMotor;
     this.mAngleMotor = angleMotor;
 
-    // this.modulePosition = config.getEncoderPort();
+    this.modulePosition = config.getModulePosition();
     this.mSpeedMotor = speedMotor; this.mAngleMotor = angleMotor;
 
     this.kGearRatios = config.getGearRatios();
@@ -101,7 +101,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * @return The angle of the module in absolute encoder ticks
    */
   public double getAngle() {
-    return ((SOTAAbsoulteEncoder) mAngleMotor.getEncoder()).getPose();
+    return mAngleMotor.getPose();
   }
 
   /**
@@ -170,7 +170,6 @@ public class ShiftingSwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Speed set", mSpeedMotor.get());
-    SmartDashboard.putNumber("Angle get", mAngleMotor.get());
+    SmartDashboard.putNumber("Angle No offset" + modulePosition, mAngleMotor.getPose());
   }
 }

@@ -98,5 +98,11 @@ public class SOTADutyCycleEncoder implements SOTAEncoder{
     public double getVelocity() {
         return 0;
     }
+
+    @Override
+    public double getCountsPerRevolution() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
     
 }

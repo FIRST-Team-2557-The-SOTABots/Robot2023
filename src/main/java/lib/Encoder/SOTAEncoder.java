@@ -8,4 +8,5 @@ public interface SOTAEncoder {
     public double getPositionOffset();
     public void close();
     public double getVelocity();
+    public double getCountsPerRevolution();
 }

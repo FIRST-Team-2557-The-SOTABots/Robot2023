@@ -3,5 +3,11 @@
     "isInverted": false,
     "idleMode": "COAST",
     "motorType": "BRUSHLESS",
-    "countsPerRevolution": 2048
+    "countsPerRevolution": 2048,
+    "encoderConfig": {
+        "port": 1,
+        "encoderOffset": 0.16,
+        "countsPerRevolution": 5,
+        "encoderType": "DUTYCYCLE"
+    }
 }

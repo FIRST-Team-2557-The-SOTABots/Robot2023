@@ -1,4 +1,5 @@
 {
+    "modulePosition": "FrontLeft",
     "encoderPort": 0,
     
     "gearRatios": [5.07,10.40],
