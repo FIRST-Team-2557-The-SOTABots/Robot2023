@@ -12,7 +12,7 @@ public class AnalogInputEncoder implements SOTAAbsoulteEncoder {
     public AnalogInputEncoder(AnalogInput encoder, EncoderConfig config) {
         this.mEncoder = encoder;
         this.kCountsPerRevolution = config.getCountsPerRevolution();
-        this.kOffset = config.getCountsPerRevolution();
+        this.kOffset = config.getOffset();
     }
 
     public double getPosition() {
@@ -39,6 +39,10 @@ public class AnalogInputEncoder implements SOTAAbsoulteEncoder {
 
     public double getCountsPerRevolution() {
         return kCountsPerRevolution;
+    }
+    
+    public double getOffset() {
+        return kOffset;
     }
 
     public double getPositionOffset() {

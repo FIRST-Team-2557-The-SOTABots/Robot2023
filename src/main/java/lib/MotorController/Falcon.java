@@ -1,9 +1,12 @@
 package lib.MotorController;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import lib.Config.MotorControllerConfig;
 import lib.Encoder.FalconIntegratedEncoder;
 import lib.Encoder.SOTAEncoder;
@@ -16,7 +19,7 @@ public class Falcon implements SOTAMotorController {
     public Falcon(TalonFX motor, MotorControllerConfig config){
         this(
             motor, 
-            new FalconIntegratedEncoder(motor.getSensorCollection()), 
+            new FalconIntegratedEncoder(new TalonFXSensorCollection(motor)), 
             config
         );
         setInverted(config.getInverted());
@@ -35,7 +38,6 @@ public class Falcon implements SOTAMotorController {
     public void setVoltage(double voltage) {
         set(voltage / RobotController.getBatteryVoltage());
     }
-
 
     public double get() {
         return mMotor.getMotorOutputPercent();
@@ -65,11 +67,11 @@ public class Falcon implements SOTAMotorController {
         return mEncoder;
     }
 
-    public double getNativeVelocity() {
-        return mNativeEncoder.getVelocity();
+    public double getNativeTickVelocity() {
+        return mMotor.getSelectedSensorVelocity();
     }
 
-    public double getNativePosition() {
+    public double getNativeTickPosition() {
         return mNativeEncoder.getPosition();
     }
 

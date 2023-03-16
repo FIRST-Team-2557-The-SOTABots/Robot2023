@@ -1,12 +1,14 @@
 package lib.Config;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ShiftingSwerveModuleConfig {
 
-    private int moduleNumber;
+    private int moduleNum;
 
     private double[] gearRatios;
 
@@ -32,8 +34,8 @@ public class ShiftingSwerveModuleConfig {
     private double anglePIDTolerance;
     private double speedPIDTolerance;
 
-    public int getModuleNumber() {
-        return moduleNumber;
+    public int getModuleNum() {
+        return moduleNum;
     }
 
     public double[] getGearRatios(){
@@ -142,7 +144,7 @@ public class ShiftingSwerveModuleConfig {
         return pid;
     }
     
-    public ProfiledPIDController generateSpeedPID() {
+    public ProfiledPIDController generateSpeedProfiledPID() {
         TrapezoidProfile.Constraints constraints =
             new TrapezoidProfile.Constraints(
                 getSpeedMaxVel(),
@@ -154,6 +156,16 @@ public class ShiftingSwerveModuleConfig {
                 getSpeedKI(), 
                 getSpeedKD(), 
                 constraints
+        );
+        return pid;
+    }
+
+    public PIDController generateSpeedPID() {
+        PIDController pid = 
+            new PIDController(
+                getSpeedKP(),
+                getSpeedKP(), 
+                getSpeedKD()
         );
         return pid;
     }

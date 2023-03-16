@@ -46,5 +46,11 @@ public class SOTADutyCycleEncoder implements SOTAAbsoulteEncoder {
         // TODO Auto-generated method stub
         return 0;
     }
+
+    @Override
+    public double getOffset() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
     
 }

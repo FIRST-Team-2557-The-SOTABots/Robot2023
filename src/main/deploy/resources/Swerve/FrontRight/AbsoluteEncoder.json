@@ -1,5 +1,5 @@
 {
     "port": 3,
-    "angleOffset": 4.16,
-    "angleEncoderCPR": 5.0
+    "offset": 3.460693005,
+    "countsPerRevolution": 5.0
 }

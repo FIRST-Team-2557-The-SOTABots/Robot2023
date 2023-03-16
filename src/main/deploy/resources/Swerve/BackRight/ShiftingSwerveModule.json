@@ -1,25 +1,24 @@
-{
-    "gearRatios": [5.07,10.40],
-
-    "angleOffset": 0.278085908,
-    "angleEncoderCPR": 5.0,
+{   
+    "moduleNum": 2,
+    "gearRatios": [6.5, 13.68],
 
     "wheelDiameter": 4.0, 
     
-    "speedKP": 0.014,
+    "speedKP": 0.001,
     "speedKI": 0.0,
     "speedKD": 0.0,
-    "speedMaxAccel": 1000.0,
-    "speedMaxVel": 2000.0,
-    "speedKS": 0.6284,
-    "speedKV": 0.0005339,
+    "speedMaxAccel": 4000.0,
+    "speedMaxVel": 4000.0,
+    "speedKS": 0.49527,
+    "speedKV": 0.000541206,
     "speedPIDTolerance": 0.05,
 
-    "angleKP": 6.5,
+    "angleKP": 2.0,
     "angleKI": 0.0,
     "angleKD": 0.0,
     "angleMaxAccel": 70.0,
-    "angleKS": 0.537678342,
-    "angleKV": 0.131499829,
+    "angleKS": 0.414521,
+    "angleKV": 0.115996,
     "anglePIDTolerance": 0.0
+    
 }

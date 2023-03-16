@@ -13,7 +13,7 @@ import lib.Encoder.SOTAEncoder;
 /** Add your docs here. */
 public class EncoderConfig {
     private int port;
-    private double encoderOffset;
+    private double offset;
     private double countsPerRevolution;
     private String portType;
     private String encoderType;
@@ -26,8 +26,8 @@ public class EncoderConfig {
         return countsPerRevolution;
     }
 
-    public double getEncoderOffset() {
-        return encoderOffset;
+    public double getOffset() {
+        return offset;
     }
     public String getPortType(){
         return portType;

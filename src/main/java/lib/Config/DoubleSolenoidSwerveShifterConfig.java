@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 public class DoubleSolenoidSwerveShifterConfig {
     private String hiGearValue;
     private String loGearValue;
-    private int[] gearRatios;
 
     private Value convertStringToValue(String str) {
         switch(str) {
@@ -23,7 +22,4 @@ public class DoubleSolenoidSwerveShifterConfig {
         return convertStringToValue(loGearValue);
     }
 
-    public int[] getGearRatios(){
-        return gearRatios;
-    }
 }

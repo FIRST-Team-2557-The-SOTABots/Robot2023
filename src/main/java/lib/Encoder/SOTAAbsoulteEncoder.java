@@ -8,4 +8,5 @@ package lib.Encoder;
 public interface SOTAAbsoulteEncoder extends SOTAEncoder {
     public double getPositionNoOffset();
     public double getPositionOffset();
+    public double getOffset();
 }

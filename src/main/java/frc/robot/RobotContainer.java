@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.io.IOException;
 
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -85,14 +86,14 @@ public class RobotContainer {
       initSwerveModule(
         "Swerve/FrontRight/SpeedFalcon",
         "Swerve/FrontRight/AngleSparkMax",
-        "Swerve/FrontLeft/AbsoluteEncoder",
+        "Swerve/FrontRight/AbsoluteEncoder",
         "Swerve/FrontRight/ShiftingSwerveModule"
-      ),
+      )
     };
     
     try{
       SOTAGyro gyro = new NavX(new AHRS(Port.kMXP));
-      DoubleSolenoid solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 8, 9);
+      DoubleSolenoid solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
       GearShifter shifter = new DoubleSolenoidSwerveShifter(solenoid, 
         configUtils.readFromClassPath(DoubleSolenoidSwerveShifterConfig.class, 
         "Swerve/DoubleSolenoidSwerveShifter"));
@@ -131,12 +132,7 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    // TODO: add reset gyro
-    dController.b().onTrue(new InstantCommand(
-      () -> {
 
-      }
-    ));
     dController.x().onTrue(new InstantCommand(() -> {
       mSwerveDrive.setFieldCentricActive(true);
     }));
@@ -151,11 +147,10 @@ public class RobotContainer {
     return null;
   }
 
-
   private Falcon createFalcon(String resourceId){
     try{
         MotorControllerConfig config = configUtils.readFromClassPath(MotorControllerConfig.class, resourceId);
-        WPI_TalonFX motor = new WPI_TalonFX(config.getPort());
+        TalonFX motor = new TalonFX(config.getPort());
         return new Falcon(motor, config);
     } catch(IOException e) {
       throw new RuntimeException("Error Initializing Talon", e);
@@ -217,11 +212,6 @@ public class RobotContainer {
   }
 
   public ShiftingSwerveModule initSwerveModule(String speedConfig, String angleConfig, String encoderConfig, String moduleConfig){
-    // SOTAMotorController speedMotor = initFalconDelegate(speedConfig);
-    // SOTAMotorController angleMotor = initSparkMaxDelegate(angleConfig);
-    // SOTAEncoder encoder = new AnalogInputEncoder();
-    // SOTAMotorController angleComposite = new CompositeMotor(angleMotor, encoder);
-
     try{
       ShiftingSwerveModuleConfig config = configUtils.readFromClassPath(ShiftingSwerveModuleConfig.class, moduleConfig);
       SOTAMotorController speedMotor = createFalcon(speedConfig);
