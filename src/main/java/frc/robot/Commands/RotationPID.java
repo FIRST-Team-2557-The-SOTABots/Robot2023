@@ -42,10 +42,10 @@ public class RotationPID extends CommandBase{
 
         pidController.setSetpoint(setpoint);
 
-        pidController.setP(0.05 - ((0.03 * extensionlength.getAsDouble()) / 27));
-        //SmartDashboard.getNumber("Test delta", 0);
-        double output = Math.sin(mArm.getRotationRadians()) * (0.01 + (0.02 * extensionlength.getAsDouble() / 27)) 
-        + pidController.calculate(mArm.getRotationDegrees());
+        pidController.setP(//0.05 - ((0.03 * extensionlength.getAsDouble()) / 27));
+        SmartDashboard.getNumber("set p", 0));
+        double output = Math.sin(mArm.getRotationRadians()) * SmartDashboard.getNumber("Test delta", 0);//(0.01 + (0.02 * extensionlength.getAsDouble() / 27)) 
+        // + pidController.calculate(mArm.getRotationDegrees());
 
         mArm.set(output);
 

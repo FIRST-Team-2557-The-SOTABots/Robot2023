@@ -50,7 +50,7 @@ public class Extension extends SubsystemBase{
         }
         // SmartDashboard.putNumber("extensionEncoder", getEncoder());
         // SmartDashboard.putNumber("Extension length", getLength());
-        // SmartDashboard.putBoolean("limitswitch", limitswitch.get());
+        SmartDashboard.putBoolean("limitswitch", limitswitch.get());
         SmartDashboard.putNumber("extension motor limit", motor.getMotorLimits().getUpperLimit());
 
     }
