@@ -4,6 +4,8 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
+import static frc.robot.Constants.*;
+
 public class ShiftingSwerveModuleConfig {
 
     private String modulePosition;
@@ -47,11 +49,11 @@ public class ShiftingSwerveModuleConfig {
      * for now this is not used and would prefer to use getWheelCircumference
      */
     public double getwheelDiameter() {
-        return wheelDiameter;
+        return wheelDiameter * METERS_PER_INCH;
     }
 
     public double getWheelCircumference() {
-        return wheelDiameter * Math.PI;
+        return getwheelDiameter() * Math.PI;
     }
 
     public double getSpeedKP() {

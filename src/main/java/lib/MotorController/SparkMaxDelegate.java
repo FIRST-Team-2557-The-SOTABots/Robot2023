@@ -128,4 +128,9 @@ public class SparkMaxDelegate implements SOTAMotorController{
         return motorLimits;
     }
 
+    @Override
+    public double getTickPosition() {
+        return mEncoder.get();
+    }
+
 }

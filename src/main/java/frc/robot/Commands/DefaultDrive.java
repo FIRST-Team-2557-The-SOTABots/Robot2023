@@ -17,13 +17,11 @@ public class DefaultDrive extends CommandBase {
 
   /** Creates a new DefaultDrive. */
   public DefaultDrive(ShiftingSwerveDrive swerveDrive, CommandXboxController driveStick) {
-    mSwerveDrive = swerveDrive; this.mDriveStick = driveStick;
+    // Use addRequirements() here to declare subsystem dependencies.
+    mSwerveDrive = swerveDrive;
+    mDriveStick = driveStick;
     addRequirements(mSwerveDrive);
   }
-
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -37,19 +35,22 @@ public class DefaultDrive extends CommandBase {
     str = -Math.signum(str) * str * str;
     rot = -Math.signum(rot) * rot * rot;
 
-    SmartDashboard.putNumber("fwd", fwd);
-    SmartDashboard.putNumber("str", str);
-    SmartDashboard.putNumber("rot", rot);
-
+    shift(
+      mDriveStick.getLeftTriggerAxis(), 
+      mDriveStick.getRightTriggerAxis()
+    );
     drive(fwd, str, rot, mSwerveDrive.getRotation2d(), new Translation2d());
   }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
   protected void drive(double fwd, double str, double rot, Rotation2d angle, Translation2d pointOfRotation) {
     mSwerveDrive.drive(fwd, str, rot, angle, pointOfRotation);
+  }
+
+  protected void shift(double lo, double hi) {
+    if (lo != 0.0) 
+      mSwerveDrive.shift(0);
+    if (hi != 0.0)
+      mSwerveDrive.shift(1);
   }
 
   // Returns true when the command should end.

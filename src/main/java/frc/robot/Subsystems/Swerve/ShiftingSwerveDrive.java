@@ -41,9 +41,11 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     GearShifter shifter, 
     SOTAGyro gyro, 
     ShiftingSwerveDriveConfig config) {
+
     mSwerveModules = swerveModules;
     mShifter = shifter;
     mGyro = gyro;
+    mFieldCentricActive = true;
 
     mModuleTranslation = config.generateModuleTranslations();
     mSwerveDriveKinematics = config.generateKinematics();
@@ -73,7 +75,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
    * @param pointOfRotation Point the robot will rotate around 
    */
   public void drive(double fwd, double str, double rot, Rotation2d currentAngle, Translation2d pointOfRotation) {
-    // Squares inputs and scales based off of max speeds
+    // Scales inputs based off of max speeds
     fwd = MathUtil.clamp(fwd, -1.0, 1.0) * kMaxWheelSpeed; 
     str = MathUtil.clamp(str, -1.0, 1.0) * kMaxWheelSpeed;
     rot = MathUtil.clamp(rot, -1.0, 1.0) * kMaxAngularVelocity;
@@ -188,6 +190,10 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     return mGyro.getRotation2d();
   }
 
+  public void resetGyro() {
+    mGyro.resetAngle();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -195,12 +201,11 @@ public class ShiftingSwerveDrive extends SubsystemBase {
       getModulePositions(), 
       mGyro.getRotation2d()
     );
-    updateModuleTranslation(mGyro.getRotation2d());
-    updateModuleTranslation(mGyro.getRotation2d());
+    // updateModuleTranslation(mGyro.getRotation2d());
     
-    SmartDashboard.putNumber("inHighGear", mShifter.getGear());
-    SmartDashboard.putBoolean("FieldCentric", mFieldCentricActive);
-    SmartDashboard.putNumber("Bot angle", getRotation2d().getDegrees());
+    SmartDashboard.putBoolean("field centric active", mFieldCentricActive);
+    SmartDashboard.putNumber("angle", mGyro.getAngle());
+
   }
   
 }

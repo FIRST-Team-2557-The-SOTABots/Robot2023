@@ -101,4 +101,34 @@ public double getNativeEncoderPose() {
         return null;
     }
 
+@Override
+public void setVoltage(double voltage) {
+    // TODO Auto-generated method stub
+    
+}
+
+@Override
+public double getTickPosition() {
+    // TODO Auto-generated method stub
+    return 0;
+}
+
+@Override
+public double getNativeVelocity() {
+    // TODO Auto-generated method stub
+    return 0;
+}
+
+@Override
+public double getNativePosition() {
+    // TODO Auto-generated method stub
+    return 0;
+}
+
+@Override
+public SOTAEncoder getNativeEncoder() {
+    // TODO Auto-generated method stub
+    return null;
+}
+
 }

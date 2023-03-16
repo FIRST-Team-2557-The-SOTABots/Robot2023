@@ -16,9 +16,9 @@ import lib.MotorController.SOTAMotorController;
 
 public class ShiftingSwerveModule extends SubsystemBase {
 
-  private String modulePosition; 
+  private String mModulePosition; 
 
-  private SOTAMotorController mAngleMotor; // TODO: Change to a SOTACompositeMotor
+  private SOTAMotorController mAngleMotor; 
   private SOTAMotorController mSpeedMotor;
 
   private ProfiledPIDController mAnglePID;
@@ -28,6 +28,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
 
   private double[] kGearRatios;
   private double kAngleCountsPerRevolution;
+  private double kSpeedCountsPerRevolution;
   private double kWheelCircumference; 
 
   public ShiftingSwerveModule(
@@ -38,12 +39,14 @@ public class ShiftingSwerveModule extends SubsystemBase {
     this.mSpeedMotor = speedMotor;
     this.mAngleMotor = angleMotor;
 
-    this.modulePosition = config.getModulePosition();
-    this.mSpeedMotor = speedMotor; this.mAngleMotor = angleMotor;
+    this.mModulePosition = config.getModulePosition();
+    this.mSpeedMotor = speedMotor; 
+    this.mAngleMotor = angleMotor;
 
     this.kGearRatios = config.getGearRatios();
 
     this.kAngleCountsPerRevolution = mAngleMotor.getEncoder().getCountsPerRevolution();
+    this.kSpeedCountsPerRevolution = mSpeedMotor.getEncoder().getCountsPerRevolution();
     this.kWheelCircumference = config.getWheelCircumference();
 
     this.mAngleFF = config.angleFF();
@@ -51,7 +54,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
 
     this.mAnglePID = config.generateAnglePID(kAngleCountsPerRevolution);
     this.mSpeedPID = config.generateSpeedPID();
-                
+
   }
 
   /**
@@ -65,13 +68,17 @@ public class ShiftingSwerveModule extends SubsystemBase {
     double anglePIDOutput = mAnglePID.calculate(getAngle(), angleSetpointNative);
     double angleFFOutput = mAngleFF.calculate(mAnglePID.getSetpoint().velocity);
 
-    // mAngleMotor.setVoltage(state.speedMetersPerSecond == 0.0 ? 0.0 : anglePIDOutput + angleFFOutput);
+    mAngleMotor.setVoltage(state.speedMetersPerSecond == 0.0 ? 0.0 : angleFFOutput + anglePIDOutput);
 
-    double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, state.gear);
+    double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[state.gear]);
     double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getTickVelocity(), speedSetpointNative);
     double speedFFOutput = mSpeedFF.calculate(speedSetpointNative);
+    SmartDashboard.putNumber("Wheel Circumference", kWheelCircumference);
+    SmartDashboard.putNumber("Speed CPR", kSpeedCountsPerRevolution);
+    SmartDashboard.putNumber("Gear Ratio", kGearRatios[state.gear]);
+    SmartDashboard.putNumber("Meters Per Count", getMetersPerCount(kGearRatios[state.gear]));
 
-    // mSpeedMotor.setVoltage(3);//speedPIDOutput + speedFFOutput);
+    mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
   }
 
   /** 
@@ -109,7 +116,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * @return The angle of the absolute encoders ticks 
    */
   public double getAngleNoOffset() {
-    return ((SOTAAbsoulteEncoder) mAngleMotor.getEncoder()).getPositionNoOffset();
+    return  mAngleMotor.getEncoder().getAbsolutePosition();
   }
 
   /**
@@ -136,7 +143,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * @return Angle of the module in radians
    */
   public double nativeToRadians(double encoderCounts) {
-    return encoderCounts * 2 * Math.PI / kAngleCountsPerRevolution;
+    return encoderCounts * (2 * Math.PI) / kAngleCountsPerRevolution;
   }
 
   /**
@@ -146,7 +153,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * @return The equivalent speed motor encoder velocity in counts per 100 ms
    */
   public double metersPerSecondToNative(double metersPerSecond, double gearRatio) {
-    return metersPerSecond / getMetersPerCount(gearRatio) / 10;
+    return metersPerSecond / getMetersPerCount(gearRatio) / 10.0;
   }
 
   /**
@@ -164,13 +171,11 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * @return The meters per count 
    */
   public double getMetersPerCount(double gearRatio) {
-    return kWheelCircumference / gearRatio / mSpeedMotor.getEncoder().getCountsPerRevolution();
+    return kWheelCircumference / gearRatio / kSpeedCountsPerRevolution;
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Angle No offset" + modulePosition, mAngleMotor.getPose());
-    SmartDashboard.putNumber("Speed" + modulePosition, mSpeedMotor.getTickVelocity());
   }
 }

@@ -65,4 +65,9 @@ public class AnalogInputEncoder implements SOTAAbsoulteEncoder {
         return mEncoder.getAverageVoltage();
     }
 
+    @Override 
+    public double getOffset() {
+        return kOffset;
+    }
+
 }

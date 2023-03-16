@@ -20,4 +20,13 @@ public interface SOTAMotorController extends MotorController{
     // void resetEncoder();
     // boolean getInBrake();
     // void setBrake();
+    void set(double speed);
+    void setVoltage(double voltage);
+    double get();
+    double getTickPosition();
+    double getNativeVelocity();
+    double getNativePosition();
+    SOTAEncoder getNativeEncoder();
+
 }
+
