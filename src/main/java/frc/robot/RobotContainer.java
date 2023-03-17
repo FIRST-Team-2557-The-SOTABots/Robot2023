@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -37,6 +38,7 @@ import frc.robot.Subsystems.Swerve.DoubleSolenoidShifter;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveModule;
 import frc.robot.util.ConfigUtils;
+import lib.Command.AutoCommand;
 import lib.Config.DoubleSolenoidConfig;
 import lib.Config.MotorControllerConfig;
 import lib.Config.ShiftingSwerveDriveConfig;
@@ -67,6 +69,8 @@ public class RobotContainer {
   private ExtensionPID extensionPID;
   private ResetExtension mResetExtension;
   private BasicIntakeCommand intakeCommand;
+
+  private SendableChooser<AutoCommand> autoChooser;
 
   public RobotContainer() {
     
@@ -115,7 +119,7 @@ public class RobotContainer {
       GearShifter shifter = new DoubleSolenoidShifter(solenoid, 
         configUtils.readFromClassPath(DoubleSolenoidConfig.class, 
         "Swerve/DoubleSolenoidSwerveShifter"));
-      mSwerveDrive = new ShiftingSwerveDrive(swerveModules, shifter, gyro,
+      mSwerveDrive = new ShiftingSwerveDrive(swerveModules, shifter, gyro, 
        configUtils.readFromClassPath(ShiftingSwerveDriveConfig.class, "Swerve/ShiftingSwerveDrive"));
 
     } catch (IOException e) {

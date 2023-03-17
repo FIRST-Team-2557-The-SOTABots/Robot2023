@@ -7,6 +7,7 @@ package frc.robot.Subsystems.Swerve;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -15,8 +16,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.TimestampedRaw;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Subsystems.Rotation;
 import lib.Pneumatics.GearShifter;
 import lib.Config.ShiftingSwerveDriveConfig;
 import lib.Gyro.SOTAGyro;
@@ -29,6 +34,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   private Translation2d[] mModuleTranslation;
   private SwerveDriveKinematics mSwerveDriveKinematics;
   private SwerveDriveOdometry mSwerveDriveOdometry;
+  // private SwerveDrivePoseEstimator mSwerveDrivePoseEstimator;
 
   private boolean mFieldCentricActive;
 
@@ -39,7 +45,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   public ShiftingSwerveDrive(
     ShiftingSwerveModule[] swerveModules, 
     GearShifter shifter, 
-    SOTAGyro gyro, 
+    SOTAGyro gyro,
     ShiftingSwerveDriveConfig config) {
 
     mSwerveModules = swerveModules;
@@ -50,6 +56,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     mModuleTranslation = config.generateModuleTranslations();
     mSwerveDriveKinematics = config.generateKinematics();
     mSwerveDriveOdometry = config.generateOdometry(mSwerveDriveKinematics, getRotation2d(), getModulePositions());
+    // mSwerveDrivePoseEstimator = new SwerveDrivePoseEstimator(mSwerveDriveKinematics, getRotation2d(), getModulePositions(), new Pose2d()); // assuming we reset the pose at the start of auto
 
     kMaxWheelSpeed = config.getMaxWheelSpeed();
     kMaxAngularVelocity = config.getMaxAngularVelocity();
@@ -134,6 +141,18 @@ public class ShiftingSwerveDrive extends SubsystemBase {
       pose
     );
   }
+
+  // /**
+  //  * Updates the pose of the robot using a Pose2d from the limelight
+  //  * @param predictedPose Predicted state of the robot from the limelight
+  //  */
+  // public void updatePoseWithVision(Pose2d predictedPose) {
+  //   mSwerveDrivePoseEstimator.addVisionMeasurement(predictedPose, Timer.getMatchTime());
+  // }
+
+  // public void resetOdometry(Rotation2d gyroAngle, SwerveModulePosition[] modulePositions, Pose2d pose) {
+  //   mSwerveDrivePoseEstimator.resetPosition(gyroAngle, modulePositions, pose);
+  // }
 
   /**
    * Gets the module positions from the modules
