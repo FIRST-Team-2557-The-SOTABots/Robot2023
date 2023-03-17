@@ -1,64 +1,64 @@
 package lib.MotorController;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import edu.wpi.first.wpilibj.RobotController;
 import lib.Config.MotorControllerConfig;
 import lib.Encoder.FalconIntegratedEncoder;
 import lib.Encoder.SOTAEncoder;
 
 public class Falcon implements SOTAMotorController {
-    private final TalonFX mMotor;
+    private final WPI_TalonFX mMotor;
     private final SOTAEncoder mEncoder;
     private final SOTAEncoder mNativeEncoder;
     private MotorLimits motorLimits;
 
-    public Falcon(TalonFX motor, MotorControllerConfig config){
+    public Falcon(WPI_TalonFX motor, MotorControllerConfig config){
         this(
             motor, 
             new FalconIntegratedEncoder(motor.getSensorCollection())
         );
     }
 
-    public Falcon(TalonFX motor, SOTAEncoder encoder ) {
+    public Falcon(WPI_TalonFX motor, SOTAEncoder encoder ) {
         this(motor, encoder, new MotorLimits(null, null));
     }
 
-    public Falcon(TalonFX motor, MotorLimits limits){
+    public Falcon(WPI_TalonFX motor, MotorLimits limits){
         this(motor,  new FalconIntegratedEncoder(motor.getSensorCollection()), limits);
     }
 
-    public Falcon(TalonFX motor, SOTAEncoder encoder, MotorLimits limits){
+    public Falcon(WPI_TalonFX motor, SOTAEncoder encoder, MotorLimits limits){
         this.mMotor = motor;
         this.mEncoder = encoder;
         this.mNativeEncoder = new FalconIntegratedEncoder(mMotor.getSensorCollection());
+        mMotor.setNeutralMode(NeutralMode.Coast); //TODO: fix
     }
 
     public void set(double speed) {
-        if(motorLimits != null){
+        // if(motorLimits != null){
             
-            if(speed < 0){
-                if(motorLimits.getLowerLimit() > getPose()) speed = 0;
-            }else if(speed > 0){
-                if(motorLimits.getUpperLimit() < getPose()) speed = 0;
-            }
+            // if(speed < 0){
+            //     if(motorLimits.getLowerLimit() > getPose()) speed = 0;
+            // }else if(speed > 0){
+            //     if(motorLimits.getUpperLimit() < getPose()) speed = 0;
+            // }
             
-        }
-        mMotor.set(ControlMode.PercentOutput, speed);        
+        // }
+        mMotor.setVoltage(speed);        
     }
 
     public void setVoltage(double voltage) {
-        if(motorLimits != null){
+        // if(motorLimits != null){
             
-            if(voltage < 0){
-                if(motorLimits.getLowerLimit() > getPose()) voltage = 0;
-            }else if(voltage > 0){
-                if(motorLimits.getUpperLimit() < getPose()) voltage = 0;
-            }
+        //     if(voltage < 0){
+        //         if(motorLimits.getLowerLimit() > getPose()) voltage = 0;
+        //     }else if(voltage > 0){
+        //         if(motorLimits.getUpperLimit() < getPose()) voltage = 0;
+        //     }
             
-        }
-        set(voltage / RobotController.getBatteryVoltage());
+        // }
+        mMotor.setVoltage(voltage);
     }
 
 
@@ -91,7 +91,7 @@ public class Falcon implements SOTAMotorController {
     }
 
     public double getNativeVelocity() {
-        return mNativeEncoder.getVelocity();
+        return mMotor.getSelectedSensorVelocity();
     }
 
     public double getNativePosition() {

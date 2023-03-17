@@ -21,7 +21,8 @@ public class MotorControllerFactory {
     
     public static SOTAMotorController generateFalconDelegate(MotorControllerConfig config){
         WPI_TalonFX motor = new WPI_TalonFX(config.getPort());
-        motor.setInverted(config.getInverted());
+        motor.setInverted(config.getIsInverted());
+        
         SOTAEncoder encoder =  generateEncoder(config.getEncoderConfig()) ;
         return encoder == null ? new Falcon(motor, generateLimits(config.getMotorLimitsConfig())) : 
         new Falcon(motor, encoder , generateLimits(config.getMotorLimitsConfig()));

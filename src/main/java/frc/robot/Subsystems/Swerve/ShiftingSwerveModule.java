@@ -4,6 +4,7 @@
 
 package frc.robot.Subsystems.Swerve;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -12,6 +13,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lib.Config.ShiftingSwerveModuleConfig;
 import lib.Encoder.SOTAAbsoulteEncoder;
+import lib.Encoder.SOTAEncoder;
+import lib.MotorController.Falcon;
 import lib.MotorController.SOTAMotorController;
 
 public class ShiftingSwerveModule extends SubsystemBase {
@@ -68,21 +71,23 @@ public class ShiftingSwerveModule extends SubsystemBase {
     double anglePIDOutput = mAnglePID.calculate(getAngle(), angleSetpointNative);
     double angleFFOutput = mAngleFF.calculate(mAnglePID.getSetpoint().velocity);
 
-    // mAngleMotor.setVoltage(state.speedMetersPerSecond == 0.0 ? 0.0 : angleFFOutput + anglePIDOutput);
+    mAngleMotor.setVoltage(angleFFOutput + anglePIDOutput);
 
     double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[state.gear]);
-    double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getTickVelocity(), speedSetpointNative);
-    SmartDashboard.putNumber("mAngleMotor" + mModulePosition, mAngleMotor.getNativeEncoderPose());
-    SmartDashboard.putNumber("setPoint" + mModulePosition, angleSetpointNative);
-    SmartDashboard.putNumber("ouput" + mModulePosition, angleFFOutput + anglePIDOutput);
+    double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getNativeVelocity(), speedSetpointNative);
+    // SmartDashboard.putNumber("mAngleMotor" + mModulePosition, mAngleMotor.getNativeEncoderPose());
+    // SmartDashboard.putNumber("setPoint" + mModulePosition, angleSetpointNative);
+    // SmartDashboard.putNumber("ouput" + mModulePosition, angleFFOutput + anglePIDOutput);
     // double speedFFOutput = mSpeedFF.calculate(speedSetpointNative);
     // SmartDashboard.putNumber("Wheel Circumference", kWheelCircumference);
     // SmartDashboard.putNumber("Speed CPR", kSpeedCountsPerRevolution);
     // SmartDashboard.putNumber("Gear Ratio", kGearRatios[state.gear]);
     // SmartDashboard.putNumber("Meters Per Count", getMetersPerCount(kGearRatios[state.gear]));
-
     // mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
-    // mSpeedMotor.setVoltage(speedPIDOutput);
+    mSpeedMotor.setVoltage(speedPIDOutput);
+    SmartDashboard.putNumber("PID setPoint" + mModulePosition, speedSetpointNative);
+    SmartDashboard.putNumber("pid output" + mModulePosition, speedPIDOutput);
+    SmartDashboard.putNumber("Speed" + mModulePosition, mSpeedMotor.getNativeVelocity());
   }
 
   /** 
@@ -181,6 +186,9 @@ public class ShiftingSwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("angle no offset " + mModulePosition, mAngleMotor.getEncoder().get());
+    SOTAEncoder encoder = mAngleMotor.getEncoder();
+    double value = MathUtil.inputModulus(5 - (encoder.getAbsolutePosition() - encoder.getPositionOffset())
+    , 0, 5);
+    SmartDashboard.putNumber("angle no offset " + mModulePosition, value);
   }
 }

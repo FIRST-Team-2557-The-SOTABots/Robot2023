@@ -4,14 +4,15 @@
 
     "wheelDiameter": 4.0, 
     
-    "speedKP": 0.0014,
+    "speedKP": 0.0005,
     "speedKI": 0.0,
     "speedKD": 0.0,
-    "speedMaxAccel": 1000.0,
-    "speedMaxVel": 2000.0,
+    "speedMaxAccel": 20000.0,
+    "speedMaxVel": 40000.0,
     "speedKS": 0.6284,
     "speedKV": 0.0005339,
     "speedPIDTolerance": 0.05,
+
 
     "angleKP": 2.0,
     "angleKI": 0.0,

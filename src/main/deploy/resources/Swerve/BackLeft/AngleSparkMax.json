@@ -7,7 +7,7 @@
     "encoderConfig": {
         "port": 1,
         "encoderOffset": 0.34,
-        "angleEncoderCPR": 5,
+        "countsPerRevolution": 5,
         "encoderType": "ANALOG"
     }
 

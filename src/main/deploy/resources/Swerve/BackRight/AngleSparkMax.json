@@ -5,7 +5,7 @@
     "motorType": "BRUSHLESS",
     "countsPerRevolution": 2048,
     "encoderConfig": {
-        "port": 2.7,
+        "port": 2,
         "encoderOffset": 2.652587619,
         "countsPerRevolution": 5,
         "encoderType": "ANALOG"
