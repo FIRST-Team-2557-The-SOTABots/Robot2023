@@ -11,12 +11,12 @@ public class Intake extends SubsystemBase {
     }
 
     public void release(){
-        set(-0.2);
+        set(-0.25);
     }
 
     
     public void intake() {
-        motors.set(0.2);
+        set(0.3);
         
     }
 

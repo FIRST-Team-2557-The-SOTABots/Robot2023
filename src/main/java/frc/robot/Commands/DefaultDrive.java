@@ -9,13 +9,14 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
+import lib.Control.SOTAXboxcontroller;
 
 public class DefaultDrive extends CommandBase {
   private ShiftingSwerveDrive mSwerveDrive;
-  private CommandXboxController mDriveStick;
+  private SOTAXboxcontroller mDriveStick;
 
   /** Creates a new DefaultDrive. */
-  public DefaultDrive(ShiftingSwerveDrive swerveDrive, CommandXboxController driveStick) {
+  public DefaultDrive(ShiftingSwerveDrive swerveDrive, SOTAXboxcontroller driveStick) {
     // Use addRequirements() here to declare subsystem dependencies.
     mSwerveDrive = swerveDrive;
     mDriveStick = driveStick;
@@ -38,6 +39,9 @@ public class DefaultDrive extends CommandBase {
       mDriveStick.getLeftTriggerAxis(), 
       mDriveStick.getRightTriggerAxis()
     );
+    if(mDriveStick.getA()) mSwerveDrive.setFieldCentricActive(true);
+    if(mDriveStick.getB()) mSwerveDrive.setFieldCentricActive(false); 
+    if(mDriveStick.getStart()) mSwerveDrive.resetGyro();
     drive(fwd, str, rot, mSwerveDrive.getRotation2d(), new Translation2d());
   }
 

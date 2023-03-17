@@ -25,6 +25,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Commands.AutoLevel;
 import frc.robot.Commands.BasicIntakeCommand;
 import frc.robot.Commands.DefaultDrive;
 import frc.robot.Commands.ExtensionPID;
@@ -69,6 +72,7 @@ public class RobotContainer {
   private ExtensionPID extensionPID;
   private ResetExtension mResetExtension;
   private BasicIntakeCommand intakeCommand;
+  private AutoLevel mAutoLevel;
 
   private SendableChooser<AutoCommand> autoChooser;
 
@@ -114,7 +118,7 @@ public class RobotContainer {
     };
     
     try{
-      SOTAGyro gyro = new NavX(new AHRS(Port.kMXP));
+      NavX gyro = new NavX(new AHRS(Port.kMXP));//TODO: change back to SOTAGyro
       DoubleSolenoid solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
       GearShifter shifter = new DoubleSolenoidShifter(solenoid, 
         configUtils.readFromClassPath(DoubleSolenoidConfig.class, 
@@ -122,12 +126,13 @@ public class RobotContainer {
       mSwerveDrive = new ShiftingSwerveDrive(swerveModules, shifter, gyro, 
        configUtils.readFromClassPath(ShiftingSwerveDriveConfig.class, "Swerve/ShiftingSwerveDrive"));
 
+       mAutoLevel = new AutoLevel(mSwerveDrive);
+
     } catch (IOException e) {
       e.printStackTrace();
       throw new RuntimeException("Faild to create swerveDrive", e);
     }
    
-
 
     try{
     SOTAMotorController rotationMotor = MotorControllerFactory.generateSparkDelegate(
@@ -136,8 +141,10 @@ public class RobotContainer {
     SOTAMotorController winchMotor = MotorControllerFactory.generateSparkDelegate
     (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/WinchMotor"));
 
+    MotorController intakeMotorRight = new CANSparkMax(2, MotorType.kBrushless);
+    // intakeMotorRight.setInverted(true);
     MotorController intakeMotors = new MotorControllerGroup(new CANSparkMax(1, MotorType.kBrushless),
-     new CANSparkMax(2, MotorType.kBrushless));
+    intakeMotorRight);
 
     DigitalInput limitSwitch = new DigitalInput(0);
 
@@ -157,12 +164,9 @@ public class RobotContainer {
       this.rotationPID = new RotationPID(mRotation, armRotationController, 180, mController, mExtension::getLengthFromStart, superStructure::minRotation, superStructure::maxRotation, superStructureConfig);
       this.extensionPID = new ExtensionPID(extensController, mExtension,  mController, superStructure::maxExtension);
       this.mResetExtension = new ResetExtension(mExtension);
-      this.intakeCommand = new BasicIntakeCommand(mIntake, mController);
+      // this.intakeCommand = new BasicIntakeCommand(mIntake, mController);
     
     } catch(IOException e){}
-
-    
-
 
     this.mDriveCommand = new DefaultDrive(mSwerveDrive, dController);
 
@@ -178,20 +182,26 @@ public class RobotContainer {
     mExtension.setDefaultCommand(extensionPID);
     mRotation.setDefaultCommand(rotationPID);
     mIntake.setDefaultCommand(intakeCommand);
+
+   
   }
 
   private void configureBindings() {
-    // TODO: add reset gyro
+
+    mController.start().onTrue(mResetExtension);
+    dController.start().onTrue(new InstantCommand(mSwerveDrive::resetGyro, mSwerveDrive) );
     dController.x().onTrue(new InstantCommand(() -> {
       mSwerveDrive.setFieldCentricActive(true);
-    }));
-    dController.y().onTrue(new InstantCommand(() -> {
-      mSwerveDrive.setFieldCentricActive(false);
-    }));
-    dController.rightBumper().onTrue(new InstantCommand(() -> mSwerveDrive.shift(0)));
-    dController.leftBumper().onTrue(new InstantCommand(() -> mSwerveDrive.shift(1)));
-    
-      
+    }, mSwerveDrive));
+    dController.y().onTrue(mAutoLevel);
+
+
+
+    mController.rightTrigger().whileTrue(new RunCommand(mIntake::intake, mIntake)).onFalse(new SequentialCommandGroup(
+      new RunCommand(() -> mIntake.set(-0.01), mIntake).withTimeout(0.5),
+      new InstantCommand(mIntake::stop)));
+    mController.leftTrigger().whileTrue(new RunCommand(mIntake::release, mIntake)).onFalse(new InstantCommand(mIntake::stop));
+
   }
 
   public Command getAutonomousCommand() {

@@ -7,7 +7,6 @@ package frc.robot.Subsystems.Swerve;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -16,20 +15,16 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.TimestampedRaw;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Subsystems.Rotation;
 import lib.Pneumatics.GearShifter;
 import lib.Config.ShiftingSwerveDriveConfig;
-import lib.Gyro.SOTAGyro;
+import lib.Gyro.NavX;
 
 public class ShiftingSwerveDrive extends SubsystemBase {
   private ShiftingSwerveModule[] mSwerveModules;
   private GearShifter mShifter;
-  private SOTAGyro mGyro;
+  private NavX mGyro;
 
   private Translation2d[] mModuleTranslation;
   private SwerveDriveKinematics mSwerveDriveKinematics;
@@ -45,7 +40,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   public ShiftingSwerveDrive(
     ShiftingSwerveModule[] swerveModules, 
     GearShifter shifter, 
-    SOTAGyro gyro,
+    NavX gyro,
     ShiftingSwerveDriveConfig config) {
 
     mSwerveModules = swerveModules;
@@ -206,7 +201,11 @@ public class ShiftingSwerveDrive extends SubsystemBase {
    * @return The rotation2d of the drivetrain
    */
   public Rotation2d getRotation2d() {
-    return mGyro.getRotation2d();
+    return new Rotation2d(-mGyro.getRotation2d().getRadians());
+  }
+
+  public double getPitch(){
+    return mGyro.getPitch();
   }
 
   public void resetGyro() {
@@ -224,6 +223,11 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     
     SmartDashboard.putBoolean("field centric active", mFieldCentricActive);
     SmartDashboard.putNumber("angle", mGyro.getAngle());
+    SmartDashboard.putNumber("bot angle radians", mGyro.getRotation2d().getRadians());
+    SmartDashboard.putNumber("Gyro roll", mGyro.getRoll());
+    SmartDashboard.putNumber("Gyro yaw", mGyro.getYaw());
+    SmartDashboard.putNumber("Gyro pitch", mGyro.getPitch());
+    
 
   }
   

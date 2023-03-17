@@ -37,9 +37,11 @@ public class RotationPID extends CommandBase{
 
     @Override
     public void execute() {
+        //120 && 245 are for placing
+        if(controller.getA()) setpoint = 120;//110; This is from pickup station
+
+        if(controller.getB()) setpoint = 237;//245; this is from pickup station
         
-        if(controller.getA()) setpoint = 110;
-        if(controller.getB()) setpoint = 245;
         if(controller.getX()) setpoint = 180;
         
         setpoint = MathUtil.clamp(setpoint, minAngle.getAsDouble(), maxAngle.getAsDouble());

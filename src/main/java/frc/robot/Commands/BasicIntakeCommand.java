@@ -15,9 +15,10 @@ public class BasicIntakeCommand extends CommandBase{
 
     @Override
     public void execute() {
-        if(controller.getRightTriggerAxis() >= 0) mIntake.set(0.5);
-        else if(controller.getRightTriggerAxis() >= 0) mIntake.set(-1);
-        else mIntake.set(0);
+        // if(controller.getRightBumper()) mIntake.set(0.5);
+        // else if(controller.getLeftBumper()) mIntake.set(-1);
+        // else mIntake.set(0);
+        // if (controller.rightTrigger().)
     }
 
     

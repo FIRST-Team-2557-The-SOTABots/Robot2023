@@ -75,7 +75,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
     double anglePIDOutput = mAnglePID.calculate(getAngle(), angleSetpointNative);
     double angleFFOutput = mAngleFF.calculate(mAnglePID.getSetpoint().velocity);
 
-    mAngleMotor.setVoltage(angleFFOutput + anglePIDOutput);
+    mAngleMotor.setVoltage(state.speedMetersPerSecond ==0 ? 0 :  angleFFOutput + anglePIDOutput);
 
     double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[state.gear]);
     double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getNativeVelocity(), speedSetpointNative);
@@ -88,7 +88,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
     // SmartDashboard.putNumber("Gear Ratio", kGearRatios[state.gear]);
     // SmartDashboard.putNumber("Meters Per Count", getMetersPerCount(kGearRatios[state.gear]));
     // mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
-    mSpeedMotor.set(speedSetpointNative / maxSpeed);
+    mSpeedMotor.set((speedSetpointNative / maxSpeed) / 1.5);
     SmartDashboard.putNumber("PID setPoint" + mModulePosition, speedSetpointNative);
     SmartDashboard.putNumber("pid output" + mModulePosition, speedSetpointNative / maxSpeed);
     SmartDashboard.putNumber("Speed" + mModulePosition, mSpeedMotor.getNativeVelocity());

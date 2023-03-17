@@ -9,6 +9,9 @@ public class SOTAXboxcontroller extends CommandXboxController{
     public SOTAXboxcontroller(int port) {
         super(port);
     }
+    public boolean getStart(){
+        return start().getAsBoolean();
+    }
     public boolean getA(){
         return super.a().getAsBoolean();
     }

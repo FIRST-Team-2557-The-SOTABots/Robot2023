@@ -1,6 +1,7 @@
 package frc.robot.Subsystems;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lib.Config.SuperStructureConfig;
 import lib.MotorController.SOTAMotorController;
@@ -17,11 +18,13 @@ public class Extension extends SubsystemBase{
     }
 
     public void set(double speed){
+        SmartDashboard.putNumber("SpeedInit", speed);
         if(limitswitch.get() && speed < 0){
            speed = 0;
         }
         if(!hasReset && speed > 0) speed = 0;
         motor.setVoltage(speed);
+        SmartDashboard.putNumber("extensionSpeed", speed);
       }
  
 
