@@ -2,6 +2,8 @@ package frc.robot.Commands;
 
 import java.util.function.DoubleSupplier;
 
+import com.revrobotics.CANSparkMax;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -14,6 +16,7 @@ public class ExtensionPID extends CommandBase{
     private SOTAXboxcontroller mController;
     private DoubleSupplier maxLength;
     private double setPoint;
+
 
     public ExtensionPID(ProfiledPIDController PID, Extension mArm, SOTAXboxcontroller mController, DoubleSupplier maxLength){
         this.extendPID = PID; this.mExtension = mArm; this.mController = mController; this.maxLength = maxLength;
@@ -41,8 +44,8 @@ public class ExtensionPID extends CommandBase{
         // else setPoint = 0;
         mExtension.set(output);
 
-        SmartDashboard.putNumber("extensionGoal", setPoint);
-        SmartDashboard.putNumber("Max Extension", maxLength.getAsDouble());
+        // SmartDashboard.putNumber("extensionGoal", setPoint);
+        // SmartDashboard.putNumber("Max Extension", maxLength.getAsDouble());
         
 
         

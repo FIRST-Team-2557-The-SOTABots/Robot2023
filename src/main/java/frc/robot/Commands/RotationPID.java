@@ -49,10 +49,10 @@ public class RotationPID extends CommandBase{
 
         mArm.set(output);
 
-        SmartDashboard.putNumber("Angle Output", output);
-        SmartDashboard.putNumber("MinAngle", minAngle.getAsDouble());
-        SmartDashboard.putNumber("maxAngle", maxAngle.getAsDouble());
-        SmartDashboard.putNumber("Rotation goal", setpoint);
+        // SmartDashboard.putNumber("Angle Output", output);
+        // SmartDashboard.putNumber("MinAngle", minAngle.getAsDouble());
+        // SmartDashboard.putNumber("maxAngle", maxAngle.getAsDouble());
+        // SmartDashboard.putNumber("Rotation goal", setpoint);
 
 
 

@@ -77,28 +77,24 @@ public class RobotContainer {
       initSwerveModule(
         "Swerve/FrontLeft/SpeedFalcon",
         "Swerve/FrontLeft/AngleSparkMax",
-        "Swerve/FrontLeft/AbsoluteEncoder",
         "Swerve/FrontLeft/ShiftingSwerveModule"
       ),
 
       initSwerveModule(
         "Swerve/BackLeft/SpeedFalcon",
         "Swerve/BackLeft/AngleSparkMax",
-        "Swerve/BackLeft/AbsoluteEncoder",
       "Swerve/BackLeft/ShiftingSwerveModule"
       ),
 
       initSwerveModule(
         "Swerve/BackRight/SpeedFalcon",
         "Swerve/BackRight/AngleSparkMax",
-        "Swerve/BackRight/AbsoluteEncoder",
         "Swerve/BackRight/ShiftingSwerveModule"
       ),
       
       initSwerveModule(
         "Swerve/FrontRight/SpeedFalcon",
         "Swerve/FrontRight/AngleSparkMax",
-        "Swerve/FrontLeft/AbsoluteEncoder",
         "Swerve/FrontRight/ShiftingSwerveModule"
       ),
     };
@@ -180,7 +176,7 @@ public class RobotContainer {
   
   
 
-  public ShiftingSwerveModule initSwerveModule(String speedConfig, String angleConfig, String encoderConfig, String moduleConfig){
+  public ShiftingSwerveModule initSwerveModule(String speedConfig, String angleConfig, String moduleConfig){
 
     try{
       ShiftingSwerveModuleConfig config = configUtils.readFromClassPath(ShiftingSwerveModuleConfig.class, moduleConfig);

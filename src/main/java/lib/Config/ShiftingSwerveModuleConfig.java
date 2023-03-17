@@ -10,8 +10,6 @@ public class ShiftingSwerveModuleConfig {
 
     private String modulePosition;
 
-    
-
     private double[] gearRatios;
 
     private double wheelDiameter;   

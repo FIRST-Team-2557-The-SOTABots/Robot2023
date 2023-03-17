@@ -24,7 +24,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
   private ProfiledPIDController mAnglePID;
   private ProfiledPIDController mSpeedPID;
   private SimpleMotorFeedforward mAngleFF;
-  private SimpleMotorFeedforward mSpeedFF;
+  // private SimpleMotorFeedforward mSpeedFF;
 
   private double[] kGearRatios;
   private double kAngleCountsPerRevolution;
@@ -50,7 +50,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
     this.kWheelCircumference = config.getWheelCircumference();
 
     this.mAngleFF = config.angleFF();
-    this.mSpeedFF = config.speedFF();
+    // this.mSpeedFF = config.speedFF();
 
     this.mAnglePID = config.generateAnglePID(kAngleCountsPerRevolution);
     this.mSpeedPID = config.generateSpeedPID();
@@ -68,17 +68,21 @@ public class ShiftingSwerveModule extends SubsystemBase {
     double anglePIDOutput = mAnglePID.calculate(getAngle(), angleSetpointNative);
     double angleFFOutput = mAngleFF.calculate(mAnglePID.getSetpoint().velocity);
 
-    mAngleMotor.setVoltage(state.speedMetersPerSecond == 0.0 ? 0.0 : angleFFOutput + anglePIDOutput);
+    // mAngleMotor.setVoltage(state.speedMetersPerSecond == 0.0 ? 0.0 : angleFFOutput + anglePIDOutput);
 
     double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[state.gear]);
     double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getTickVelocity(), speedSetpointNative);
-    double speedFFOutput = mSpeedFF.calculate(speedSetpointNative);
-    SmartDashboard.putNumber("Wheel Circumference", kWheelCircumference);
-    SmartDashboard.putNumber("Speed CPR", kSpeedCountsPerRevolution);
-    SmartDashboard.putNumber("Gear Ratio", kGearRatios[state.gear]);
-    SmartDashboard.putNumber("Meters Per Count", getMetersPerCount(kGearRatios[state.gear]));
+    SmartDashboard.putNumber("mAngleMotor" + mModulePosition, mAngleMotor.getNativeEncoderPose());
+    SmartDashboard.putNumber("setPoint" + mModulePosition, angleSetpointNative);
+    SmartDashboard.putNumber("ouput" + mModulePosition, angleFFOutput + anglePIDOutput);
+    // double speedFFOutput = mSpeedFF.calculate(speedSetpointNative);
+    // SmartDashboard.putNumber("Wheel Circumference", kWheelCircumference);
+    // SmartDashboard.putNumber("Speed CPR", kSpeedCountsPerRevolution);
+    // SmartDashboard.putNumber("Gear Ratio", kGearRatios[state.gear]);
+    // SmartDashboard.putNumber("Meters Per Count", getMetersPerCount(kGearRatios[state.gear]));
 
-    mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
+    // mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
+    // mSpeedMotor.setVoltage(speedPIDOutput);
   }
 
   /** 
@@ -177,5 +181,6 @@ public class ShiftingSwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("angle no offset " + mModulePosition, mAngleMotor.getEncoder().get());
   }
 }

@@ -79,7 +79,7 @@ public class Falcon implements SOTAMotorController {
     }
 
     public double getTickVelocity() {
-        return mEncoder.getVelocity();
+        return mMotor.getSelectedSensorVelocity();
     }
 
     public double getTickPosition() {
