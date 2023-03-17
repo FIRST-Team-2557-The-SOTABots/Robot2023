@@ -27,6 +27,8 @@ public class ShiftingSwerveModule extends SubsystemBase {
   private ProfiledPIDController mAnglePID;
   private ProfiledPIDController mSpeedPID;
   private SimpleMotorFeedforward mAngleFF;
+
+  private double maxSpeed;
   // private SimpleMotorFeedforward mSpeedFF;
 
   private double[] kGearRatios;
@@ -53,6 +55,8 @@ public class ShiftingSwerveModule extends SubsystemBase {
     this.kWheelCircumference = config.getWheelCircumference();
 
     this.mAngleFF = config.angleFF();
+
+    this.maxSpeed = config.getSpeedMaxVel();
     // this.mSpeedFF = config.speedFF();
 
     this.mAnglePID = config.generateAnglePID(kAngleCountsPerRevolution);
@@ -84,9 +88,9 @@ public class ShiftingSwerveModule extends SubsystemBase {
     // SmartDashboard.putNumber("Gear Ratio", kGearRatios[state.gear]);
     // SmartDashboard.putNumber("Meters Per Count", getMetersPerCount(kGearRatios[state.gear]));
     // mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
-    mSpeedMotor.setVoltage(speedPIDOutput);
+    mSpeedMotor.set(speedSetpointNative / maxSpeed);
     SmartDashboard.putNumber("PID setPoint" + mModulePosition, speedSetpointNative);
-    SmartDashboard.putNumber("pid output" + mModulePosition, speedPIDOutput);
+    SmartDashboard.putNumber("pid output" + mModulePosition, speedSetpointNative / maxSpeed);
     SmartDashboard.putNumber("Speed" + mModulePosition, mSpeedMotor.getNativeVelocity());
   }
 
@@ -186,9 +190,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SOTAEncoder encoder = mAngleMotor.getEncoder();
-    double value = MathUtil.inputModulus(5 - (encoder.getAbsolutePosition() - encoder.getPositionOffset())
-    , 0, 5);
-    SmartDashboard.putNumber("angle no offset " + mModulePosition, value);
+    
+    SmartDashboard.putNumber("angle no offset " + mModulePosition, mAngleMotor.getEncoder().getAbsolutePosition());
   }
 }

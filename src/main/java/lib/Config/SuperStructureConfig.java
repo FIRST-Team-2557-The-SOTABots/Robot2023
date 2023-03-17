@@ -12,7 +12,16 @@ public class SuperStructureConfig {
     private double bAbsoluteOffset;
     private double maxExtension;
     private double roatationEncoderOffset;
+    private double rotationDelta;
+    private double rotationDeltaPorportional;
+    
+    public double getRotationDelta() {
+        return rotationDelta;
+    }
 
+    public double getRotationDeltaPorportional() {
+        return rotationDeltaPorportional;
+    }
     public double getEncoderAtZeroDegrees(){
         return encoderAtZeroDegrees;
     }

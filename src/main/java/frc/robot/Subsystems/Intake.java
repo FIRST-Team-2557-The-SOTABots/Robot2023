@@ -1,8 +1,9 @@
 package frc.robot.Subsystems;
 
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Intake {
+public class Intake extends SubsystemBase {
     MotorController motors;
 
     public Intake(MotorController motors){

@@ -1,8 +1,10 @@
 package lib.MotorController;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.math.MathUtil;
 import lib.Config.MotorControllerConfig;
 import lib.Encoder.FalconIntegratedEncoder;
 import lib.Encoder.SOTAEncoder;
@@ -45,7 +47,7 @@ public class Falcon implements SOTAMotorController {
             // }
             
         // }
-        mMotor.setVoltage(speed);        
+        mMotor.set(TalonFXControlMode.PercentOutput, speed);        
     }
 
     public void setVoltage(double voltage) {
@@ -58,7 +60,7 @@ public class Falcon implements SOTAMotorController {
         //     }
             
         // }
-        mMotor.setVoltage(voltage);
+        mMotor.setVoltage(MathUtil.clamp(voltage, 12, 12) / 12);
     }
 
 

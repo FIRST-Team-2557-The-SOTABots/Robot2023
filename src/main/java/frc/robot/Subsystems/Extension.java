@@ -1,7 +1,6 @@
 package frc.robot.Subsystems;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lib.Config.SuperStructureConfig;
 import lib.MotorController.SOTAMotorController;
@@ -14,7 +13,7 @@ public class Extension extends SubsystemBase{
     private boolean hasReset = false;
 
     public Extension(SOTAMotorController motor, DigitalInput limitSwitch, SuperStructureConfig config){
-        this.motor = motor; this.limitswitch = limitSwitch; this.config = config;
+        this.motor = motor; this.limitswitch = limitSwitch; this.maxLength = config.getMaxExtension(); this.config = config;
     }
 
     public void set(double speed){
@@ -41,6 +40,9 @@ public class Extension extends SubsystemBase{
     public boolean isFullyRetracted(){
         return limitswitch.get();
     }
+    public double getMaxExtension(){
+        return maxLength;
+    }
 
     @Override
     public void periodic() {
@@ -49,9 +51,9 @@ public class Extension extends SubsystemBase{
             hasReset = true;
         }
         // SmartDashboard.putNumber("extensionEncoder", getEncoder());
-        // SmartDashboard.putNumber("Extension length", getLength());
-        SmartDashboard.putBoolean("limitswitch", limitswitch.get());
-        SmartDashboard.putNumber("extension motor limit", motor.getMotorLimits().getUpperLimit());
+        // SmartDashboard.putNumber("Extension length inches", getLength());
+        // SmartDashboard.putBoolean("limitswitch", limitswitch.get());
+        // SmartDashboard.putNumber("extension motor limit", motor.getMotorLimits().getUpperLimit());
 
     }
 

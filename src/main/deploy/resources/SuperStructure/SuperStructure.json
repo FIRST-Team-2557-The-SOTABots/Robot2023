@@ -8,8 +8,9 @@
     "fOffset": -3,
     "fAbsoluteOffset": -2.5,
     "bAbsoluteOffset": -5.5,
-    "maxExtension": 27,
+    "maxExtension": 32,
     "rotationEncoderOffset": 0.16,
-    "delta": 0.01 
+    "rotationalDelta": 0.01,
+    "rotationalDeltaProportional": 0.015
     
 }

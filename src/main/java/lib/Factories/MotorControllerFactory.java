@@ -43,6 +43,7 @@ public class MotorControllerFactory {
       }
         CANSparkMax sparkMax = new CANSparkMax(config.getPort(), motorType);
         SOTAEncoder encoder = (generateEncoder(config.getEncoderConfig()));
+        sparkMax.setInverted(config.getIsInverted());
         if(encoder == null){
             SmartDashboard.putBoolean("Failed to create encoder" +  config.getPort(), true);
         return new SparkMaxDelegate(sparkMax
