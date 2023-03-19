@@ -1,5 +1,5 @@
 {
-    "isInverted": true,
+    "isInverted": false,
     "idleMode": "COAST",
     "motorType": "BRUSHLESS",
     "countsPerRevolution": 2048,

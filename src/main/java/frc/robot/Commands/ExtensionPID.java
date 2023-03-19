@@ -24,9 +24,9 @@ public class ExtensionPID extends CommandBase{
 
     @Override
     public void execute() {
-        if(mController.getA() || mController.getB()) setPoint = 32;
+        if(mController.getA() || mController.getB() || mController.getLeftBumper() || mController.getRightBumper()) setPoint = 32;
 
-        if(mController.getY()) setPoint = 10;
+        if(mController.getY() || mController.getStart() || mController.getBack()) setPoint = 10;
 
         if(mController.getX()) setPoint = -2;
         // setPoint = SmartDashboard.getNumber("Extension Length", 0.0);

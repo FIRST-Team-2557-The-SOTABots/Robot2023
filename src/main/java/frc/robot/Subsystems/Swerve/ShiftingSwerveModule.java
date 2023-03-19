@@ -89,9 +89,12 @@ public class ShiftingSwerveModule extends SubsystemBase {
     // SmartDashboard.putNumber("Meters Per Count", getMetersPerCount(kGearRatios[state.gear]));
     // mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
     mSpeedMotor.set((speedSetpointNative / maxSpeed) / 1.5);
-    SmartDashboard.putNumber("PID setPoint" + mModulePosition, speedSetpointNative);
-    SmartDashboard.putNumber("pid output" + mModulePosition, speedSetpointNative / maxSpeed);
-    SmartDashboard.putNumber("Speed" + mModulePosition, mSpeedMotor.getNativeVelocity());
+
+    // SmartDashboard.putNumber("PID setPoint" + mModulePosition, speedSetpointNative);
+    // SmartDashboard.putNumber("pid output" + mModulePosition, speedSetpointNative / maxSpeed);
+    // SmartDashboard.putNumber("Speed" + mModulePosition, mSpeedMotor.getNativeVelocity());
+
+    SmartDashboard.putBoolean("Current Gear", state.gear == 0 ? false : true);
   }
 
   /** 

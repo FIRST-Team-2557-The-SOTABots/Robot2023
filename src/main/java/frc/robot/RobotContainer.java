@@ -24,15 +24,19 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Commands.AutoLevel;
 import frc.robot.Commands.BasicIntakeCommand;
 import frc.robot.Commands.DefaultDrive;
 import frc.robot.Commands.ExtensionPID;
 import frc.robot.Commands.ResetExtension;
 import frc.robot.Commands.RotationPID;
+import frc.robot.Commands.Autos.BackUpMobility;
 import frc.robot.Subsystems.Extension;
 import frc.robot.Subsystems.Intake;
 import frc.robot.Subsystems.Rotation;
@@ -73,8 +77,9 @@ public class RobotContainer {
   private ResetExtension mResetExtension;
   private BasicIntakeCommand intakeCommand;
   private AutoLevel mAutoLevel;
+  private BackUpMobility mBackUpMobility;
 
-  private SendableChooser<AutoCommand> autoChooser;
+  private SendableChooser<CommandBase> mAutoChooser;
 
   public RobotContainer() {
     
@@ -87,6 +92,14 @@ public class RobotContainer {
     ObjectMapper mapper = new ObjectMapper();
     mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     this.configUtils = new ConfigUtils(mapper);
+    
+    // mAutoChooser = new SendableChooser<CommandBase>();
+    // mAutoChooser.setDefaultOption("None", null);
+    // mAutoChooser.addOption("Back Up Mobility", 
+    //   new RunCommand(() -> {
+    //     mSwerveDrive.drive(-0.5, 0, 0, mSwerveDrive.getRotation2d());
+    //   }, mSwerveDrive).withTimeout(2.5)
+    // );
 
     dController = new SOTAXboxcontroller(0);
     mController = new SOTAXboxcontroller(1);
@@ -170,6 +183,8 @@ public class RobotContainer {
 
     this.mDriveCommand = new DefaultDrive(mSwerveDrive, dController);
 
+    mBackUpMobility = new BackUpMobility(mSwerveDrive);
+
     configureDefaultCommands();
     configureBindings();
     
@@ -205,7 +220,10 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return null;
+    return CommandGroupBase.deadline(
+      new WaitCommand(mBackUpMobility.kTime),
+      mBackUpMobility
+    );
   }
 
   

@@ -12,6 +12,9 @@ public class SOTAXboxcontroller extends CommandXboxController{
     public boolean getStart(){
         return start().getAsBoolean();
     }
+    public boolean getBack() {
+        return back().getAsBoolean();
+    }
     public boolean getA(){
         return super.a().getAsBoolean();
     }

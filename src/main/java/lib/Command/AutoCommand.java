@@ -5,8 +5,9 @@
 package lib.Command;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj2.command.Command;
 
 /** Add your docs here. */
-public interface AutoCommand{
+public interface AutoCommand extends Command{
     public Pose2d getInitPose();
 }

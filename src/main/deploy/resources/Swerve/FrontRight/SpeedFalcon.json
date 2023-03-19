@@ -1,6 +1,6 @@
 {
     "port": 9,
-    "isInverted": true,
+    "isInverted": false,
     "idleMode": "COAST",
     "motorType": "BRUSHLESS",
     "countsPerRevolution": 2048
