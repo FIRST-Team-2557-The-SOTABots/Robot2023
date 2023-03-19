@@ -19,38 +19,32 @@ public class DoubleSolenoidShifter implements GearShifter{
         this.kLoGearValue = Value.kReverse;
     }
 
-    @Override
     public int getGear() {
         if(shifter == null) throw new RuntimeException("Null swerve module");
         return shifter.get() == kHiGearValue ? 1 : 0;
     }
 
-    @Override
     public void shift(int gear) {
         MathUtil.clamp(gear, 0, 1);
         
         shifter.set(gear == 0 ? kLoGearValue : kHiGearValue); 
     }
 
-    @Override
     public int shiftUp() {
         shifter.set(kHiGearValue);
         return getGear();
     }
 
-    @Override
     public int shiftDown() {
         shifter.set(kLoGearValue);
         return getGear();
     }
 
-    @Override
     public double getCurrentGearRatio() {
         
         return gearRatios[getGear()];
     }
 
-    @Override
     public double getRatioFromGear(int gear) {
         return gearRatios[gear];
     }

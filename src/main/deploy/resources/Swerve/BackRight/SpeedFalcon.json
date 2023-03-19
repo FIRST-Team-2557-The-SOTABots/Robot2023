@@ -1,8 +1,8 @@
 {
+    "port": 12,
     "isInverted": false,
     "idleMode": "COAST",
     "motorType": "BRUSHLESS",
     "countsPerRevolution": 2048,
-    "port": 12
-
+    "currentLimit": 30
 }

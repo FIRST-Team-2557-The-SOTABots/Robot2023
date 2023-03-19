@@ -1,6 +1,7 @@
 package lib.MotorController;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
@@ -106,6 +107,11 @@ public class Falcon implements SOTAMotorController {
 
     public double getMotorCurrent() {
         return mMotor.getSupplyCurrent();
+    }
+
+    public void setCurrentLimit(int amps) {
+        StatorCurrentLimitConfiguration config = new StatorCurrentLimitConfiguration(true, amps, amps, 1.0); 
+        mMotor.configStatorCurrentLimit(config);
     }
 
     public double getMotorTemperature() {

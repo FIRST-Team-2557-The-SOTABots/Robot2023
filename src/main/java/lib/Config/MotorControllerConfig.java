@@ -4,13 +4,13 @@ package lib.Config;
 public class MotorControllerConfig  {
     private int port;
     private boolean isInverted;
-    
 
     private String motorType;
     private int countsPerRevolution;
     private String idleMode;
     private EncoderConfig encoderConfig;
     private MotorLimitsConfig motorLimitsConfig;
+    private int currentLimit;
 
     public boolean getIsInverted() {
         return isInverted;
@@ -37,6 +37,10 @@ public class MotorControllerConfig  {
 
     public MotorLimitsConfig getMotorLimitsConfig(){
         return motorLimitsConfig;
+    }
+
+    public int getCurrentLimit() {
+        return currentLimit;
     }
     
 }

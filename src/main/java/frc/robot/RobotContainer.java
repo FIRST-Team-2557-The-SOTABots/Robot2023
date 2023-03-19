@@ -83,11 +83,11 @@ public class RobotContainer {
 
   public RobotContainer() {
     
-    SmartDashboard.putNumber("rotation setpoint", 180);
-    SmartDashboard.putNumber("Extension Length", 0);
+    // SmartDashboard.putNumber("rotation setpoint", 180);
+    // SmartDashboard.putNumber("Extension Length", 0);
 
-    SmartDashboard.putNumber("set p", 0);
-    SmartDashboard.putNumber("TestDelta", 0.0);
+    // SmartDashboard.putNumber("set p", 0);
+    // SmartDashboard.putNumber("TestDelta", 0.0);
 
     ObjectMapper mapper = new ObjectMapper();
     mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -210,8 +210,6 @@ public class RobotContainer {
     }, mSwerveDrive));
     dController.y().onTrue(mAutoLevel);
 
-
-
     mController.rightTrigger().whileTrue(new RunCommand(mIntake::intake, mIntake)).onFalse(new SequentialCommandGroup(
       new RunCommand(() -> mIntake.set(-0.01), mIntake).withTimeout(0.5),
       new InstantCommand(mIntake::stop)));
@@ -220,10 +218,11 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return CommandGroupBase.deadline(
-      new WaitCommand(mBackUpMobility.kTime),
-      mBackUpMobility
-    );
+    // return CommandGroupBase.deadline(
+    //   new WaitCommand(mBackUpMobility.kTime),
+    //   mBackUpMobility
+    // );
+    return mBackUpMobility.withTimeout(mBackUpMobility.kTime); // removed use of depracated thingy if dont work just comment out
   }
 
   

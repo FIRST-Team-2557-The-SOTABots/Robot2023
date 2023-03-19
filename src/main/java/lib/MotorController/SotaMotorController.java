@@ -8,6 +8,7 @@ public interface SOTAMotorController extends MotorController{
     double getTickVelocity();
     SOTAEncoder getEncoder();
     double getMotorCurrent();
+    void setCurrentLimit(int amps);
     double getMotorTemperature();
     double getPose();
     double getNativeEncoderPose();

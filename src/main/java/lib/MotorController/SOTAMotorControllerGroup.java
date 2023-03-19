@@ -79,6 +79,10 @@ public double getMotorCurrent() {
     return 0;
 }
 
+public void setCurrentLimit(int amps) {
+    // TODO Auto-generated method stub
+}
+
 @Override
 public double getMotorTemperature() {
     // TODO Auto-generated method stub

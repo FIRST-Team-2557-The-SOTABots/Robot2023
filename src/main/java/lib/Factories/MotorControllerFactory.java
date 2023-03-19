@@ -1,5 +1,6 @@
 package lib.Factories;
 
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -22,6 +23,11 @@ public class MotorControllerFactory {
     public static SOTAMotorController generateFalconDelegate(MotorControllerConfig config){
         WPI_TalonFX motor = new WPI_TalonFX(config.getPort());
         motor.setInverted(config.getIsInverted());
+        if (config.getCurrentLimit() != 0.0) {
+            StatorCurrentLimitConfiguration currentConfig = new StatorCurrentLimitConfiguration(
+                true, config.getCurrentLimit(), config.getCurrentLimit(), 1.0);
+            motor.configStatorCurrentLimit(currentConfig);    
+        }
         
         SOTAEncoder encoder =  generateEncoder(config.getEncoderConfig()) ;
         return encoder == null ? new Falcon(motor, generateLimits(config.getMotorLimitsConfig())) : 
@@ -30,24 +36,26 @@ public class MotorControllerFactory {
 
     public static SOTAMotorController generateSparkDelegate(MotorControllerConfig config){
         if(config == null) return null;
-        MotorType motorType;
-      switch(config.getMotorType()) {
-          case("BRUSHLESS"):
-              motorType = MotorType.kBrushless;
-              break;
-          case("BRUSHED"):
-              motorType = MotorType.kBrushed;
-              break;
-          default:
-              throw new IllegalArgumentException("Illegal motor type");
-      }
+            MotorType motorType;
+        switch(config.getMotorType()) {
+            case("BRUSHLESS"):
+                motorType = MotorType.kBrushless;
+                break;
+            case("BRUSHED"):
+                motorType = MotorType.kBrushed;
+                break;
+            default:
+                throw new IllegalArgumentException("Illegal motor type");
+        }
         CANSparkMax sparkMax = new CANSparkMax(config.getPort(), motorType);
         SOTAEncoder encoder = (generateEncoder(config.getEncoderConfig()));
         sparkMax.setInverted(config.getIsInverted());
+        if (config.getCurrentLimit() != 0.0) {
+            sparkMax.setSmartCurrentLimit(config.getCurrentLimit());
+        }
         if(encoder == null){
             SmartDashboard.putBoolean("Failed to create encoder" +  config.getPort(), true);
-        return new SparkMaxDelegate(sparkMax
-        , generateLimits(config.getMotorLimitsConfig()));
+            return new SparkMaxDelegate(sparkMax, generateLimits(config.getMotorLimitsConfig()));
         }
         return new SparkMaxDelegate(sparkMax, encoder, generateLimits(config.getMotorLimitsConfig()));
     }

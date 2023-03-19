@@ -104,6 +104,10 @@ public class SparkMaxDelegate implements SOTAMotorController{
         return mMotor.getOutputCurrent();
     }
 
+    public void setCurrentLimit(int amps) {
+        mMotor.setSmartCurrentLimit(amps);
+    }
+
     public double getMotorTemperature() {
         return mMotor.getMotorTemperature();
     }

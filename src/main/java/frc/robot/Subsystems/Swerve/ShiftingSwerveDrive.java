@@ -223,12 +223,11 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     
     SmartDashboard.putBoolean("field centric active", mFieldCentricActive);
     SmartDashboard.putNumber("angle", mGyro.getAngle());
-    SmartDashboard.putNumber("bot angle radians", mGyro.getRotation2d().getRadians());
-    SmartDashboard.putNumber("Gyro roll", mGyro.getRoll());
-    SmartDashboard.putNumber("Gyro yaw", mGyro.getYaw());
-    SmartDashboard.putNumber("Gyro pitch", mGyro.getPitch());
+    // SmartDashboard.putNumber("bot angle radians", mGyro.getRotation2d().getRadians());
+    // SmartDashboard.putNumber("Gyro roll", mGyro.getRoll());
+    // SmartDashboard.putNumber("Gyro yaw", mGyro.getYaw());
+    // SmartDashboard.putNumber("Gyro pitch", mGyro.getPitch());
     
-
   }
   
 }
