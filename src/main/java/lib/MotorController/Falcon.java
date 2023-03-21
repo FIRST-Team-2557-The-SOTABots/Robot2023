@@ -7,60 +7,69 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.MathUtil;
 import lib.Config.MotorControllerConfig;
-import lib.Encoder.FalconIntegratedEncoder;
-import lib.Encoder.SOTAEncoder;
+import lib.Encoder.SOTA_Encoder;
 
-public class Falcon implements SOTAMotorController {
+public class Falcon implements SOTA_MotorController {
     private final WPI_TalonFX mMotor;
-    private final SOTAEncoder mEncoder;
-    private final SOTAEncoder mNativeEncoder;
-    private MotorLimits motorLimits;
+    private final SOTA_Encoder mEncoder;
+    private MotorLimits mMotorLimits;
 
+    // TODO: check these constructors
     public Falcon(WPI_TalonFX motor, MotorControllerConfig config){
         this(
             motor, 
-            new FalconIntegratedEncoder(motor.getSensorCollection())
+            (SOTA_Encoder) null,
+            config
         );
     }
 
-    public Falcon(WPI_TalonFX motor, SOTAEncoder encoder ) {
-        this(motor, encoder, new MotorLimits(null, null));
+    public Falcon(WPI_TalonFX motor, SOTA_Encoder encoder, MotorControllerConfig config) {
+        this(motor, encoder, (MotorLimits) null, config);
     }
 
-    public Falcon(WPI_TalonFX motor, MotorLimits limits){
-        this(motor,  new FalconIntegratedEncoder(motor.getSensorCollection()), limits);
+    public Falcon(WPI_TalonFX motor, MotorLimits limits, MotorControllerConfig config) {
+        this(motor, (SOTA_Encoder) null, limits, config);
     }
 
-    public Falcon(WPI_TalonFX motor, SOTAEncoder encoder, MotorLimits limits){
+    public Falcon(WPI_TalonFX motor, SOTA_Encoder encoder, MotorLimits limits, MotorControllerConfig config){
         this.mMotor = motor;
         this.mEncoder = encoder;
-        this.mNativeEncoder = new FalconIntegratedEncoder(mMotor.getSensorCollection());
-        mMotor.setNeutralMode(NeutralMode.Coast); //TODO: fix
+        setInverted(config.getIsInverted());
+        switch (config.getNeutralOperation()) {
+            case "BRAKE" :
+                setNeutralOperation(NeutralOperation.kBrake);
+                break;
+            case "COAST" : 
+                setNeutralOperation(NeutralOperation.kCoast);
+                break;
+        }
+        if (config.getCurrentLimit() != 0.0) {
+            setCurrentLimit(config.getCurrentLimit());
+        }
+
     }
 
     public void set(double speed) {
-        // if(motorLimits != null){
+        if(mMotorLimits != null){
+            if(speed < 0){
+                if(mMotorLimits.getLowerLimit() > getEncoderPosition()) speed = 0;
+            }else if(speed > 0){
+                if(mMotorLimits.getUpperLimit() < getEncoderPosition()) speed = 0;
+            }
             
-            // if(speed < 0){
-            //     if(motorLimits.getLowerLimit() > getPose()) speed = 0;
-            // }else if(speed > 0){
-            //     if(motorLimits.getUpperLimit() < getPose()) speed = 0;
-            // }
-            
-        // }
+        }
         mMotor.set(TalonFXControlMode.PercentOutput, speed);        
     }
 
     public void setVoltage(double voltage) {
-        // if(motorLimits != null){
+        if(mMotorLimits != null){
+            if(voltage < 0){
+                if(mMotorLimits.getLowerLimit() > getEncoderPosition()) voltage = 0;
+            }else if(voltage > 0){
+                if(mMotorLimits.getUpperLimit() < getEncoderPosition()) voltage = 0;
+            }
             
-        //     if(voltage < 0){
-        //         if(motorLimits.getLowerLimit() > getPose()) voltage = 0;
-        //     }else if(voltage > 0){
-        //         if(motorLimits.getUpperLimit() < getPose()) voltage = 0;
-        //     }
-            
-        // }
+        }
         mMotor.setVoltage(MathUtil.clamp(voltage, 12, 12) / 12);
     }
 
@@ -77,67 +86,67 @@ public class Falcon implements SOTAMotorController {
         return mMotor.getInverted();
     }
 
-    public void disable() {
-        mMotor.neutralOutput();        
+    public void setNeutralOperation(NeutralOperation neutralOperation) {
+        switch (neutralOperation) {
+            case kBrake :
+                mMotor.setNeutralMode(NeutralMode.Brake);
+                break;
+            case kCoast :
+                mMotor.setNeutralMode(NeutralMode.Coast);
+                break;
+        }
+        
     }
 
-    public double getTickVelocity() {
-        return mMotor.getSelectedSensorVelocity();
-    }
-
-    public double getTickPosition() {
-        return mEncoder.get();
-    }
-
-    public SOTAEncoder getEncoder() {
+    public SOTA_Encoder getEncoder() {
         return mEncoder;
     }
 
-    public double getNativeVelocity() {
+    public double getEncoderVelocity() {
         return mMotor.getSelectedSensorVelocity();
     }
 
-    public double getNativePosition() {
-        return mNativeEncoder.get();
+    public double getEncoderPosition() {
+        return mEncoder.get();
     }
 
-    public SOTAEncoder getNativeEncoder() {
-        return mNativeEncoder;
+    public double getNativeEncoderVelocity() {
+        return mMotor.getSelectedSensorVelocity();
     }
 
-    public double getMotorCurrent() {
-        return mMotor.getSupplyCurrent();
-    }
-
-    public void setCurrentLimit(int amps) {
-        StatorCurrentLimitConfiguration config = new StatorCurrentLimitConfiguration(true, amps, amps, 1.0); 
-        mMotor.configStatorCurrentLimit(config);
+    public double getNativeEncoderPosition() {
+        return mMotor.getSelectedSensorPosition();
     }
 
     public double getMotorTemperature() {
         return mMotor.getTemperature();
     }
 
-    @Override
+    public double getMotorCurrent() {
+        return mMotor.getSupplyCurrent();
+    }
+
+    // TODO: arbitrary number for current limits works for swerve but who knows what will happen
+    public void setCurrentLimit(int amps) {
+        StatorCurrentLimitConfiguration config = new StatorCurrentLimitConfiguration(true, amps, amps, 1.0); 
+        mMotor.configStatorCurrentLimit(config);
+    }
+
+    public void setLimits(MotorLimits limits) {
+        mMotorLimits = limits;
+    }
+
+    public MotorLimits getLimits() {
+        return mMotorLimits;
+    }
+
+    public void disable() {
+        mMotor.neutralOutput();        
+    }
+
     public void stopMotor() {
-        mMotor.DestroyObject();
+        mMotor.neutralOutput();
         
-    }
-
-    @Override
-    public double getPose() {
-        // TODO Auto-generated method stub
-        return mEncoder.get();
-    }
-
-    @Override
-    public double getNativeEncoderPose() {
-        return mNativeEncoder.get();
-    }
-
-    @Override
-    public MotorLimits getMotorLimits() {
-        return motorLimits;
     }
 
 }

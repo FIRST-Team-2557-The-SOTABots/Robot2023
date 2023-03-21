@@ -4,7 +4,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 
-public class Pigeon implements SOTAGyro {
+public class Pigeon implements SOTA_Gyro {
 
     private PigeonIMU mPidgeon;
 

@@ -5,6 +5,10 @@ public class MotorLimits {
     private Double lowerLimit;
     private boolean finalLimits;
 
+    public MotorLimits() {
+        this(null, null);
+    }
+
     public MotorLimits(Double lower, Double upper){
         this(lower, upper, true);
     }

@@ -1,42 +1,36 @@
 package lib.Factories;
 
-import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import lib.Config.EncoderConfig;
 import lib.Config.MotorControllerConfig;
 import lib.Config.MotorLimitsConfig;
 import lib.Encoder.AnalogInputEncoder;
 import lib.Encoder.SOTADutyCycleEncoder;
-import lib.Encoder.SOTAEncoder;
+import lib.Encoder.SOTA_Encoder;
 import lib.MotorController.Falcon;
 import lib.MotorController.MotorLimits;
-import lib.MotorController.SOTAMotorController;
+import lib.MotorController.SOTA_MotorController;
 import lib.MotorController.SparkMaxDelegate;
 
 public class MotorControllerFactory {
     
-    public static SOTAMotorController generateFalconDelegate(MotorControllerConfig config){
-        WPI_TalonFX motor = new WPI_TalonFX(config.getPort());
-        motor.setInverted(config.getIsInverted());
-        if (config.getCurrentLimit() != 0.0) {
-            StatorCurrentLimitConfiguration currentConfig = new StatorCurrentLimitConfiguration(
-                true, config.getCurrentLimit(), config.getCurrentLimit(), 1.0);
-            motor.configStatorCurrentLimit(currentConfig);    
-        }
-        
-        SOTAEncoder encoder =  generateEncoder(config.getEncoderConfig()) ;
-        return encoder == null ? new Falcon(motor, generateLimits(config.getMotorLimitsConfig())) : 
-        new Falcon(motor, encoder , generateLimits(config.getMotorLimitsConfig()));
+    public static SOTA_MotorController generateFalconDelegate(MotorControllerConfig config){
+        if(config == null) return null;
+        WPI_TalonFX motor = new WPI_TalonFX(config.getPort());        
+        SOTA_Encoder encoder =  generateEncoder(config.getEncoderConfig());
+        MotorLimits limits = generateLimits(config.getMotorLimitsConfig());
+
+        return new Falcon(motor, encoder, limits, config);
     }
 
-    public static SOTAMotorController generateSparkDelegate(MotorControllerConfig config){
+    public static SOTA_MotorController generateSparkDelegate(MotorControllerConfig config) {
         if(config == null) return null;
-            MotorType motorType;
+        MotorType motorType;
         switch(config.getMotorType()) {
             case("BRUSHLESS"):
                 motorType = MotorType.kBrushless;
@@ -48,37 +42,27 @@ public class MotorControllerFactory {
                 throw new IllegalArgumentException("Illegal motor type");
         }
         CANSparkMax sparkMax = new CANSparkMax(config.getPort(), motorType);
-        SOTAEncoder encoder = (generateEncoder(config.getEncoderConfig()));
-        sparkMax.setInverted(config.getIsInverted());
-        if (config.getCurrentLimit() != 0.0) {
-            sparkMax.setSmartCurrentLimit(config.getCurrentLimit());
-        }
-        if(encoder == null){
-            SmartDashboard.putBoolean("Failed to create encoder" +  config.getPort(), true);
-            return new SparkMaxDelegate(sparkMax, generateLimits(config.getMotorLimitsConfig()));
-        }
-        return new SparkMaxDelegate(sparkMax, encoder, generateLimits(config.getMotorLimitsConfig()));
+        SOTA_Encoder encoder = generateEncoder(config.getEncoderConfig());
+        MotorLimits limits = generateLimits(config.getMotorLimitsConfig());
+        return new SparkMaxDelegate(sparkMax, encoder, limits, config);
     }
 
     public static MotorLimits generateLimits(MotorLimitsConfig config){
-            if(config == null) return new MotorLimits(null, null);
-
-            return new MotorLimits(config.getLowerLimit(), config.getUpperLimit(), config.getFinalLimits());
+        if(config == null) return null;
+        return new MotorLimits(config.getLowerLimit(), config.getUpperLimit(), config.getFinalLimits());
         
     }
 
-    public static SOTAEncoder generateEncoder(EncoderConfig encoderConfig){
-        try{
-        if (encoderConfig == null ) return null;
+    public static SOTA_Encoder generateEncoder(EncoderConfig encoderConfig){
         switch(encoderConfig.getEncoderType()){
             case "ANALOG":
-                AnalogInput input = new AnalogInput(encoderConfig.getPort());
-                return new AnalogInputEncoder(input, encoderConfig);
+                AnalogInput analogInput = new AnalogInput(encoderConfig.getPort());
+                return new AnalogInputEncoder(analogInput, encoderConfig);
             case "DUTYCYCLE":
-                return new SOTADutyCycleEncoder(encoderConfig.getPort(), encoderConfig.getEncoderOffset());
-        
+                DutyCycleEncoder dutyCycle = new DutyCycleEncoder(encoderConfig.getPort());
+                return new SOTADutyCycleEncoder(dutyCycle, encoderConfig);
+            default :
+                return null;
         }
-    } catch(NullPointerException e){}
-        return null;
     }
 }

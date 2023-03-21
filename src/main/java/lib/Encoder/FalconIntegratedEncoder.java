@@ -5,12 +5,10 @@
 package lib.Encoder;
 
 import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
 
 /** Add your docs here. */
-public class FalconIntegratedEncoder implements SOTAEncoder {
+@Deprecated // This just doesnt work
+public class FalconIntegratedEncoder implements SOTA_Encoder {
     private static final double kCountsPerRevolution = 2048;
     private TalonFXSensorCollection mEncoder;
     private double offset;
@@ -62,7 +60,5 @@ public class FalconIntegratedEncoder implements SOTAEncoder {
     public void close() {
                 
     }
-
-    
     
 }

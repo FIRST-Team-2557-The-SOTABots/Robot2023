@@ -1,50 +1,40 @@
 package lib.MotorController;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 
-import lib.Encoder.SOTAEncoder;
-import lib.Encoder.SparkMaxIntegratedEncoder;
+import lib.Config.MotorControllerConfig;
+import lib.Encoder.SOTA_Encoder;
 
-public class SparkMaxDelegate implements SOTAMotorController{
+public class SparkMaxDelegate implements SOTA_MotorController{
     private final CANSparkMax mMotor;
-    private final SOTAEncoder mEncoder;
-    private final SOTAEncoder mNativeEncoder;
-    private MotorLimits motorLimits;
-    public SparkMaxDelegate(CANSparkMax motor){
-        this(
-            motor, 
-            new SparkMaxIntegratedEncoder(motor.getEncoder())
-        );
+    private final SOTA_Encoder mEncoder;
+    private MotorLimits mMotorLimits;
+    // TODO: check these constructors
+    public SparkMaxDelegate(CANSparkMax motor, MotorControllerConfig config){
+        this(motor, (SOTA_Encoder) null, config);
     }
 
-    public SparkMaxDelegate(CANSparkMax motor, MotorLimits limits){
-        this(
-            motor, 
-            new SparkMaxIntegratedEncoder(motor.getEncoder()),
-            limits
-        );
+    public SparkMaxDelegate(CANSparkMax motor, MotorLimits limits, MotorControllerConfig config){
+        this(motor, (SOTA_Encoder) null, limits ,config);
     }
     
-    public SparkMaxDelegate(CANSparkMax motor, SOTAEncoder encoder) {
-        this.mMotor = motor;
-        this.mEncoder = encoder;
-        this.mNativeEncoder = new SparkMaxIntegratedEncoder(mMotor.getEncoder());
-        this.motorLimits = new MotorLimits(null, null);
+    public SparkMaxDelegate(CANSparkMax motor, SOTA_Encoder encoder, MotorControllerConfig config) {
+        this(motor, encoder, (MotorLimits) null, config);
     }
-    public SparkMaxDelegate(CANSparkMax motor, SOTAEncoder encoder, MotorLimits limits){
+
+    public SparkMaxDelegate(CANSparkMax motor, SOTA_Encoder encoder, MotorLimits limits, MotorControllerConfig config){
         this.mMotor = motor;
         this.mEncoder = encoder;
-        this.mNativeEncoder = new SparkMaxIntegratedEncoder(mMotor.getEncoder());
-        this.motorLimits = limits;
+        this.mMotorLimits = limits;
     }
 
     public void set(double speed) {
-        if(motorLimits != null){
-            
+        if(mMotorLimits != null){
             if(speed < 0){
-                if(motorLimits.getLowerLimit() > getPose()) speed = 0;
+                if(mMotorLimits.getLowerLimit() > getEncoderPosition()) speed = 0;
             }else if(speed > 0){
-                if(motorLimits.getUpperLimit() < getPose()) speed = 0;
+                if(mMotorLimits.getUpperLimit() < getEncoderPosition()) speed = 0;
             }
             
         }
@@ -52,15 +42,14 @@ public class SparkMaxDelegate implements SOTAMotorController{
     }
 
     public void setVoltage(double voltage) {
-            if(motorLimits != null){
-                
-                if(voltage < 0){
-                    if(motorLimits.getLowerLimit() > getPose()) voltage = 0;
-                }else if(voltage > 0){
-                    if(motorLimits.getUpperLimit() < getPose()) voltage = 0;
-                }
-                
+        if(mMotorLimits != null){
+            if(voltage < 0){
+                if(mMotorLimits.getLowerLimit() > getEncoderPosition()) voltage = 0;
+            }else if(voltage > 0){
+                if(mMotorLimits.getUpperLimit() < getEncoderPosition()) voltage = 0;
             }
+            
+        }
         
         mMotor.setVoltage(voltage);
     }
@@ -77,27 +66,37 @@ public class SparkMaxDelegate implements SOTAMotorController{
         return mMotor.getInverted();
     }
 
-    public void disable() {
-        mMotor.disable();        
+    public void setNeutralOperation(NeutralOperation neutralOperation) {
+        switch(neutralOperation) {
+            case kBrake :
+                mMotor.setIdleMode(IdleMode.kBrake);
+                break;
+            case kCoast :
+                mMotor.setIdleMode(IdleMode.kCoast);
+                break;
+        }        
     }
 
-    public double getTickVelocity() {
-        return mEncoder.getVelocity();
-    }
-
-    public SOTAEncoder getEncoder() {
+    public SOTA_Encoder getEncoder() {
         return mEncoder;
     }
 
-    public double getNativeVelocity() {
-        return mNativeEncoder.getVelocity();
-    }
-    public double getNativePosition() {
-        return mNativeEncoder.get();
+    public double getEncoderVelocity() {
+        if (mEncoder == null) return getNativeEncoderVelocity();
+        return mEncoder.getVelocity();
     }
 
-    public SOTAEncoder getNativeEncoder() {
-        return mNativeEncoder;
+    public double getEncoderPosition() {
+        if (mEncoder == null) return getNativeEncoderPosition();
+        return mEncoder.get();
+    }
+
+    public double getNativeEncoderVelocity() {
+        return mMotor.getEncoder().getVelocity();
+    }
+
+    public double getNativeEncoderPosition() {
+        return mMotor.getEncoder().getPosition();
     }
 
     public double getMotorCurrent() {
@@ -112,29 +111,21 @@ public class SparkMaxDelegate implements SOTAMotorController{
         return mMotor.getMotorTemperature();
     }
 
-    @Override
+    public MotorLimits getLimits() {
+        return mMotorLimits;
+    }
+
+    public void setLimits(MotorLimits limits) {
+        mMotorLimits = limits;
+    }
+
+    public void disable() {
+        mMotor.disable();        
+    }
+
     public void stopMotor() {
-        mMotor.stopMotor();;
+        mMotor.stopMotor();
         
-    }
-
-    @Override
-    public double getPose() {
-        return mEncoder.get();
-    }
-
-    @Override
-    public double getNativeEncoderPose() {
-        return mNativeEncoder.get();
-    }
-    @Override
-    public MotorLimits getMotorLimits() {
-        return motorLimits;
-    }
-
-    @Override
-    public double getTickPosition() {
-        return mEncoder.get();
     }
 
 }

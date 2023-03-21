@@ -1,6 +1,6 @@
 package lib.Encoder;
 
-public interface SOTAEncoder {
+public interface SOTA_Encoder {
     public double get();
     public double getAbsolutePosition();
     public void reset();

@@ -5,17 +5,17 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Extension;
-import lib.Control.SOTAXboxcontroller;
+import lib.Control.SOTA_Xboxcontroller;
 
 public class ExtensionPID extends CommandBase{
     private ProfiledPIDController extendPID;
     private Extension mExtension;
-    private SOTAXboxcontroller mController;
+    private SOTA_Xboxcontroller mController;
     private DoubleSupplier maxLength;
     private double setPoint;
     private ResetExtension resetExtension;
 
-    public ExtensionPID(ProfiledPIDController PID, Extension mArm, SOTAXboxcontroller mController, DoubleSupplier maxLength){
+    public ExtensionPID(ProfiledPIDController PID, Extension mArm, SOTA_Xboxcontroller mController, DoubleSupplier maxLength){
         this.extendPID = PID; this.mExtension = mArm; this.mController = mController; this.maxLength = maxLength;
         this.resetExtension = new ResetExtension(mArm);
         // SmartDashboard.putNumber("maxLength2", maxLength.getAsDouble());

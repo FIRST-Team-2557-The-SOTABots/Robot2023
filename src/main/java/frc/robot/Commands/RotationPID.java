@@ -7,7 +7,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Rotation;
 import lib.Config.SuperStructureConfig;
-import lib.Control.SOTAXboxcontroller;
+import lib.Control.SOTA_Xboxcontroller;
 
 public class RotationPID extends CommandBase{
     private Rotation mArm;
@@ -17,12 +17,12 @@ public class RotationPID extends CommandBase{
     private DoubleSupplier maxAngle;
     private DoubleSupplier extensionlength;
     private SuperStructureConfig config;
-    private SOTAXboxcontroller controller;
+    private SOTA_Xboxcontroller controller;
 
     public RotationPID(Rotation mArm,
             PIDController pidController,
             double setpoint,
-            SOTAXboxcontroller controller,
+            SOTA_Xboxcontroller controller,
             DoubleSupplier extensionLength,
             DoubleSupplier minAngle, 
             DoubleSupplier maxAngle,

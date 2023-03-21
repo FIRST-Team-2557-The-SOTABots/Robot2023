@@ -3,13 +3,13 @@ package frc.robot.Commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Extension;
-import lib.Control.SOTAXboxcontroller;
+import lib.Control.SOTA_Xboxcontroller;
 
 public class BasicArmExtension extends CommandBase{
     private Extension mArm;
-    private SOTAXboxcontroller mController;
+    private SOTA_Xboxcontroller mController;
 
-    public BasicArmExtension(Extension mArm, SOTAXboxcontroller mController){
+    public BasicArmExtension(Extension mArm, SOTA_Xboxcontroller mController){
         this.mArm = mArm; this.mController = mController;
         addRequirements(mArm);
     }

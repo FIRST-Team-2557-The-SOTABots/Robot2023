@@ -7,7 +7,7 @@ package lib.Encoder;
 import com.revrobotics.RelativeEncoder;
 
 /** Add your docs here. */
-public class SparkMaxIntegratedEncoder implements SOTAEncoder {
+public class SparkMaxIntegratedEncoder implements SOTA_Encoder {
     
     private final RelativeEncoder mEncoder;
     private double offset;

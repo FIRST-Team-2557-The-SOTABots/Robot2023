@@ -8,7 +8,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 
-public class NavX implements SOTAGyro {
+public class NavX implements SOTA_Gyro {
   private final AHRS mNavX;
 
   /** Creates a new NavX. */

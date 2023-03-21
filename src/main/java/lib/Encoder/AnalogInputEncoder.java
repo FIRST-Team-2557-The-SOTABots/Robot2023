@@ -1,12 +1,10 @@
 package lib.Encoder;
 
-import com.pathplanner.lib.auto.MecanumAutoBuilder;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.AnalogInput;
 import lib.Config.EncoderConfig;
 
-public class AnalogInputEncoder implements SOTAAbsoulteEncoder {
+public class AnalogInputEncoder implements SOTA_AbsoulteEncoder {
     private final AnalogInput mEncoder;
     private final double kCountsPerRevolution;
     private double kOffset;

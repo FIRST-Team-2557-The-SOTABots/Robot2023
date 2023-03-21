@@ -4,16 +4,16 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lib.Config.SuperStructureConfig;
-import lib.MotorController.SOTAMotorController;
+import lib.MotorController.SOTA_MotorController;
 
 public class Extension extends SubsystemBase{
     private double maxLength;
-    private SOTAMotorController motor;
+    private SOTA_MotorController motor;
     private DigitalInput limitswitch;
     private SuperStructureConfig config;
     private boolean hasReset = false;
 
-    public Extension(SOTAMotorController motor, DigitalInput limitSwitch, SuperStructureConfig config){
+    public Extension(SOTA_MotorController motor, DigitalInput limitSwitch, SuperStructureConfig config){
         this.motor = motor; this.limitswitch = limitSwitch; this.maxLength = config.getMaxExtension(); this.config = config;
     }
 
@@ -29,7 +29,7 @@ public class Extension extends SubsystemBase{
  
 
     public double getEncoder(){
-        return motor.getPose();
+        return motor.getEncoderPosition();
     }
 
     public double getLength(){

@@ -7,7 +7,7 @@ package frc.robot.Commands;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
-import lib.Control.SOTAXboxcontroller;
+import lib.Control.SOTA_Xboxcontroller;
 
 public class RotateAroundModuleClosestToPoint extends DefaultDrive{
   private ShiftingSwerveDrive mSwerveDrive;
@@ -15,10 +15,10 @@ public class RotateAroundModuleClosestToPoint extends DefaultDrive{
   private Translation2d mClosestModule;
   private Translation2d mPoint;
 
-  private SOTAXboxcontroller mDriveStick;
+  private SOTA_Xboxcontroller mDriveStick;
 
   /** Creates a new RotateAroundFarthestModule. */
-  public RotateAroundModuleClosestToPoint(ShiftingSwerveDrive swerveDrive, SOTAXboxcontroller driveStick, Translation2d point) {
+  public RotateAroundModuleClosestToPoint(ShiftingSwerveDrive swerveDrive, SOTA_Xboxcontroller driveStick, Translation2d point) {
     // Use addRequirements() here to declare subsystem dependencies.
     super(swerveDrive, driveStick);
     mModuleTranslations = mSwerveDrive.getModuleTranslation();

@@ -20,11 +20,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lib.Pneumatics.GearShifter;
 import lib.Config.ShiftingSwerveDriveConfig;
 import lib.Gyro.NavX;
+import lib.Gyro.SOTA_Gyro;
 
 public class ShiftingSwerveDrive extends SubsystemBase {
   private ShiftingSwerveModule[] mSwerveModules;
   private GearShifter mShifter;
-  private NavX mGyro;
+  private SOTA_Gyro mGyro;
 
   private Translation2d[] mModuleTranslation;
   private SwerveDriveKinematics mSwerveDriveKinematics;
@@ -40,7 +41,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   public ShiftingSwerveDrive(
     ShiftingSwerveModule[] swerveModules, 
     GearShifter shifter, 
-    NavX gyro,
+    SOTA_Gyro gyro,
     ShiftingSwerveDriveConfig config) {
 
     mSwerveModules = swerveModules;

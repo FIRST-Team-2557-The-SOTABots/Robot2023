@@ -9,14 +9,14 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
-import lib.Control.SOTAXboxcontroller;
+import lib.Control.SOTA_Xboxcontroller;
 
 public class DefaultDrive extends CommandBase {
   private ShiftingSwerveDrive mSwerveDrive;
-  private SOTAXboxcontroller mDriveStick;
+  private SOTA_Xboxcontroller mDriveStick;
 
   /** Creates a new DefaultDrive. */
-  public DefaultDrive(ShiftingSwerveDrive swerveDrive, SOTAXboxcontroller driveStick) {
+  public DefaultDrive(ShiftingSwerveDrive swerveDrive, SOTA_Xboxcontroller driveStick) {
     // Use addRequirements() here to declare subsystem dependencies.
     mSwerveDrive = swerveDrive;
     mDriveStick = driveStick;

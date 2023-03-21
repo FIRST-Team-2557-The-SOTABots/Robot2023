@@ -7,7 +7,7 @@ public class MotorControllerConfig  {
 
     private String motorType;
     private int countsPerRevolution;
-    private String idleMode;
+    private String neutralOperation;
     private EncoderConfig encoderConfig;
     private MotorLimitsConfig motorLimitsConfig;
     private int currentLimit;
@@ -16,8 +16,8 @@ public class MotorControllerConfig  {
         return isInverted;
     }
 
-    public String getIdleMode() {
-        return idleMode;
+    public String getNeutralOperation() {
+        return neutralOperation;
     }
 
     public String getMotorType() {

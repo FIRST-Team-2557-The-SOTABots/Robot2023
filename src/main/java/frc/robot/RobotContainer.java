@@ -21,15 +21,10 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Commands.AutoLevel;
 import frc.robot.Commands.BasicIntakeCommand;
 import frc.robot.Commands.DefaultDrive;
@@ -51,20 +46,19 @@ import lib.Config.MotorControllerConfig;
 import lib.Config.ShiftingSwerveDriveConfig;
 import lib.Config.ShiftingSwerveModuleConfig;
 import lib.Config.SuperStructureConfig;
-import lib.Control.SOTAXboxcontroller;
+import lib.Control.SOTA_Xboxcontroller;
 import lib.Factories.MotorControllerFactory;
 import lib.Gyro.NavX;
-import lib.Gyro.SOTAGyro;
-import lib.MotorController.SOTAMotorController;
-import lib.MotorController.SOTAMotorControllerGroup;
+import lib.Gyro.SOTA_Gyro;
+import lib.MotorController.SOTA_MotorController;
 import lib.Pneumatics.GearShifter;
 
 public class RobotContainer {
   // private final ArmInterface arm;
   private final ConfigUtils configUtils;
 
-  private final SOTAXboxcontroller dController;
-  private final SOTAXboxcontroller mController;
+  private final SOTA_Xboxcontroller dController;
+  private final SOTA_Xboxcontroller mController;
 
   private ShiftingSwerveDrive mSwerveDrive;
   private Rotation mRotation;
@@ -79,7 +73,7 @@ public class RobotContainer {
   private AutoLevel mAutoLevel;
   private BackUpMobility mBackUpMobility;
 
-  private SendableChooser<CommandBase> mAutoChooser;
+  // private SendableChooser<CommandBase> mAutoChooser;
 
   public RobotContainer() {
     
@@ -101,8 +95,8 @@ public class RobotContainer {
     //   }, mSwerveDrive).withTimeout(2.5)
     // );
 
-    dController = new SOTAXboxcontroller(0);
-    mController = new SOTAXboxcontroller(1);
+    dController = new SOTA_Xboxcontroller(0);
+    mController = new SOTA_Xboxcontroller(1);
 
     ShiftingSwerveModule[] swerveModules = {
       initSwerveModule(
@@ -131,7 +125,7 @@ public class RobotContainer {
     };
     
     try{
-      NavX gyro = new NavX(new AHRS(Port.kMXP));//TODO: change back to SOTAGyro
+      SOTA_Gyro gyro = new NavX(new AHRS(Port.kMXP));//TODO: change back to SOTAGyro
       DoubleSolenoid solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
       GearShifter shifter = new DoubleSolenoidShifter(solenoid, 
         configUtils.readFromClassPath(DoubleSolenoidConfig.class, 
@@ -148,10 +142,10 @@ public class RobotContainer {
    
 
     try{
-    SOTAMotorController rotationMotor = MotorControllerFactory.generateSparkDelegate(
+    SOTA_MotorController rotationMotor = MotorControllerFactory.generateSparkDelegate(
     (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/RotatorMotor")));
 
-    SOTAMotorController winchMotor = MotorControllerFactory.generateSparkDelegate
+    SOTA_MotorController winchMotor = MotorControllerFactory.generateSparkDelegate
     (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/WinchMotor"));
 
     MotorController intakeMotorRight = new CANSparkMax(2, MotorType.kBrushless);
@@ -225,19 +219,14 @@ public class RobotContainer {
     return mBackUpMobility.withTimeout(mBackUpMobility.kTime); // removed use of depracated thingy if dont work just comment out
   }
 
-  
-
-  
-  
-
   public ShiftingSwerveModule initSwerveModule(String speedConfig, String angleConfig, String moduleConfig){
 
     try{
       ShiftingSwerveModuleConfig config = configUtils.readFromClassPath(ShiftingSwerveModuleConfig.class, moduleConfig);
       MotorControllerConfig speedMotorConfig = configUtils.readFromClassPath(MotorControllerConfig.class, speedConfig);
       MotorControllerConfig rotatorConfig = configUtils.readFromClassPath(MotorControllerConfig.class, angleConfig);
-      SOTAMotorController speedMotor = MotorControllerFactory.generateFalconDelegate(speedMotorConfig);
-      SOTAMotorController angleMotor = MotorControllerFactory.generateSparkDelegate(rotatorConfig);
+      SOTA_MotorController speedMotor = MotorControllerFactory.generateFalconDelegate(speedMotorConfig);
+      SOTA_MotorController angleMotor = MotorControllerFactory.generateSparkDelegate(rotatorConfig);
       return new ShiftingSwerveModule(angleMotor, speedMotor, config);
     } catch(IOException e){
       throw new RuntimeException("Could not create config", e);

@@ -3,29 +3,29 @@ package frc.robot.Subsystems;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lib.Config.SuperStructureConfig;
-import lib.MotorController.SOTAMotorController;
+import lib.MotorController.SOTA_MotorController;
 
 public class Rotation extends SubsystemBase{
-    private SOTAMotorController motor;
+    private SOTA_MotorController motor;
     private SuperStructureConfig config;
 
-    public Rotation(SOTAMotorController motor, SuperStructureConfig config){
+    public Rotation(SOTA_MotorController motor, SuperStructureConfig config){
         this.motor = motor; this.config = config;
     }
 
-    public void set(double speed){
+    public void set(double speed) {
         motor.set(speed);
     }
 
-    public double getRotatorEncoder(){
-        return motor.getPose();
+    public double getRotatorEncoder() {
+        return motor.getEncoderPosition();
       }
 
-    public double getRotationDegrees(){
+    public double getRotationDegrees() {
         return (getRotatorEncoder() - config.getEncoderAtZeroDegrees())/config.getEncoderPerDegree();
       }
 
-    public double getRotationRadians(){
+    public double getRotationRadians() {
         return ((2*Math.PI) / 360) * getRotationDegrees();  
     }
       @Override
