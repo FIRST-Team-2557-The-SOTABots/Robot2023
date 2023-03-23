@@ -41,7 +41,7 @@ public class ExtensionPID extends CommandBase{
         // if(mController.getLeftBumper()) setPoint = 3;
         // if(mController.getRightBumper()) setPoint = -3;
         // else setPoint = 0;
-        mExtension.set(output);
+        // mExtension.set(output);
 
         // SmartDashboard.putNumber("extensionGoal", setPoint);
         // SmartDashboard.putNumber("Max Extension", maxLength.getAsDouble());

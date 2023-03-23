@@ -46,4 +46,9 @@ public class Intake extends SubsystemBase {
         motors.set(0);       
     }
 
+    @Override
+    public void periodic() {
+        
+    }
+
 }

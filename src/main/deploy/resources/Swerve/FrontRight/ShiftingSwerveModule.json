@@ -13,7 +13,6 @@
     "speedKV": 0.0005339,
     "speedPIDTolerance": 0.05,
 
-
     "angleKP": 6.0,
     "angleKI": 0.0,
     "angleKD": 0.0,

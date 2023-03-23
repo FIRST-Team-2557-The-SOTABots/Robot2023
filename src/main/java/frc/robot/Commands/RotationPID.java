@@ -4,6 +4,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Rotation;
 import lib.Config.SuperStructureConfig;
@@ -59,12 +60,12 @@ public class RotationPID extends CommandBase{
         double output = Math.sin(mArm.getRotationRadians()) * (config.getRotationDelta() + (config.getRotationDeltaPorportional() * extensionlength.getAsDouble() / 32)) 
         + pidController.calculate(mArm.getRotationDegrees());
 
-        mArm.set(output);
+        // mArm.set(output);
 
         // SmartDashboard.putNumber("Angle Output", output);
         // SmartDashboard.putNumber("MinAngle", minAngle.getAsDouble());
         // SmartDashboard.putNumber("maxAngle", maxAngle.getAsDouble());
-        // SmartDashboard.putNumber("Rotation goal", setpoint);
+        SmartDashboard.putNumber("Rotation goal", setpoint);
 
     }
     

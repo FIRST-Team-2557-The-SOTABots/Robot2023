@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import lib.Config.EncoderConfig;
 import lib.Config.MotorControllerConfig;
 import lib.Config.MotorLimitsConfig;
@@ -29,7 +30,9 @@ public class MotorControllerFactory {
     }
 
     public static SOTA_MotorController generateSparkDelegate(MotorControllerConfig config) {
-        if(config == null) return null;
+        if(config == null) {
+            return null;
+        }
         MotorType motorType;
         switch(config.getMotorType()) {
             case("BRUSHLESS"):
@@ -54,6 +57,9 @@ public class MotorControllerFactory {
     }
 
     public static SOTA_Encoder generateEncoder(EncoderConfig encoderConfig){
+        if (encoderConfig == null) {
+            return null;
+        }
         switch(encoderConfig.getEncoderType()){
             case "ANALOG":
                 AnalogInput analogInput = new AnalogInput(encoderConfig.getPort());
@@ -62,7 +68,7 @@ public class MotorControllerFactory {
                 DutyCycleEncoder dutyCycle = new DutyCycleEncoder(encoderConfig.getPort());
                 return new SOTADutyCycleEncoder(dutyCycle, encoderConfig);
             default :
-                return null;
+                throw new IllegalArgumentException("Illegal Encoder Type");
         }
     }
 }

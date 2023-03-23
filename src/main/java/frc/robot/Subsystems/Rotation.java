@@ -10,7 +10,8 @@ public class Rotation extends SubsystemBase{
     private SuperStructureConfig config;
 
     public Rotation(SOTA_MotorController motor, SuperStructureConfig config){
-        this.motor = motor; this.config = config;
+        this.motor = motor; 
+        this.config = config;
     }
 
     public void set(double speed) {
@@ -31,7 +32,7 @@ public class Rotation extends SubsystemBase{
       @Override
       public void periodic() {
           SmartDashboard.putNumber("Arm Angle", getRotationDegrees());
-        //   SmartDashboard.putNumber("Angle Encoder", getRotatorEncoder());
+          SmartDashboard.putNumber("Angle Encoder", getRotatorEncoder());
           // SmartDashboard.putNumber("angle from native", motor.getNativeEncoderPose());
         //   SmartDashboard.putNumber("Rotation motor limit", motor.getMotorLimits().getUpperLimit());
       }

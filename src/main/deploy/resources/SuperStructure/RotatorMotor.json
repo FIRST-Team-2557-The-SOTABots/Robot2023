@@ -1,7 +1,7 @@
 {
     "port": 13,
     "isInverted": true,
-    "idleMode": "COAST",
+    "neutralOperation": "COAST",
     "motorType": "BRUSHLESS",
     "countsPerRevolution": 2048,
     "encoderConfig": {

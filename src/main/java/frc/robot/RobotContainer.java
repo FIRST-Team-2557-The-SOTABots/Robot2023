@@ -21,10 +21,13 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Commands.AutoLevel;
 import frc.robot.Commands.BasicIntakeCommand;
 import frc.robot.Commands.DefaultDrive;
@@ -185,8 +188,6 @@ public class RobotContainer {
   }
 
   private void configureDefaultCommands(){
-    
-
     mSwerveDrive.setDefaultCommand(mDriveCommand);
     mExtension.setDefaultCommand(extensionPID);
     mRotation.setDefaultCommand(rotationPID);
@@ -212,15 +213,14 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    // return CommandGroupBase.deadline(
-    //   new WaitCommand(mBackUpMobility.kTime),
-    //   mBackUpMobility
-    // );
-    return mBackUpMobility.withTimeout(mBackUpMobility.kTime); // removed use of depracated thingy if dont work just comment out
+    return CommandGroupBase.deadline(
+      new WaitCommand(mBackUpMobility.kTime),
+      mBackUpMobility
+    );
+    // return mBackUpMobility.withTimeout(mBackUpMobility.kTime); // removed use of depracated thingy if dont work just comment out
   }
 
-  public ShiftingSwerveModule initSwerveModule(String speedConfig, String angleConfig, String moduleConfig){
-
+  public ShiftingSwerveModule initSwerveModule(String speedConfig, String angleConfig, String moduleConfig) {
     try{
       ShiftingSwerveModuleConfig config = configUtils.readFromClassPath(ShiftingSwerveModuleConfig.class, moduleConfig);
       MotorControllerConfig speedMotorConfig = configUtils.readFromClassPath(MotorControllerConfig.class, speedConfig);

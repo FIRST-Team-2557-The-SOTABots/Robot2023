@@ -1,7 +1,7 @@
 {
     "port": 8,
     "isInverted": false,
-    "idleMode": "BRAKE",
+    "neutralOperation": "BRAKE",
     "motorType": "BRUSHLESS",
     "countsPerRevolution": 2048,
     "motorLimitsConfig": {

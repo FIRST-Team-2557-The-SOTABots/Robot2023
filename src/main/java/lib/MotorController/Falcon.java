@@ -10,17 +10,14 @@ import lib.Config.MotorControllerConfig;
 import lib.Encoder.SOTA_Encoder;
 
 public class Falcon implements SOTA_MotorController {
+    private static final double kNativeCountsPerRevolution = 2048;
     private final WPI_TalonFX mMotor;
     private final SOTA_Encoder mEncoder;
     private MotorLimits mMotorLimits;
 
     // TODO: check these constructors
     public Falcon(WPI_TalonFX motor, MotorControllerConfig config){
-        this(
-            motor, 
-            (SOTA_Encoder) null,
-            config
-        );
+        this(motor, (SOTA_Encoder) null, config);
     }
 
     public Falcon(WPI_TalonFX motor, SOTA_Encoder encoder, MotorControllerConfig config) {
@@ -31,7 +28,7 @@ public class Falcon implements SOTA_MotorController {
         this(motor, (SOTA_Encoder) null, limits, config);
     }
 
-    public Falcon(WPI_TalonFX motor, SOTA_Encoder encoder, MotorLimits limits, MotorControllerConfig config){
+    public Falcon(WPI_TalonFX motor, SOTA_Encoder encoder, MotorLimits limits, MotorControllerConfig config) {
         this.mMotor = motor;
         this.mEncoder = encoder;
         setInverted(config.getIsInverted());
@@ -118,12 +115,20 @@ public class Falcon implements SOTA_MotorController {
         return mMotor.getSelectedSensorPosition();
     }
 
+    public double getNativeCountsPerRevolution() {
+        return kNativeCountsPerRevolution;
+    }
+
+    public void resetNativeEncoder() {
+        mMotor.setSelectedSensorPosition(0.0);
+    }
+
     public double getMotorTemperature() {
         return mMotor.getTemperature();
     }
 
     public double getMotorCurrent() {
-        return mMotor.getSupplyCurrent();
+        return mMotor.getStatorCurrent();
     }
 
     // TODO: arbitrary number for current limits works for swerve but who knows what will happen

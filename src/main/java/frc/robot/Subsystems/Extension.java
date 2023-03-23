@@ -50,7 +50,7 @@ public class Extension extends SubsystemBase{
     @Override
     public void periodic() {
         if(limitswitch.get()) {
-            motor.getEncoder().reset();;
+            motor.resetNativeEncoder();
             hasReset = true;
         }
         // SmartDashboard.putNumber("extensionEncoder", getEncoder());

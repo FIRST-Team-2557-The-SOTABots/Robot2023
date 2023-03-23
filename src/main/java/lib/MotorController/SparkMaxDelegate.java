@@ -3,6 +3,7 @@ package lib.MotorController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import lib.Config.MotorControllerConfig;
 import lib.Encoder.SOTA_Encoder;
 
@@ -11,16 +12,16 @@ public class SparkMaxDelegate implements SOTA_MotorController{
     private final SOTA_Encoder mEncoder;
     private MotorLimits mMotorLimits;
     // TODO: check these constructors
-    public SparkMaxDelegate(CANSparkMax motor, MotorControllerConfig config){
+    public SparkMaxDelegate(CANSparkMax motor, MotorControllerConfig config) {
         this(motor, (SOTA_Encoder) null, config);
+    }
+
+    public SparkMaxDelegate(CANSparkMax motor, SOTA_Encoder encoder, MotorControllerConfig config) {
+        this(motor, encoder, (MotorLimits) null, config);
     }
 
     public SparkMaxDelegate(CANSparkMax motor, MotorLimits limits, MotorControllerConfig config){
         this(motor, (SOTA_Encoder) null, limits ,config);
-    }
-    
-    public SparkMaxDelegate(CANSparkMax motor, SOTA_Encoder encoder, MotorControllerConfig config) {
-        this(motor, encoder, (MotorLimits) null, config);
     }
 
     public SparkMaxDelegate(CANSparkMax motor, SOTA_Encoder encoder, MotorLimits limits, MotorControllerConfig config){
@@ -99,6 +100,14 @@ public class SparkMaxDelegate implements SOTA_MotorController{
         return mMotor.getEncoder().getPosition();
     }
 
+    public double getNativeCountsPerRevolution() {
+        return mMotor.getEncoder().getCountsPerRevolution();
+    }
+
+    public void resetNativeEncoder() {
+        mMotor.getEncoder().setPosition(0.0);
+    }
+
     public double getMotorCurrent() {
         return mMotor.getOutputCurrent();
     }
@@ -127,5 +136,6 @@ public class SparkMaxDelegate implements SOTA_MotorController{
         mMotor.stopMotor();
         
     }
+
 
 }
