@@ -23,7 +23,7 @@ public class Extension extends SubsystemBase{
            speed = 0;
         }
         if(!hasReset && speed > 0) speed = 0;
-        motor.setVoltage(speed);
+        // motor.setVoltage(speed);
         SmartDashboard.putNumber("extensionSpeed", speed);
       }
  
@@ -50,7 +50,7 @@ public class Extension extends SubsystemBase{
     @Override
     public void periodic() {
         if(limitswitch.get()) {
-            motor.resetNativeEncoder();
+            motor.getEncoder().reset();;
             hasReset = true;
         }
         // SmartDashboard.putNumber("extensionEncoder", getEncoder());

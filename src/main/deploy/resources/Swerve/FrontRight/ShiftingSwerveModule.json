@@ -4,7 +4,7 @@
 
     "wheelDiameter": 4.0, 
     
-    "speedKP": 0.0005,
+    "speedKP": 0.001,
     "speedKI": 0.0,
     "speedKD": 0.0,
     "speedMaxAccel": 20000.0,

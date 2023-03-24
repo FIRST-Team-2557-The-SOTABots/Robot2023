@@ -67,7 +67,7 @@ public class Falcon implements SOTA_MotorController {
             }
             
         }
-        mMotor.setVoltage(MathUtil.clamp(voltage, 12, 12) / 12);
+        mMotor.setVoltage(voltage);
     }
 
 
