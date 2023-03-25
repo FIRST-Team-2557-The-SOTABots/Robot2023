@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Rotation;
 import lib.Config.SuperStructureConfig;
-import lib.Control.SOTA_Xboxcontroller;
 
 public class RotationPID extends CommandBase{
 
@@ -38,7 +37,6 @@ public class RotationPID extends CommandBase{
     public RotationPID(Rotation mArm,
             PIDController pidController,
             double setpoint,
-            SOTA_Xboxcontroller controller,
             DoubleSupplier extensionLength,
             DoubleSupplier minAngle, 
             DoubleSupplier maxAngle,

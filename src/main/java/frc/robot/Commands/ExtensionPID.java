@@ -5,7 +5,6 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Extension;
-import lib.Control.SOTA_Xboxcontroller;
 
 public class ExtensionPID extends CommandBase {
 
@@ -28,7 +27,7 @@ public class ExtensionPID extends CommandBase {
     private double setpoint;
     // private ResetExtension resetExtension;
 
-    public ExtensionPID(ProfiledPIDController PID, Extension mArm, SOTA_Xboxcontroller mController, DoubleSupplier maxLength){
+    public ExtensionPID(ProfiledPIDController PID, Extension mArm, DoubleSupplier maxLength){
         this.extendPID = PID; 
         this.mExtension = mArm; 
         // this.mController = mController; 

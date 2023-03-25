@@ -73,7 +73,6 @@ public class RobotContainer {
   // private AutoLevel mAutoLevel;
   private BackUpMobility mBackUpMobility;
   private ParallelDeadlineGroup mBackUpAuto;
-
   // private SendableChooser<CommandBase> mAutoChooser;
 
   public RobotContainer() {
@@ -169,8 +168,8 @@ public class RobotContainer {
       ProfiledPIDController extensController = new ProfiledPIDController(3, 0, 0,
        new TrapezoidProfile.Constraints(40.0,80.0));
 
-      this.rotationPID = new RotationPID(mRotation, armRotationController, 150, mController, mExtension::getLengthFromStart, superStructure::minRotation, superStructure::maxRotation, superStructureConfig);
-      this.extensionPID = new ExtensionPID(extensController, mExtension,  mController, superStructure::maxExtension);
+      this.rotationPID = new RotationPID(mRotation, armRotationController, 150, mExtension::getLengthFromStart, superStructure::minRotation, superStructure::maxRotation, superStructureConfig);
+      this.extensionPID = new ExtensionPID(extensController, mExtension, superStructure::maxExtension);
       // this.mResetExtension = new ResetExtension(mExtension);
       this.intakeCommand = new BasicIntakeCommand(mIntake, mController);
     
@@ -204,21 +203,24 @@ public class RobotContainer {
       new InstantCommand(
         () -> {
           mSwerveDrive.resetGyro();
-        }
+        },
+        mSwerveDrive
       )
     );
     dController.a().onTrue(
       new InstantCommand(
         () -> {
           mSwerveDrive.setFieldCentricActive(true);
-        }
+        },
+        mSwerveDrive
       )
     );
     dController.b().onTrue(
       new InstantCommand(
         () -> {
           mSwerveDrive.setFieldCentricActive(false);
-        }
+        },
+        mSwerveDrive
       )
     );
 
@@ -231,7 +233,8 @@ public class RobotContainer {
         () -> {
           rotationPID.setSetpoint(RotationSetpoint.SUBSTATION);
           extensionPID.setSetpoint(ExtensionSetpoint.HIGH);
-        }
+        },
+        mRotation, mExtension
       )
     );
     mController.back().onTrue( // FLOOR
@@ -239,7 +242,8 @@ public class RobotContainer {
         () -> {
           rotationPID.setSetpoint(RotationSetpoint.FLOOR);
           extensionPID.setSetpoint(ExtensionSetpoint.MID);
-        }
+        },
+        mRotation, mExtension
       )
     );
     mController.a().onTrue( // SCORE MID ON RELEASE HIGH
@@ -247,13 +251,15 @@ public class RobotContainer {
         () -> {
           rotationPID.setSetpoint(RotationSetpoint.SCORE);
           extensionPID.setSetpoint(ExtensionSetpoint.MID);
-        }
+        },
+        mRotation, mExtension
       )
     ).onFalse(
       new InstantCommand(
         () -> {
           extensionPID.setSetpoint(ExtensionSetpoint.HIGH);
-        }
+        },
+        mExtension
       )
     );
     mController.x().onTrue( // RESET
@@ -261,7 +267,8 @@ public class RobotContainer {
         () -> {
           rotationPID.setSetpoint(RotationSetpoint.RESET);
           extensionPID.setSetpoint(ExtensionSetpoint.RESET);
-        }
+        },
+        mRotation, mExtension
       )
     );
     
