@@ -6,7 +6,7 @@
     "countsPerRevolution": 2048,
     "encoderConfig": {
         "port": 3,
-        "encoderOffset": 1.590576009,
+        "encoderOffset": 4.213866756,
         "countsPerRevolution": 5,
         "encoderType": "ANALOG"
     }

@@ -174,7 +174,7 @@ public class RobotContainer {
       ProfiledPIDController extensController = new ProfiledPIDController(3, 0, 0,
        new TrapezoidProfile.Constraints(40.0,80.0));
 
-      this.rotationPID = new RotationPID(mRotation, armRotationController, 180, mController, mExtension::getLengthFromStart, superStructure::minRotation, superStructure::maxRotation, superStructureConfig);
+      this.rotationPID = new RotationPID(mRotation, armRotationController, 150, mController, mExtension::getLengthFromStart, superStructure::minRotation, superStructure::maxRotation, superStructureConfig);
       this.extensionPID = new ExtensionPID(extensController, mExtension,  mController, superStructure::maxExtension);
       this.mResetExtension = new ResetExtension(mExtension);
       // this.intakeCommand = new BasicIntakeCommand(mIntake, mController);

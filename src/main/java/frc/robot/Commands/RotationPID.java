@@ -41,9 +41,9 @@ public class RotationPID extends CommandBase{
 
         if(controller.getB()) setpoint = 237;//245; this is from pickup station
         
-        if(controller.getX()) setpoint = 180;
+        if(controller.getX()) setpoint = 150; // Retract
 
-        if(controller.getLeftBumper()) setpoint = 110;
+        if(controller.getLeftBumper()) setpoint = 106.5;
 
         if(controller.getRightBumper()) setpoint = 250;
 

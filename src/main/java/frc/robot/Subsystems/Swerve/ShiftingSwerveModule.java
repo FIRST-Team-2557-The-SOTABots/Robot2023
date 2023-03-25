@@ -180,10 +180,13 @@ public class ShiftingSwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    boolean shouldShift = mSpeedMotor.get() > 0.70;
     
     SmartDashboard.putNumber("angle no offset " + mModulePosition, mAngleMotor.getEncoder().getAbsolutePosition());
-    SmartDashboard.putNumber("current draw" + mModulePosition, mSpeedMotor.getMotorCurrent());
-    SmartDashboard.putNumber("mModulePosition", kAngleCountsPerRevolution);
-    SmartDashboard.putNumber("getspeed", mSpeedMotor.get());
+    SmartDashboard.putBoolean("Should shift", shouldShift);
+
+    // SmartDashboard.putNumber("current draw" + mModulePosition, mSpeedMotor.getMotorCurrent());
+    // SmartDashboard.putNumber("mModulePosition", kAngleCountsPerRevolution);
   }
 }
