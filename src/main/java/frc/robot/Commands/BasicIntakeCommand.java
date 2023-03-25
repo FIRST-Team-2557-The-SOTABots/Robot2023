@@ -7,11 +7,11 @@ import lib.Control.SOTA_Xboxcontroller;
 
 public class BasicIntakeCommand extends CommandBase{
     private Intake mIntake;
-    private CommandXboxController controller;
+    private SOTA_Xboxcontroller mController;
 
-    public BasicIntakeCommand(Intake mIntake, SOTA_Xboxcontroller controller){
-        this.mIntake = mIntake; 
-        this.controller = controller;
+    public BasicIntakeCommand(Intake intake, SOTA_Xboxcontroller controller) {
+        this.mIntake = intake;
+        this.mController = controller;
         addRequirements(mIntake);
     }
 
@@ -21,8 +21,7 @@ public class BasicIntakeCommand extends CommandBase{
         // else if(controller.getLeftBumper()) mIntake.set(-1);
         // else mIntake.set(0);
         // if (controller.rightTrigger().)
-        mIntake.set(controller.getRightX());
-        
+        mIntake.set(mController.getLeftY());
     }
 
     

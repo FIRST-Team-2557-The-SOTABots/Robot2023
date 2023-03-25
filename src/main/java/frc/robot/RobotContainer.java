@@ -9,8 +9,6 @@ import java.io.IOException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kauailabs.navx.frc.AHRS;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -19,7 +17,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.I2C.Port;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
@@ -148,10 +145,17 @@ public class RobotContainer {
     SOTA_MotorController winchMotor = MotorControllerFactory.generateSparkDelegate
     (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/WinchMotor"));
 
-    MotorController intakeMotorRight = new CANSparkMax(2, MotorType.kBrushless);
+    // MotorController intakeMotorRight = new CANSparkMax(2, MotorType.kBrushless);
     // intakeMotorRight.setInverted(true);
-    MotorController intakeMotors = new MotorControllerGroup(new CANSparkMax(1, MotorType.kBrushless),
-    intakeMotorRight);
+    // MotorControllerGroup intakeMotors = new MotorControllerGroup(new CANSparkMax(1, MotorType.kBrushless),
+    // intakeMotorRight);
+    SOTA_MotorController intakeMotorBottom = MotorControllerFactory.generateSparkDelegate
+    (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/IntakeMotorBottom"));
+    SOTA_MotorController intakeMotorTop = MotorControllerFactory.generateSparkDelegate
+    (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/IntakeMotorTop"));
+
+    // Using SOTA_MotorController as a MotorController limits it's capabilities but it has immense compatibility
+    MotorControllerGroup intakeMotors = new MotorControllerGroup(intakeMotorBottom, intakeMotorTop);
 
     DigitalInput limitSwitch = new DigitalInput(0);
 
