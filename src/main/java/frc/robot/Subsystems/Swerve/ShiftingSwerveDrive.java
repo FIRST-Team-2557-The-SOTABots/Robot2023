@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lib.Pneumatics.GearShifter;
 import lib.Config.ShiftingSwerveDriveConfig;
-import lib.Gyro.NavX;
 import lib.Gyro.SOTA_Gyro;
 
 public class ShiftingSwerveDrive extends SubsystemBase {

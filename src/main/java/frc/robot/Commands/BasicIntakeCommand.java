@@ -18,6 +18,8 @@ public class BasicIntakeCommand extends CommandBase{
         // else if(controller.getLeftBumper()) mIntake.set(-1);
         // else mIntake.set(0);
         // if (controller.rightTrigger().)
+        mIntake.set(controller.getRightX());
+        
     }
 
     

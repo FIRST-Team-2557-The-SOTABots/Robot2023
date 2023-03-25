@@ -7,7 +7,6 @@ package frc.robot.Commands;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 import lib.Control.SOTA_Xboxcontroller;
 
@@ -35,13 +34,14 @@ public class DefaultDrive extends CommandBase {
     str = Math.signum(str) * str * str;
     rot = -Math.signum(rot) * rot * rot;
 
+
+    // if(mDriveStick.getA()) mSwerveDrive.setFieldCentricActive(true);
+    // if(mDriveStick.getB()) mSwerveDrive.setFieldCentricActive(false); 
+    // if(mDriveStick.getStart()) mSwerveDrive.resetGyro();
     shift(
       mDriveStick.getLeftTriggerAxis(), 
       mDriveStick.getRightTriggerAxis()
     );
-    if(mDriveStick.getA()) mSwerveDrive.setFieldCentricActive(true);
-    if(mDriveStick.getB()) mSwerveDrive.setFieldCentricActive(false); 
-    if(mDriveStick.getStart()) mSwerveDrive.resetGyro();
     drive(fwd, str, rot, mSwerveDrive.getRotation2d(), new Translation2d());
   }
 
