@@ -23,7 +23,7 @@ public class Extension extends SubsystemBase{
            speed = 0;
         }
         if(!hasReset && speed > 0) speed = 0;
-        // motor.setVoltage(speed);
+        motor.setVoltage(speed);
         SmartDashboard.putNumber("extensionSpeed", speed);
       }
  
