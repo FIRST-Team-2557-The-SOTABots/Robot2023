@@ -101,6 +101,12 @@ public class ShiftingSwerveDrive extends SubsystemBase {
       mSwerveModules[i].drive(moduleStates[i]);
     }
   }
+
+  public void drive(ChassisSpeeds speeds){
+    SwerveModuleState[] moduleStates = mSwerveDriveKinematics.toSwerveModuleStates(speeds, new Translation2d());
+    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, kMaxWheelSpeed);
+    drive(ShiftingSwerveModuleState.toShiftingSwerveModuleState(moduleStates, mShifter.getGear()));
+  }
   
   /** 
    * Shifts the gear of the drivetrain
@@ -173,6 +179,10 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     }
   } 
 
+  public void updatePose(Pose2d pose2d){
+    mSwerveDriveOdometry.resetPosition(mGyro.getRotation2d(), getModulePositions(), pose2d);
+  }
+
   /**
    * Gets the translation 2d array of the modules
    * @return Translation 2d array of the modules
@@ -203,6 +213,10 @@ public class ShiftingSwerveDrive extends SubsystemBase {
    */
   public Rotation2d getRotation2d() {
     return new Rotation2d(-mGyro.getRotation2d().getRadians());
+  }
+
+  public Pose2d getPose() {
+    return mSwerveDriveOdometry.getPoseMeters();
   }
 
   public double getPitch(){
