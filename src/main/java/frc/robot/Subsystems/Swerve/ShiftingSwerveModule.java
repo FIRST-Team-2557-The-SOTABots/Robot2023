@@ -75,7 +75,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
     double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[state.gear]);
     double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getNativeEncoderVelocity(), speedSetpointNative);
 
-    mSpeedMotor.setVoltage(state.speedMetersPerSecond == 0 ? 0 : speedPIDOutput);
+    mSpeedMotor.setVoltage(speedPIDOutput);
     // mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
     // mSpeedMotor.set((speedSetpointNative / maxSpeed));
 
@@ -183,5 +183,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
     
     SmartDashboard.putNumber("angle no offset " + mModulePosition, mAngleMotor.getEncoder().getAbsolutePosition());
     SmartDashboard.putNumber("current draw" + mModulePosition, mSpeedMotor.getMotorCurrent());
+    SmartDashboard.putNumber("mModulePosition", kAngleCountsPerRevolution);
+    SmartDashboard.putNumber("getspeed", mSpeedMotor.get());
   }
 }

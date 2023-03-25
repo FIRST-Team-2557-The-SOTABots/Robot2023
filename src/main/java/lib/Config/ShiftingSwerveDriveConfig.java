@@ -32,7 +32,6 @@ public class ShiftingSwerveDriveConfig {
             new Translation2d(-getWheelBase() / 2, getTrackWidth() / 2),
             new Translation2d(getWheelBase() / 2, getTrackWidth() / 2),
             new Translation2d(getWheelBase() / 2, -getTrackWidth() / 2),
-           
             new Translation2d(-getWheelBase() / 2, -getTrackWidth() / 2)
         };
         return moduleTranslations;

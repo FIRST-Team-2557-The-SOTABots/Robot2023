@@ -28,7 +28,7 @@ public class EncoderConfig {
         return portType;
     }
     
-    public String getEncoderType(){
+    public String getEncoderType() {
         return encoderType;
     }
     
