@@ -42,7 +42,7 @@ public class InterpolatingSwerveOffsetTreeMap extends TreeMap<Double, Double> {
      * @return adjusted encoder ticks
      */
     public double getInterpolated(double radians) {
-        if (super.containsKey(radians)) return get((radians));
+        if (super.containsKey(radians)) return get(radians);
         // Silly basic liner interpolation
         double floorKey = super.floorKey(radians);
         double ceilingKey = super.ceilingKey(radians);
@@ -50,6 +50,10 @@ public class InterpolatingSwerveOffsetTreeMap extends TreeMap<Double, Double> {
         double dx = ceilingKey - floorKey;
         return (dy/dx) * radians + getOffset();
     }
+
+    // public double getInverseInterpolated(double nat) {
+    //     // if (super.containsValue(nat)) return ;
+    // }
 
     /**
      * Converts native encoder to adjusted range and offset

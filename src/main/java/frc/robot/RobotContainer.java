@@ -24,7 +24,9 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -75,6 +77,7 @@ public class RobotContainer {
   private BasicIntakeCommand intakeCommand;
   private AutoLevel mAutoLevel;
   private BackUpMobility mBackUpMobility;
+  private ParallelDeadlineGroup mBackUpAuto;
 
   // private SendableChooser<CommandBase> mAutoChooser;
 
@@ -182,6 +185,11 @@ public class RobotContainer {
 
     mBackUpMobility = new BackUpMobility(mSwerveDrive);
 
+    mBackUpAuto = CommandGroupBase.deadline(
+      new WaitCommand(mBackUpMobility.kTime),
+      mBackUpMobility
+    );    
+
     configureDefaultCommands();
     configureBindings();
     
@@ -213,10 +221,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return CommandGroupBase.deadline(
-      new WaitCommand(mBackUpMobility.kTime),
-      mBackUpMobility
-    );
+    return mBackUpAuto;
     // return mBackUpMobility.withTimeout(mBackUpMobility.kTime); // removed use of depracated thingy if dont work just comment out
   }
 

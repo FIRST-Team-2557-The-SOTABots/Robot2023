@@ -3,7 +3,6 @@ package lib.MotorController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import lib.Config.MotorControllerConfig;
 import lib.Encoder.SOTA_Encoder;
 
@@ -51,7 +50,6 @@ public class SparkMaxDelegate implements SOTA_MotorController{
             }
             
         }
-        
         mMotor.setVoltage(voltage);
     }
 

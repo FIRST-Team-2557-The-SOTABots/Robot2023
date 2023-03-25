@@ -14,12 +14,12 @@ public class Rotation extends SubsystemBase{
     }
 
     public void set(double speed) {
-        // motor.set(speed);
+        motor.set(speed);
     }
 
     public double getRotatorEncoder() {
         return motor.getEncoderPosition();
-      }
+    }
 
     public double getRotationDegrees() {
         return (getRotatorEncoder() - config.getEncoderAtZeroDegrees())/config.getEncoderPerDegree();
@@ -31,6 +31,8 @@ public class Rotation extends SubsystemBase{
       @Override
       public void periodic() {
           SmartDashboard.putNumber("Arm Angle", getRotationDegrees());
+          SmartDashboard.putNumber("Angle Encoder", getRotatorEncoder());
+          SmartDashboard.putNumber("No Offset", motor.getEncoder().getAbsolutePosition());
         //   SmartDashboard.putNumber("Angle Encoder", getRotatorEncoder());
           // SmartDashboard.putNumber("angle from native", motor.getNativeEncoderPose());
         //   SmartDashboard.putNumber("Rotation motor limit", motor.getMotorLimits().getUpperLimit());

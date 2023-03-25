@@ -1,10 +1,16 @@
 package lib.Config;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.util.InterpolatingTreeMap;
+import frc.robot.util.InterpolatingSwerveOffsetTreeMap;
 
 import static frc.robot.Constants.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ShiftingSwerveModuleConfig {
 
@@ -12,13 +18,18 @@ public class ShiftingSwerveModuleConfig {
 
     private double[] gearRatios;
 
-    private double wheelDiameter;   
+    private double wheelDiameter;  
+    
+    private double[] angles;
+    private double[] offsets;
 
     private double speedKP;
     private double speedKI;
     private double speedKD;
     private double speedMaxAccel;
     private double speedMaxVel;
+
+    private double maxWheelSpeed;
 
     private double speedKS;
     private double speedKV;
@@ -80,6 +91,27 @@ public class ShiftingSwerveModuleConfig {
 
     public double getSpeedKV() {
         return speedKV;
+    }
+
+    public double getMaxWheelSpeed() {
+        return maxWheelSpeed;
+    }
+
+    public double[] getAngles() {
+        return angles;
+    }
+
+    public double[] getOffsets() {
+        return offsets;
+    }
+
+    public Map<Double, Double>  getAnglesToOffset() {
+        Map<Double, Double> angleToOffset = new HashMap<Double, Double>();
+        for (int i = 0; i < angles.length; i++) {
+            angleToOffset.put(angles[i], offsets[i]);
+        }
+        // return new InterpolatingSwerveOffsetTreeMap(angleToOffset, ); 
+        return angleToOffset;
     }
 
     public double getAngleKP() {
@@ -144,18 +176,13 @@ public class ShiftingSwerveModuleConfig {
         return pid;
     }
     
-    public ProfiledPIDController generateSpeedPID() {
-        TrapezoidProfile.Constraints constraints =
-            new TrapezoidProfile.Constraints(
-                getSpeedMaxVel(),
-                getSpeedMaxAccel()
-        );
-        ProfiledPIDController pid =
-            new ProfiledPIDController(
+    public PIDController generateSpeedPID() {
+        
+        PIDController pid =
+            new PIDController(
                 getSpeedKP(),
                 getSpeedKI(), 
-                getSpeedKD(), 
-                constraints
+                getSpeedKD()                
         );
         return pid;
     }

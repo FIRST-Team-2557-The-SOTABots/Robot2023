@@ -10,6 +10,7 @@ public class SOTADutyCycleEncoder implements SOTA_Encoder{
     // TODO: big jon clean this up
     public SOTADutyCycleEncoder(DutyCycleEncoder dutyCycle, EncoderConfig config) {
         encoder = dutyCycle;
+        this.offset = config.getEncoderOffset();
     }
 
     public void setDistancePerRotation(double distancePerRot) {

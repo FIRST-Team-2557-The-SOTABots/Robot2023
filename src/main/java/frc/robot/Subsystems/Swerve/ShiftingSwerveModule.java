@@ -4,6 +4,8 @@
 
 package frc.robot.Subsystems.Swerve;
 
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -21,11 +23,9 @@ public class ShiftingSwerveModule extends SubsystemBase {
   private SOTA_MotorController mSpeedMotor;
 
   private ProfiledPIDController mAnglePID;
-  private ProfiledPIDController mSpeedPID;
+  private PIDController mSpeedPID;
   private SimpleMotorFeedforward mAngleFF;
-
-  private double maxSpeed;
-  private SimpleMotorFeedforward mSpeedFF;
+  // private SimpleMotorFeedforward mSpeedFF;
 
   private double[] kGearRatios;
   private double kAngleCountsPerRevolution;
@@ -37,23 +37,22 @@ public class ShiftingSwerveModule extends SubsystemBase {
     SOTA_MotorController speedMotor, 
     ShiftingSwerveModuleConfig config) {
 
-    this.mSpeedMotor = speedMotor;
-    this.mAngleMotor = angleMotor;
-
     this.mModulePosition = config.getModulePosition();
+    
     this.mSpeedMotor = speedMotor; 
     this.mAngleMotor = angleMotor;
 
     this.kGearRatios = config.getGearRatios();
 
     this.kAngleCountsPerRevolution = mAngleMotor.getEncoder().getCountsPerRevolution();
-    this.kSpeedCountsPerRevolution = mSpeedMotor.getEncoder().getCountsPerRevolution();
+    this.kSpeedCountsPerRevolution = mSpeedMotor.getNativeCountsPerRevolution();
     this.kWheelCircumference = config.getWheelCircumference();
+
+    // this.mOffsets = new InterpolatingSwerveOffsetTreeMap(config.getAnglesToOffset(), kAngleCountsPerRevolution);
 
     this.mAngleFF = config.angleFF();
 
-    this.maxSpeed = config.getSpeedMaxVel();
-    this.mSpeedFF = config.speedFF();
+    // this.mSpeedFF = config.speedFF();
 
     this.mAnglePID = config.generateAnglePID(kAngleCountsPerRevolution);
     this.mSpeedPID = config.generateSpeedPID();
@@ -71,14 +70,14 @@ public class ShiftingSwerveModule extends SubsystemBase {
     double anglePIDOutput = mAnglePID.calculate(getAngle(), angleSetpointNative);
     double angleFFOutput = mAngleFF.calculate(mAnglePID.getSetpoint().velocity);
 
-    mAngleMotor.setVoltage(state.speedMetersPerSecond ==0 ? 0 :  angleFFOutput + anglePIDOutput);
+    mAngleMotor.setVoltage(state.speedMetersPerSecond == 0 ? 0 :  angleFFOutput + anglePIDOutput);
 
     double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[state.gear]);
     double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getNativeEncoderVelocity(), speedSetpointNative);
-    double speedFFOutput = mSpeedFF.calculate(speedSetpointNative);
 
-    mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
-    // mSpeedMotor.set((speedSetpointNative / maxSpeed) / 1.5);
+    mSpeedMotor.setVoltage(state.speedMetersPerSecond == 0 ? 0 : speedPIDOutput);
+    // mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
+    // mSpeedMotor.set((speedSetpointNative / maxSpeed));
 
     SmartDashboard.putBoolean("Current Gear", state.gear == 0 ? false : true);
   }
@@ -110,6 +109,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * @return The angle of the module in absolute encoder ticks
    */
   public double getAngle() {
+    // return mOffsets.nativeToAdjusted(getAngleNoOffset());
     return mAngleMotor.getEncoderPosition();
   }
 
@@ -165,6 +165,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    */
   public double radiansToNative(double radians) {
     return radians / (2 * Math.PI) * kAngleCountsPerRevolution;
+    // return mOffsets.getInterpolated(radians);
   }
 
   /**
@@ -181,5 +182,6 @@ public class ShiftingSwerveModule extends SubsystemBase {
     // This method will be called once per scheduler run
     
     SmartDashboard.putNumber("angle no offset " + mModulePosition, mAngleMotor.getEncoder().getAbsolutePosition());
+    SmartDashboard.putNumber("current draw" + mModulePosition, mSpeedMotor.getMotorCurrent());
   }
 }

@@ -4,8 +4,11 @@
     "gearRatios": [10.40, 5.07],
 
     "wheelDiameter": 4.0, 
+
+    "angles": [0.0, 1.5707, 3.1415, 4.7123, 6.2831],
+    "offsets": [2.891845407, 4.117431219, 0.391845663, 1.633300614, 2.891845406],
     
-    "speedKP": 0.001,
+    "speedKP": 0.0005,
     "speedKI": 0.0,
     "speedKD": 0.0,
     "speedMaxAccel": 20000.0,
@@ -14,6 +17,7 @@
     "speedKV": 0.0005339,
     "speedPIDTolerance": 0.05,
 
+    "maxWheelSpeed": 6,
 
     "angleKP": 6.0,
     "angleKI": 0.0,
