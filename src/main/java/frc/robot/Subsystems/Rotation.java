@@ -34,7 +34,8 @@ public class Rotation extends SubsystemBase{
           SmartDashboard.putNumber("Angle Encoder", getRotatorEncoder());
           SmartDashboard.putNumber("No Offset", motor.getEncoder().getAbsolutePosition());
         //   SmartDashboard.putNumber("Angle Encoder", getRotatorEncoder());
-          // SmartDashboard.putNumber("angle from native", motor.getNativeEncoderPose());
+        //   SmartDashboard.putNumber("angle from native", motor.getNativeEncoderPose());
+          SmartDashboard.putNumber("angle from native", motor.getNativeEncoderPosition());
         //   SmartDashboard.putNumber("Rotation motor limit", motor.getMotorLimits().getUpperLimit());
       }
 }

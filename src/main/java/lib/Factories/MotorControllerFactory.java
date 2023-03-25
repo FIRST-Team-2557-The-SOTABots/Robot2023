@@ -47,6 +47,7 @@ public class MotorControllerFactory {
         CANSparkMax sparkMax = new CANSparkMax(config.getPort(), motorType);
         SOTA_Encoder encoder = generateEncoder(config.getEncoderConfig());
         MotorLimits limits = generateLimits(config.getMotorLimitsConfig());
+        sparkMax.setInverted(config.getIsInverted());
         return new SparkMaxDelegate(sparkMax, encoder, limits, config);
     }
 
