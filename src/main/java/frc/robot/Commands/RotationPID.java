@@ -60,7 +60,7 @@ public class RotationPID extends CommandBase{
         double output = Math.sin(mArm.getRotationRadians()) * (config.getRotationDelta() + (config.getRotationDeltaPorportional() * extensionlength.getAsDouble() / 32)) 
         + pidController.calculate(mArm.getRotationDegrees());
 
-        // mArm.set(output);
+        mArm.set(output);
 
         // SmartDashboard.putNumber("Angle Output", output);
         // SmartDashboard.putNumber("MinAngle", minAngle.getAsDouble());
