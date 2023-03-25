@@ -15,8 +15,8 @@ public class AutoFactory {
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
             mSwerveDrive::getPose, 
             mSwerveDrive::updatePose,
-            new PIDConstants(0, 0, 0),
-            new PIDConstants(0, 0, 0),
+            new PIDConstants(2, 0, 0),//TODO: Don't hardcode!!!
+            new PIDConstants(2, 0, 0),
             mSwerveDrive::drive,
             mEventMap,
             true,

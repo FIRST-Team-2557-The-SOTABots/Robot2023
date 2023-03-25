@@ -9,6 +9,12 @@ import java.io.IOException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
+import com.pathplanner.lib.commands.FollowPathWithEvents;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -78,6 +84,8 @@ public class RobotContainer {
   private AutoLevel mAutoLevel;
   private BackUpMobility mBackUpMobility;
   private ParallelDeadlineGroup mBackUpAuto;
+
+  private SwerveAutoBuilder mAutoBuilder;
 
   // private SendableChooser<CommandBase> mAutoChooser;
 
@@ -221,7 +229,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return mBackUpAuto;
+    return autos();
     // return mBackUpMobility.withTimeout(mBackUpMobility.kTime); // removed use of depracated thingy if dont work just comment out
   }
 
@@ -236,5 +244,13 @@ public class RobotContainer {
     } catch(IOException e){
       throw new RuntimeException("Could not create config", e);
     }
+  }
+
+
+
+  public Command autos(){
+    
+    PathPlannerTrajectory path1 = PathPlanner.loadPath("New Path", 4, 3.5, false);
+    return mAutoBuilder.followPath(path1);
   }
 }
