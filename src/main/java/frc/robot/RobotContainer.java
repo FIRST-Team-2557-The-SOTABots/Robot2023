@@ -251,6 +251,7 @@ public class RobotContainer {
   public Command autos(){
     
     PathPlannerTrajectory path1 = PathPlanner.loadPath("New Path", 4, 3.5, false);
+    mSwerveDrive.updatePose(path1.getInitialState());
     return mAutoBuilder.followPath(path1);
   }
 }
