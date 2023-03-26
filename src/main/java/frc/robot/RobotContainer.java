@@ -162,13 +162,8 @@ public class RobotContainer {
 
       SuperStructure superStructure = new SuperStructure(mExtension::getLength, mRotation::getRotationDegrees, superStructureConfig);
 
-      ProfiledPIDController rotationPID = superStructureConfig.getRotationProfiledPIDController();
-
-      ProfiledPIDController extensController = new ProfiledPIDController(3, 0, 0,
-       new TrapezoidProfile.Constraints(40.0,80.0));
-
       this.rotationPID = new RotationPID(mRotation, mExtension::getLengthFromStart, superStructure::minRotation, superStructure::maxRotation, superStructureConfig);
-      this.extensionPID = new ExtensionPID(extensController, mExtension, superStructure::maxExtension);
+      this.extensionPID = new ExtensionPID(mExtension, superStructure::maxExtension, superStructureConfig);
       this.mResetExtension = new ResetExtension(mExtension);
       this.intakeCommand = new BasicIntakeCommand(mIntake, mController);
     

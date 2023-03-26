@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Extension;
+import lib.Config.SuperStructureConfig;
 
 public class ExtensionPID extends CommandBase {
 
@@ -32,12 +33,12 @@ public class ExtensionPID extends CommandBase {
     private double mSetpoint;
     private Timer mExhaustTimer;
 
-    public ExtensionPID(ProfiledPIDController PID, Extension mArm, DoubleSupplier maxLength){
-        this.extendPID = PID; 
-        this.mExtension = mArm; 
+    public ExtensionPID(Extension extension, DoubleSupplier maxLength, SuperStructureConfig config){
+        this.extendPID = config.getExtensionProfiledPIDController(); 
+        this.mExtension = extension; 
         this.kMaxLength = maxLength;
         mExhaustTimer = new Timer();
-        addRequirements(mArm);
+        addRequirements(mExtension);
     }
 
     public void setSetpoint(ExtensionSetpoint setpoint) {
