@@ -1,7 +1,6 @@
 package frc.robot.Commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsystems.Intake;
 import lib.Control.SOTA_Xboxcontroller;
 
@@ -17,11 +16,9 @@ public class BasicIntakeCommand extends CommandBase{
 
     @Override
     public void execute() {
-        // if(controller.getRightBumper()) mIntake.set(0.5);
-        // else if(controller.getLeftBumper()) mIntake.set(-1);
-        // else mIntake.set(0);
-        // if (controller.rightTrigger().)
-        mIntake.set(mController.getLeftY());
+        double speed = mController.getLeftY() * 0.5;
+
+        mIntake.set(speed);
     }
 
     

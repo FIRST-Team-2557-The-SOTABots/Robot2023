@@ -32,7 +32,7 @@ public class DefaultDrive extends CommandBase {
     // Squares inputs and preserves sign TODO: make controller class that handles this
     fwd = -Math.signum(fwd) * fwd * fwd;
     str = Math.signum(str) * str * str;
-    rot = -Math.signum(rot) * rot * rot;
+    rot = Math.signum(rot) * rot * rot;
 
 
     // if(mDriveStick.getA()) mSwerveDrive.setFieldCentricActive(true);

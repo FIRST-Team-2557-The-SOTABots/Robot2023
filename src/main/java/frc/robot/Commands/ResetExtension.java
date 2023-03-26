@@ -12,7 +12,7 @@ public class ResetExtension extends CommandBase{
     }
     @Override
     public void execute() {
-        mExtension.set(-5);
+        mExtension.set(-1);
         
     }
     @Override

@@ -1,12 +1,12 @@
 {
     "port": 4,
-    "isInverted": false,
+    "isInverted": true,
     "neutralOperation": "BRAKE",
     "motorType": "BRUSHLESS",
     "countsPerRevolution": 2048,
     "encoderConfig": {
-        "port": 1,
-        "encoderOffset": 0.375976524,
+        "port": 3,
+        "encoderOffset": 0.865478427,
         "countsPerRevolution": 5,
         "encoderType": "ANALOG"
     }
