@@ -26,7 +26,7 @@ public class DefaultDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double fwd = mDriveStick.getLeftY();
+    double fwd = mDriveStick.getLeftY(); //TODO convert to double suppliers not directly from stick
     double str = mDriveStick.getLeftX();
     double rot = mDriveStick.getRightX();
 
