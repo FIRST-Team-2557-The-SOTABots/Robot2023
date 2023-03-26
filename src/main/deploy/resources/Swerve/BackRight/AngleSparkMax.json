@@ -1,6 +1,6 @@
 {
-    "port": 11,
-    "isInverted": false,
+    "port": 10,
+    "isInverted": true,
     "neutralOperation": "BRAKE",
     "motorType": "BRUSHLESS",
     "countsPerRevolution": 2048,

@@ -30,7 +30,7 @@ public class Extension extends SubsystemBase{
         if(!hasReset && speed > 0) speed = 0;
         mMotor.setVoltage(speed);
         SmartDashboard.putNumber("extensionSpeed", speed);
-      }
+    }
  
 
     public double getEncoder(){
@@ -58,9 +58,10 @@ public class Extension extends SubsystemBase{
             mMotor.resetNativeEncoder();
             hasReset = true;
         }
-        // SmartDashboard.putNumber("extensionEncoder", getEncoder());
+        SmartDashboard.putNumber("extensionEncoder", getEncoder());
+        SmartDashboard.putNumber("length", getLengthFromStart());
         // SmartDashboard.putNumber("Extension length inches", getLength());
-        // SmartDashboard.putBoolean("limitswitch", limitswitch.get());
+        SmartDashboard.putBoolean("limitswitch", mLimitswitch.get());
         // SmartDashboard.putNumber("extension motor limit", motor.getMotorLimits().getUpperLimit());
 
     }

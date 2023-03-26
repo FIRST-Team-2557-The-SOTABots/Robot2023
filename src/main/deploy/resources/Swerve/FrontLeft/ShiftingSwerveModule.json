@@ -19,11 +19,11 @@
 
     "maxWheelSpeed": 10,
 
-    "angleKP": 6.0,
+    "angleKP": 2.0,
     "angleKI": 0.0,
     "angleKD": 0.0,
     "angleMaxAccel": 90.0,
-    "angleKS": 0.0357224,
-    "angleKV": 0.207199,
+    "angleKS": 0.414521,
+    "angleKV": 0.115996,
     "anglePIDTolerance": 0.0
 }
