@@ -11,7 +11,7 @@ import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 
 public class AutoFactory {
     
-    public static SwerveAutoBuilder swerveAutoBuilderFactory(ShiftingSwerveDrive mSwerveDrive, Map<String, Command> mEventMap){
+    public static SwerveAutoBuilder swerveAutoBuilderGenerator(ShiftingSwerveDrive mSwerveDrive, Map<String, Command> mEventMap){
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
             mSwerveDrive::getPose, 
             mSwerveDrive::updatePose,

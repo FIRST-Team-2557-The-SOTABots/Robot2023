@@ -5,6 +5,8 @@
 package frc.robot;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,6 +60,7 @@ import lib.Config.ShiftingSwerveDriveConfig;
 import lib.Config.ShiftingSwerveModuleConfig;
 import lib.Config.SuperStructureConfig;
 import lib.Control.SOTA_Xboxcontroller;
+import lib.Factories.AutoFactory;
 import lib.Factories.MotorControllerFactory;
 import lib.Gyro.NavX;
 import lib.Gyro.SOTA_Gyro;
@@ -147,6 +150,7 @@ public class RobotContainer {
       mSwerveDrive = new ShiftingSwerveDrive(swerveModules, shifter, gyro, 
        configUtils.readFromClassPath(ShiftingSwerveDriveConfig.class, "Swerve/ShiftingSwerveDrive"));
 
+       mAutoBuilder = AutoFactory.swerveAutoBuilderGenerator(mSwerveDrive, Map<String, Command>);
        mAutoLevel = new AutoLevel(mSwerveDrive);
 
     } catch (IOException e) {
