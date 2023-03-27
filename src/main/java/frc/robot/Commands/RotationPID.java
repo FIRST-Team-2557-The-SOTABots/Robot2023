@@ -14,7 +14,7 @@ public class RotationPID extends CommandBase{
 
     public enum RotationSetpoint {
         RESET(150),
-        FLOOR(50),
+        FLOOR(49),
         SCORE(116),
         SUBSTATION(130);
     

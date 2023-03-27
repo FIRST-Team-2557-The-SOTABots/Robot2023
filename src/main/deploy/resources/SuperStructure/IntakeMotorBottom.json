@@ -4,6 +4,6 @@
     "neutralOperation": "BRAKE",
     "motorType": "BRUSHLESS",
     "countsPerRevolution": 2048,
-    "currentLimit": 16
+    "currentLimit": 4
 
 }
