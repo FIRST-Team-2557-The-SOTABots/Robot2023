@@ -8,9 +8,23 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Rotation;
 import lib.Config.SuperStructureConfig;
-import lib.Control.SOTA_Xboxcontroller;
 
 public class RotationPID extends CommandBase{
+
+    public enum RotationSetpoint {
+        RESET(150),
+        SUBSTATION(106.5),
+        FLOOR(59),
+        SCORE(120);
+    
+        public double angle;
+    
+        private RotationSetpoint(double angle) {
+            this.angle = angle;
+        }
+    
+    }
+
     private Rotation mRotation;
     private double setpoint;
     private PIDController pidController;
@@ -18,39 +32,33 @@ public class RotationPID extends CommandBase{
     private DoubleSupplier maxAngle;
     private DoubleSupplier extensionlength;
     private SuperStructureConfig config;
-    private SOTA_Xboxcontroller controller;
 
-    public RotationPID(Rotation mArm,
+    public RotationPID(Rotation mRotation,
             PIDController pidController,
             double setpoint,
-            SOTA_Xboxcontroller controller,
             DoubleSupplier extensionLength,
             DoubleSupplier minAngle, 
             DoubleSupplier maxAngle,
             SuperStructureConfig config){
-        this.mRotation = mArm; this.setpoint = setpoint; this.pidController = pidController; this.controller = controller;
-         this.extensionlength = extensionLength; this.minAngle = minAngle; this.maxAngle = maxAngle; this.config = config;
-        addRequirements(mArm);
+
+        this.mRotation = mRotation; 
+        this.setpoint = setpoint;
+        this.pidController = pidController;
+        // this.controller = controller;
+        this.extensionlength = extensionLength; 
+        this.minAngle = minAngle; 
+        this.maxAngle = maxAngle; 
+        this.config = config;
+        addRequirements(mRotation);
+    }
+
+    public void setSetpoint(RotationSetpoint newSetpoint) {
+        setpoint = newSetpoint.angle;
     }
     
 
     @Override
     public void execute() {
-        //120 && 245 are for placing
-        if(controller.getA()) setpoint = 120;//110; This is from pickup station
-
-        if(controller.getB()) setpoint = 237;//245; this is from pickup station
-        
-        if(controller.getX()) setpoint = 180;
-
-        if(controller.getLeftBumper()) setpoint = 110;
-
-        if(controller.getRightBumper()) setpoint = 250;
-
-        if(controller.getBack()) setpoint = 59;
-
-        if(controller.getStart()) setpoint = 293;
-        
         setpoint = MathUtil.clamp(setpoint, minAngle.getAsDouble(), maxAngle.getAsDouble());
 
         pidController.setSetpoint(setpoint);
@@ -60,7 +68,7 @@ public class RotationPID extends CommandBase{
         double output = Math.sin(mRotation.getRotationRadians()) * (config.getRotationDelta() + (config.getRotationDeltaPorportional() * extensionlength.getAsDouble() / 32)) 
         + pidController.calculate(mRotation.getRotationDegrees());
 
-        // mArm.set(output);
+        mRotation.set(output);
 
         // SmartDashboard.putNumber("Angle Output", output);
         // SmartDashboard.putNumber("MinAngle", minAngle.getAsDouble());

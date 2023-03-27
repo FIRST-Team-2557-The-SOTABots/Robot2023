@@ -5,20 +5,17 @@
 package frc.robot;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kauailabs.navx.frc.AHRS;
-import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
-import com.pathplanner.lib.commands.FollowPathWithEvents;
-import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -33,19 +30,18 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Commands.AutoLevel;
 import frc.robot.Commands.BasicIntakeCommand;
 import frc.robot.Commands.DefaultDrive;
 import frc.robot.Commands.ExtensionPID;
-import frc.robot.Commands.ResetExtension;
 import frc.robot.Commands.RotationPID;
 import frc.robot.Commands.Autos.BackUpMobility;
+import frc.robot.Commands.ExtensionPID.ExtensionSetpoint;
+import frc.robot.Commands.RotationPID.RotationSetpoint;
 import frc.robot.Subsystems.Extension;
 import frc.robot.Subsystems.Intake;
 import frc.robot.Subsystems.Rotation;
@@ -54,7 +50,6 @@ import frc.robot.Subsystems.Swerve.DoubleSolenoidShifter;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveModule;
 import frc.robot.util.ConfigUtils;
-import lib.Command.AutoCommand;
 import lib.Config.DoubleSolenoidConfig;
 import lib.Config.MotorControllerConfig;
 import lib.Config.ShiftingSwerveDriveConfig;
@@ -83,13 +78,15 @@ public class RobotContainer {
   private DefaultDrive mDriveCommand;
   private RotationPID rotationPID;
   private ExtensionPID extensionPID;
-  private ResetExtension mResetExtension;
   private BasicIntakeCommand intakeCommand;
+  // private ResetExtension mResetExtension;
   private AutoLevel mAutoLevel;
   private BackUpMobility mBackUpMobility;
   private ParallelDeadlineGroup mBackUpAuto;
 
   private SwerveAutoBuilder mAutoBuilder;
+
+  
 
   // private SendableChooser<CommandBase> mAutoChooser;
 
@@ -151,12 +148,9 @@ public class RobotContainer {
       mSwerveDrive = new ShiftingSwerveDrive(swerveModules, shifter, gyro, 
        configUtils.readFromClassPath(ShiftingSwerveDriveConfig.class, "Swerve/ShiftingSwerveDrive"));
 
-       Map<String, Command> eventMap = new HashMap<String, Command>();
-       eventMap.put("event1", new InstantCommand(() -> {
-        
-       }));
-       mAutoBuilder = AutoFactory.swerveAutoBuilderGenerator(mSwerveDrive, eventMap);
+       
        mAutoLevel = new AutoLevel(mSwerveDrive);
+
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -183,7 +177,7 @@ public class RobotContainer {
 
       this.mExtension = new Extension(winchMotor, limitSwitch, superStructureConfig);
       this.mRotation = new Rotation(rotationMotor, superStructureConfig);
-      this.mIntake = new Intake(intakeMotors);
+      this.mIntake = new Intake(intakeMotors, new ColorSensorV3(Port.kOnboard));
 
       SuperStructure superStructure = new SuperStructure(mExtension::getLength,mRotation::getRotationDegrees, superStructureConfig);
       PIDController armRotationController = new PIDController(0.03,0,0);
@@ -191,10 +185,10 @@ public class RobotContainer {
       ProfiledPIDController extensController = new ProfiledPIDController(3, 0, 0,
        new TrapezoidProfile.Constraints(40.0,80.0));
 
-      this.rotationPID = new RotationPID(mRotation, armRotationController, 180, mController, mExtension::getLengthFromStart, superStructure::minRotation, superStructure::maxRotation, superStructureConfig);
-      this.extensionPID = new ExtensionPID(extensController, mExtension,  mController, superStructure::maxExtension);
-      this.mResetExtension = new ResetExtension(mExtension);
-      // this.intakeCommand = new BasicIntakeCommand(mIntake, mController);
+      this.rotationPID = new RotationPID(mRotation, armRotationController, 150, mExtension::getLengthFromStart, superStructure::minRotation, superStructure::maxRotation, superStructureConfig);
+      this.extensionPID = new ExtensionPID(extensController, mExtension, superStructure::maxExtension);
+      // this.mResetExtension = new ResetExtension(mExtension);
+      this.intakeCommand = new BasicIntakeCommand(mIntake, mController);
     
     } catch(IOException e){}
 
@@ -207,9 +201,25 @@ public class RobotContainer {
       mBackUpMobility
     );    
 
+    Map<String, Command> eventMap = new HashMap<String, Command>();
+       eventMap.put("event1", new InstantCommand(
+        () -> {
+          rotationPID.setSetpoint(RotationSetpoint.FLOOR);
+          extensionPID.setSetpoint(ExtensionSetpoint.MID);
+        },
+        mRotation, mExtension
+      ));
+      eventMap.put("event2", new InstantCommand(
+        () -> {
+          rotationPID.setSetpoint(RotationSetpoint.SCORE);
+          extensionPID.setSetpoint(ExtensionSetpoint.MID);
+        },
+        mRotation, mExtension
+      ));
+       mAutoBuilder = AutoFactory.swerveAutoBuilderGenerator(mSwerveDrive, eventMap);
+
     configureDefaultCommands();
     configureBindings();
-    
   }
 
   private void configureDefaultCommands(){
@@ -218,22 +228,83 @@ public class RobotContainer {
     mRotation.setDefaultCommand(rotationPID);
     mIntake.setDefaultCommand(intakeCommand);
 
-   
   }
 
   private void configureBindings() {
 
-    mController.start().onTrue(mResetExtension);
-    dController.start().onTrue(new InstantCommand(mSwerveDrive::resetGyro, mSwerveDrive) );
-    dController.x().onTrue(new InstantCommand(() -> {
-      mSwerveDrive.setFieldCentricActive(true);
-    }, mSwerveDrive));
-    dController.y().onTrue(mAutoLevel);
+    dController.start().onTrue(
+      new InstantCommand(
+        () -> {
+          mSwerveDrive.resetGyro();
+        },
+        mSwerveDrive
+      )
+    );
+    dController.a().onTrue(
+      new InstantCommand(
+        () -> {
+          mSwerveDrive.setFieldCentricActive(true);
+        },
+        mSwerveDrive
+      )
+    );
+    dController.b().onTrue(
+      new InstantCommand(
+        () -> {
+          mSwerveDrive.setFieldCentricActive(false);
+        },
+        mSwerveDrive
+      )
+    );
 
-    mController.rightTrigger().whileTrue(new RunCommand(mIntake::intake, mIntake)).onFalse(new SequentialCommandGroup(
-      new RunCommand(() -> mIntake.set(-0.01), mIntake).withTimeout(0.5),
-      new InstantCommand(mIntake::stop)));
-    mController.leftTrigger().whileTrue(new RunCommand(mIntake::release, mIntake)).onFalse(new InstantCommand(mIntake::stop));
+    // mController.rightTrigger().whileTrue(new RunCommand(mIntake::intake, mIntake)).onFalse(new SequentialCommandGroup(
+    //   new RunCommand(() -> mIntake.set(-0.01), mIntake).withTimeout(0.5),
+    //   new InstantCommand(mIntake::stop)));
+    // mController.leftTrigger().whileTrue(new RunCommand(mIntake::release, mIntake)).onFalse(new InstantCommand(mIntake::stop));
+    mController.leftBumper().onTrue( // Substation
+      new InstantCommand(
+        () -> {
+          rotationPID.setSetpoint(RotationSetpoint.SUBSTATION);
+          extensionPID.setSetpoint(ExtensionSetpoint.HIGH);
+        },
+        mRotation, mExtension
+      )
+    );
+    mController.back().onTrue( // FLOOR
+      new InstantCommand(
+        () -> {
+          rotationPID.setSetpoint(RotationSetpoint.FLOOR);
+          extensionPID.setSetpoint(ExtensionSetpoint.MID);
+        },
+        mRotation, mExtension
+      )
+    );
+    mController.a().onTrue( // SCORE MID ON RELEASE HIGH
+      new InstantCommand(
+        () -> {
+          rotationPID.setSetpoint(RotationSetpoint.SCORE);
+          extensionPID.setSetpoint(ExtensionSetpoint.MID);
+        },
+        mRotation, mExtension
+      )
+    ).onFalse(
+      new InstantCommand(
+        () -> {
+          extensionPID.setSetpoint(ExtensionSetpoint.HIGH);
+        },
+        mExtension
+      )
+    );
+    mController.x().onTrue( // RESET
+      new InstantCommand(
+        () -> {
+          rotationPID.setSetpoint(RotationSetpoint.RESET);
+          extensionPID.setSetpoint(ExtensionSetpoint.RESET);
+        },
+        mRotation, mExtension
+      )
+    );
+    
 
   }
 
@@ -261,7 +332,6 @@ public class RobotContainer {
     
     PathPlannerTrajectory path1 = PathPlanner.loadPath("Leave Community", 4, 3.5, false);
     return new SequentialCommandGroup(
-      new InstantCommand(() -> SmartDashboard.putBoolean("Pathplanner", true)),
       new InstantCommand(() -> mSwerveDrive.updatePose(path1.getInitialState())),
        mAutoBuilder.followPath(path1)
     );
