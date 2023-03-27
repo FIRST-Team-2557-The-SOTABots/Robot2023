@@ -38,6 +38,7 @@ import frc.robot.Commands.AutoLevel;
 import frc.robot.Commands.BasicIntakeCommand;
 import frc.robot.Commands.DefaultDrive;
 import frc.robot.Commands.ExtensionPID;
+import frc.robot.Commands.ResetExtension;
 import frc.robot.Commands.RotationPID;
 import frc.robot.Commands.Autos.BackUpMobility;
 import frc.robot.Commands.ExtensionPID.ExtensionSetpoint;
@@ -79,7 +80,7 @@ public class RobotContainer {
   private RotationPID rotationPID;
   private ExtensionPID extensionPID;
   private BasicIntakeCommand intakeCommand;
-  // private ResetExtension mResetExtension;
+  private ResetExtension mResetExtension;
   private AutoLevel mAutoLevel;
   private BackUpMobility mBackUpMobility;
   private ParallelDeadlineGroup mBackUpAuto;
@@ -188,7 +189,7 @@ public class RobotContainer {
 
       this.rotationPID = new RotationPID(mRotation, armRotationController, 150, mExtension::getLengthFromStart, superStructure::minRotation, superStructure::maxRotation, superStructureConfig);
       this.extensionPID = new ExtensionPID(extensController, mExtension, superStructure::maxExtension);
-      // this.mResetExtension = new ResetExtension(mExtension);
+      this.mResetExtension = new ResetExtension(mExtension);
       this.intakeCommand = new BasicIntakeCommand(mIntake, mController);
     
     } catch(IOException e){}
@@ -271,6 +272,7 @@ public class RobotContainer {
         mRotation, mExtension
       )
     );
+    mController.start().onTrue(mResetExtension);
     mController.back().onTrue( // FLOOR
       new InstantCommand(
         () -> {

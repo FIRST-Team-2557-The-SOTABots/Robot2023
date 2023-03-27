@@ -65,12 +65,15 @@ public class RotationPID extends CommandBase{
 
         pidController.setP(0.05 - ((0.03 * extensionlength.getAsDouble()) / 32));
         // SmartDashboard.getNumber("set p", 0));
-        double output = Math.sin(mRotation.getRotationRadians()) * (config.getRotationDelta() + (config.getRotationDeltaPorportional() * extensionlength.getAsDouble() / 32)) 
+        double output = Math.sin(mRotation.getRotationRadians()) * (config.getRotationalDelta() + (config.getRotationalDeltaProportional() * extensionlength.getAsDouble() / 32)) 
         + pidController.calculate(mRotation.getRotationDegrees());
+
 
         mRotation.set(output);
 
-        // SmartDashboard.putNumber("Angle Output", output);
+        SmartDashboard.putNumber("Delta", config.getRotationalDeltaProportional());
+
+        SmartDashboard.putNumber("Angle Output", output);
         // SmartDashboard.putNumber("MinAngle", minAngle.getAsDouble());
         // SmartDashboard.putNumber("maxAngle", maxAngle.getAsDouble());
         SmartDashboard.putNumber("Rotation goal", setpoint);
