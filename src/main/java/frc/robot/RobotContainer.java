@@ -256,6 +256,15 @@ public class RobotContainer {
         mExtension
       )
     );
+    mController.b().onTrue(
+      new InstantCommand(
+        () -> {
+          rotationPID.setSetpoint(RotationSetpoint.SINGLE);
+          extensionPID.setSetpoint(ExtensionSetpoint.SINGLE);
+        },
+        mRotation, mExtension
+      )
+    );
     mController.x().onTrue( // RESET
       new InstantCommand(
         () -> {

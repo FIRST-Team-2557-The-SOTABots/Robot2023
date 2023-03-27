@@ -4,7 +4,6 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Rotation;
@@ -16,7 +15,8 @@ public class RotationPID extends CommandBase{
         RESET(150),
         FLOOR(49),
         SCORE(116),
-        SUBSTATION(130);
+        SUBSTATION(130),
+        SINGLE(98);
     
         public double angle;
     
