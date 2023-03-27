@@ -18,14 +18,13 @@ public class Extension extends SubsystemBase{
     }
 
     public void set(double speed){
-        SmartDashboard.putNumber("SpeedInit", speed);
-        if(limitswitch.get() && speed < 0){
+        if(limitswitch.get() && speed < 0) {
            speed = 0;
         }
         if(!hasReset && speed > 0) speed = 0;
         motor.setVoltage(speed);
         SmartDashboard.putNumber("extensionSpeed", speed);
-      }
+    }
  
 
     public double getEncoder(){
@@ -33,11 +32,11 @@ public class Extension extends SubsystemBase{
     }
 
     public double getLength(){
-        return config.getArmBaseLength() + (getEncoder()/config.getEncoderPerInch());
+        return config.getArmBaseLength() + (getEncoder() / config.getEncoderPerInch());
     }   
 
     public double getLengthFromStart() {
-        return (getEncoder()/config.getEncoderPerInch());
+        return (getEncoder() / config.getEncoderPerInch());
     }
 
     public boolean isFullyRetracted(){
@@ -53,9 +52,10 @@ public class Extension extends SubsystemBase{
             motor.resetNativeEncoder();
             hasReset = true;
         }
-        // SmartDashboard.putNumber("extensionEncoder", getEncoder());
+        SmartDashboard.putNumber("extensionEncoder", getEncoder());
+        SmartDashboard.putNumber("length", getLengthFromStart());
         // SmartDashboard.putNumber("Extension length inches", getLength());
-        // SmartDashboard.putBoolean("limitswitch", limitswitch.get());
+        SmartDashboard.putBoolean("limitswitch", limitswitch.get());
         // SmartDashboard.putNumber("extension motor limit", motor.getMotorLimits().getUpperLimit());
 
     }

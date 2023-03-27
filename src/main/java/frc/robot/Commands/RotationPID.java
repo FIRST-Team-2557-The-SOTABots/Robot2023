@@ -4,6 +4,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Rotation;
@@ -13,9 +14,9 @@ public class RotationPID extends CommandBase{
 
     public enum RotationSetpoint {
         RESET(150),
-        SUBSTATION(106.5),
-        FLOOR(59),
-        SCORE(120);
+        FLOOR(49),
+        SCORE(116),
+        SUBSTATION(130);
     
         public double angle;
     
@@ -25,31 +26,35 @@ public class RotationPID extends CommandBase{
     
     }
 
-    private Rotation mArm;
+    private Rotation mRotation;
     private double setpoint;
     private PIDController pidController;
-    private DoubleSupplier minAngle;
-    private DoubleSupplier maxAngle;
-    private DoubleSupplier extensionlength;
-    private SuperStructureConfig config;
-    // private SOTA_Xboxcontroller controller;
+    private double kP;
+    private double kPG; // proportional gain against gravity
+    private DoubleSupplier kMinAngle;
+    private DoubleSupplier kMaxAngle;
+    private DoubleSupplier kExtensionlength;
+    private double kRotationDelta;
+    private double kRotationDeltaProportional;
+    private double kMaxExtension;
 
-    public RotationPID(Rotation mArm,
-            PIDController pidController,
-            double setpoint,
+    public RotationPID(Rotation rotation,
             DoubleSupplier extensionLength,
             DoubleSupplier minAngle, 
             DoubleSupplier maxAngle,
             SuperStructureConfig config){
-        this.mArm = mArm; 
-        this.setpoint = setpoint;
-        this.pidController = pidController;
-        // this.controller = controller;
-        this.extensionlength = extensionLength; 
-        this.minAngle = minAngle; 
-        this.maxAngle = maxAngle; 
-        this.config = config;
-        addRequirements(mArm);
+        this.mRotation = rotation; 
+        this.setpoint = config.getRotationInitSetpoint();
+        this.pidController = config.getRotationPIDController();
+        this.kP = config.getRotationKP();
+        this.kPG = config.getRotationKPG();
+        this.kExtensionlength = extensionLength; 
+        this.kMinAngle = minAngle; 
+        this.kMaxAngle = maxAngle; 
+        this.kRotationDelta = config.getRotationDelta();
+        this.kRotationDeltaProportional = config.getrotationDeltaProportional();
+        this.kMaxExtension = config.getMaxExtension();
+        addRequirements(rotation);
     }
 
     public void setSetpoint(RotationSetpoint newSetpoint) {
@@ -59,31 +64,19 @@ public class RotationPID extends CommandBase{
 
     @Override
     public void execute() {
-        //120 && 245 are for placing
-        // if(controller.getA()) setpoint = 120;//110; This is from pickup station
-
-        // if(controller.getB()) setpoint = 237;//245; this is from pickup station
-        
-        // if(controller.getX()) setpoint = 150; // Retract
-
-        // if(controller.getLeftBumper()) setpoint = 106.5;
-
-        // if(controller.getRightBumper()) setpoint = 250;
-
-        // if(controller.getBack()) setpoint = 59;
-
-        // if(controller.getStart()) setpoint = 293;
-        
-        setpoint = MathUtil.clamp(setpoint, minAngle.getAsDouble(), maxAngle.getAsDouble());
-
-        pidController.setSetpoint(setpoint);
-
-        pidController.setP(0.05 - ((0.03 * extensionlength.getAsDouble()) / 32));
         // SmartDashboard.getNumber("set p", 0));
-        double output = Math.sin(mArm.getRotationRadians()) * (config.getRotationDelta() + (config.getRotationDeltaPorportional() * extensionlength.getAsDouble() / 32)) 
-        + pidController.calculate(mArm.getRotationDegrees());
+        setpoint = MathUtil.clamp(setpoint, kMinAngle.getAsDouble(), kMaxAngle.getAsDouble());
 
-        mArm.set(output);
+        pidController.setP(kPG - ((kP * kExtensionlength.getAsDouble()) / kMaxExtension));
+
+        double output = Math.sin(mRotation.getRotationRadians()) * (kRotationDelta + (kRotationDeltaProportional * kExtensionlength.getAsDouble() / kMaxExtension)) 
+        + pidController.calculate(mRotation.getRotationDegrees(), setpoint);
+
+        SmartDashboard.putNumber("output", output);
+        // SmartDashboard.putNumber("kPG", kPG);
+        // SmartDashboard.putNumber("max extension", kMaxExtension);
+
+        mRotation.set(output);
 
         // SmartDashboard.putNumber("Angle Output", output);
         // SmartDashboard.putNumber("MinAngle", minAngle.getAsDouble());

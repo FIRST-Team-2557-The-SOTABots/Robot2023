@@ -22,7 +22,7 @@ public class Rotation extends SubsystemBase{
     }
 
     public double getRotationDegrees() {
-        return (getRotatorEncoder() - config.getEncoderAtZeroDegrees())/config.getEncoderPerDegree();
+        return 360 - ((getRotatorEncoder() - config.getEncoderAtZeroDegrees())/config.getEncoderPerDegree());
       }
 
     public double getRotationRadians() {

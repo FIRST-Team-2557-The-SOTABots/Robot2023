@@ -6,7 +6,7 @@
     "countsPerRevolution": 2048,
     "encoderConfig": {
         "port": 1,
-        "encoderOffset": 0.16,
+        "encoderOffset": 0.4,
         "countsPerRevolution": 5,
         "encoderType": "DUTYCYCLE"
     },
