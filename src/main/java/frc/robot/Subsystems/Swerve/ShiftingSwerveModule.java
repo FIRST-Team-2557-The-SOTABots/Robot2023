@@ -66,7 +66,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
   public void drive(ShiftingSwerveModuleState state) {
     state = ShiftingSwerveModuleState.optimize(state, getRotation2d());
 
-    double angleSetpointNative = radiansToNative(state.angle.getRadians());
+    double angleSetpointNative = Math.abs(radiansToNative(state.angle.getRadians()));
     double anglePIDOutput = mAnglePID.calculate(getAngle(), angleSetpointNative);
     double angleFFOutput = mAngleFF.calculate(mAnglePID.getSetpoint().velocity);
 
