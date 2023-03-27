@@ -16,7 +16,7 @@
     "speedKV": 0.0005339,
     "speedPIDTolerance": 0.05,
 
-    "maxWheelSpeed": 6,
+    "maxWheelSpeed": 10,
 
     "angleKP": 6.0,
     "angleKI": 0.0,
