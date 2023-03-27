@@ -11,7 +11,7 @@ import lib.Config.SuperStructureConfig;
 import lib.Control.SOTA_Xboxcontroller;
 
 public class RotationPID extends CommandBase{
-    private Rotation mArm;
+    private Rotation mRotation;
     private double setpoint;
     private PIDController pidController;
     private DoubleSupplier minAngle;
@@ -28,7 +28,7 @@ public class RotationPID extends CommandBase{
             DoubleSupplier minAngle, 
             DoubleSupplier maxAngle,
             SuperStructureConfig config){
-        this.mArm = mArm; this.setpoint = setpoint; this.pidController = pidController; this.controller = controller;
+        this.mRotation = mArm; this.setpoint = setpoint; this.pidController = pidController; this.controller = controller;
          this.extensionlength = extensionLength; this.minAngle = minAngle; this.maxAngle = maxAngle; this.config = config;
         addRequirements(mArm);
     }
@@ -57,8 +57,8 @@ public class RotationPID extends CommandBase{
 
         pidController.setP(0.05 - ((0.03 * extensionlength.getAsDouble()) / 32));
         // SmartDashboard.getNumber("set p", 0));
-        double output = Math.sin(mArm.getRotationRadians()) * (config.getRotationDelta() + (config.getRotationDeltaPorportional() * extensionlength.getAsDouble() / 32)) 
-        + pidController.calculate(mArm.getRotationDegrees());
+        double output = Math.sin(mRotation.getRotationRadians()) * (config.getRotationDelta() + (config.getRotationDeltaPorportional() * extensionlength.getAsDouble() / 32)) 
+        + pidController.calculate(mRotation.getRotationDegrees());
 
         // mArm.set(output);
 

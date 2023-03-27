@@ -2,7 +2,6 @@ package frc.robot.Commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 
 public class AutoLevel extends CommandBase{

@@ -1,6 +1,5 @@
 package lib.Factories;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.pathplanner.lib.auto.PIDConstants;
@@ -11,12 +10,12 @@ import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 
 public class AutoFactory {
     
-    public static SwerveAutoBuilder swerveAutoBuilderFactory(ShiftingSwerveDrive mSwerveDrive, Map<String, Command> mEventMap){
+    public static SwerveAutoBuilder swerveAutoBuilderGenerator(ShiftingSwerveDrive mSwerveDrive, Map<String, Command> mEventMap){
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
             mSwerveDrive::getPose, 
             mSwerveDrive::updatePose,
-            new PIDConstants(2, 0, 0),//TODO: Don't hardcode!!!
-            new PIDConstants(2, 0, 0),
+            new PIDConstants(1, 0, 0),//TODO: Don't hardcode!!!
+            new PIDConstants(1, 0, 0),
             mSwerveDrive::drive,
             mEventMap,
             true,

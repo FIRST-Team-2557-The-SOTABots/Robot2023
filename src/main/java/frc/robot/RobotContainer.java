@@ -5,6 +5,9 @@
 package frc.robot;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,6 +61,7 @@ import lib.Config.ShiftingSwerveDriveConfig;
 import lib.Config.ShiftingSwerveModuleConfig;
 import lib.Config.SuperStructureConfig;
 import lib.Control.SOTA_Xboxcontroller;
+import lib.Factories.AutoFactory;
 import lib.Factories.MotorControllerFactory;
 import lib.Gyro.NavX;
 import lib.Gyro.SOTA_Gyro;
@@ -147,6 +151,11 @@ public class RobotContainer {
       mSwerveDrive = new ShiftingSwerveDrive(swerveModules, shifter, gyro, 
        configUtils.readFromClassPath(ShiftingSwerveDriveConfig.class, "Swerve/ShiftingSwerveDrive"));
 
+       Map<String, Command> eventMap = new HashMap<String, Command>();
+       eventMap.put("event1", new InstantCommand(() -> {
+        
+       }));
+       mAutoBuilder = AutoFactory.swerveAutoBuilderGenerator(mSwerveDrive, eventMap);
        mAutoLevel = new AutoLevel(mSwerveDrive);
 
     } catch (IOException e) {
@@ -250,8 +259,11 @@ public class RobotContainer {
 
   public Command autos(){
     
-    PathPlannerTrajectory path1 = PathPlanner.loadPath("New Path", 4, 3.5, false);
-    mSwerveDrive.updatePose(path1.getInitialState());
-    return mAutoBuilder.followPath(path1);
+    PathPlannerTrajectory path1 = PathPlanner.loadPath("Leave Community", 4, 3.5, false);
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> SmartDashboard.putBoolean("Pathplanner", true)),
+      new InstantCommand(() -> mSwerveDrive.updatePose(path1.getInitialState())),
+       mAutoBuilder.followPath(path1)
+    );
   }
 }
