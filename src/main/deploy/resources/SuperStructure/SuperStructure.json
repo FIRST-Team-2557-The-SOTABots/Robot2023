@@ -3,7 +3,7 @@
     "encoderPerDegree": 0.002744444,
     "armBaseLength": 28.5,
     "encoderPerInch": 7.357,
-    "height": 26.5,
+    "height": 27.5,
     "bOffset": -6,
     "fOffset": -3,
     "fAbsoluteOffset": -2.5,
@@ -21,7 +21,7 @@
     "rotationMaxVel": 50.0,
     "rotationMaxAccel": 10000.0,
 
-    "extensionKP": 3.0,
+    "extensionKP": 4.0,
     "extensionKI": 0.0,
     "extensionKD": 0.0,
     "extensionMaxVel": 40.0,

@@ -14,6 +14,7 @@ public class ExtensionPID extends CommandBase {
     public enum ExtensionSetpoint {
         RESET(-2),
         FLOOR(10),
+        FLOORCONE(17),
         HIGH(39), // 32 for old claw
         MID(20),
         SUBSTATION(16),
@@ -58,7 +59,7 @@ public class ExtensionPID extends CommandBase {
 
         // SmartDashboard.putNumber("extensionSpeed", output);
         
-        mExtension.set(output);
+        mExtension.setVoltage(output);
 
         SmartDashboard.putNumber("extensionGoal", mSetpoint);
         // SmartDashboard.putNumber("Max Extension", maxLength.getAsDouble());
