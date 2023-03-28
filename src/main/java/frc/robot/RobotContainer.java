@@ -141,7 +141,7 @@ public class RobotContainer {
     };
     
     try{
-      SOTA_Gyro gyro = new NavX(new AHRS(Port.kMXP));//TODO: change back to SOTAGyro
+      SOTA_Gyro gyro = new NavX(new AHRS(Port.kMXP), true);//TODO: change back to SOTAGyro
       DoubleSolenoid solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
       GearShifter shifter = new DoubleSolenoidShifter(solenoid, 
         configUtils.readFromClassPath(DoubleSolenoidConfig.class, 

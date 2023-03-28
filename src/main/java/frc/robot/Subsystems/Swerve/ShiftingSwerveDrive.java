@@ -247,6 +247,8 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     
     SmartDashboard.putBoolean("field centric active", mFieldCentricActive);
     SmartDashboard.putNumber("angle", mGyro.getAngle()); //TODO: I think that the gyro angle will need to be reversed once everything else is
+    SmartDashboard.putNumber("Odometry x", mSwerveDriveOdometry.getPoseMeters().getX());
+    SmartDashboard.putNumber("Odometry y", mSwerveDriveOdometry.getPoseMeters().getY());
     // SmartDashboard.putNumber("bot angle radians", mGyro.getRotation2d().getRadians());
     // SmartDashboard.putNumber("Gyro roll", mGyro.getRoll());
     // SmartDashboard.putNumber("Gyro yaw", mGyro.getYaw());

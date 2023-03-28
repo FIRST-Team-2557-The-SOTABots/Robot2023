@@ -31,7 +31,7 @@ public class DefaultDrive extends CommandBase {
 
     // Squares inputs and preserves sign TODO: make controller class that handles this
     fwd = -Math.signum(fwd) * fwd * fwd;
-    str = Math.signum(str) * str * str;
+    str = -Math.signum(str) * str * str;
     rot = -Math.signum(rot) * rot * rot;
 
     shift(
