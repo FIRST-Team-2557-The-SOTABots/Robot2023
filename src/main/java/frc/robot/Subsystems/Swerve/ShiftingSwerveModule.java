@@ -37,6 +37,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
     SOTA_MotorController speedMotor, 
     ShiftingSwerveModuleConfig config) {
 
+
     this.mModulePosition = config.getModulePosition();
     
     this.mSpeedMotor = speedMotor; 
@@ -57,6 +58,9 @@ public class ShiftingSwerveModule extends SubsystemBase {
     this.mAnglePID = config.generateAnglePID(kAngleCountsPerRevolution);
     this.mSpeedPID = config.generateSpeedPID();
 
+    // SmartDashboard.putNumber("Voltage" + mModulePosition, 0);
+
+
   }
 
   /**
@@ -75,11 +79,14 @@ public class ShiftingSwerveModule extends SubsystemBase {
     double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[state.gear]);
     double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getNativeEncoderVelocity(), speedSetpointNative);
 
+    // double v = SmartDashboard.getNumber("Voltage" + mModulePosition, 0);
+
+    // mSpeedMotor.setVoltage(v);
+
     mSpeedMotor.setVoltage(speedPIDOutput);
     // mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
     // mSpeedMotor.set((speedSetpointNative / maxSpeed));
 
-    SmartDashboard.putNumber("state angle native" + mModulePosition, angleSetpointNative);
 
     SmartDashboard.putBoolean("Current Gear", state.gear == 0 ? false : true);
   }
@@ -188,6 +195,8 @@ public class ShiftingSwerveModule extends SubsystemBase {
     
     SmartDashboard.putNumber("angle no offset " + mModulePosition, mAngleMotor.getEncoder().getAbsolutePosition());
     SmartDashboard.putBoolean("Should shift", shouldShift);
+
+    SmartDashboard.putNumber("Speed Motor Speed", mSpeedMotor.getNativeEncoderVelocity());
 
     // SmartDashboard.putNumber("current draw" + mModulePosition, mSpeedMotor.getMotorCurrent());
     // SmartDashboard.putNumber("mModulePosition", kAngleCountsPerRevolution);

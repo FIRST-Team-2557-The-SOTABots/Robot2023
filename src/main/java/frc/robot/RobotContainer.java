@@ -15,19 +15,18 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -38,11 +37,11 @@ import frc.robot.Commands.AutoLevel;
 import frc.robot.Commands.BasicIntakeCommand;
 import frc.robot.Commands.DefaultDrive;
 import frc.robot.Commands.ExtensionPID;
+import frc.robot.Commands.ExtensionPID.ExtensionSetpoint;
 import frc.robot.Commands.ResetExtension;
 import frc.robot.Commands.RotationPID;
-import frc.robot.Commands.Autos.BackUpMobility;
-import frc.robot.Commands.ExtensionPID.ExtensionSetpoint;
 import frc.robot.Commands.RotationPID.RotationSetpoint;
+import frc.robot.Commands.Autos.BackUpMobility;
 import frc.robot.Subsystems.Extension;
 import frc.robot.Subsystems.Intake;
 import frc.robot.Subsystems.Rotation;
@@ -179,7 +178,7 @@ public class RobotContainer {
 
       this.mExtension = new Extension(winchMotor, limitSwitch, superStructureConfig);
       this.mRotation = new Rotation(rotationMotor, superStructureConfig);
-      this.mIntake = new Intake(intakeMotors, new ColorSensorV3(Port.kOnboard));
+      this.mIntake = new Intake(intakeMotors);
 
       SuperStructure superStructure = new SuperStructure(mExtension::getLength,mRotation::getRotationDegrees, superStructureConfig);
       PIDController armRotationController = new PIDController(0.03,0,0);
@@ -335,8 +334,12 @@ public class RobotContainer {
     
     PathPlannerTrajectory path1 = PathPlanner.loadPath("Leave Community", 4, 3.5, false);
     return new SequentialCommandGroup(
-      new InstantCommand(() -> mSwerveDrive.updatePose(path1.getInitialState())),
+      new InstantCommand(() -> {
+        mSwerveDrive.updatePose(path1.getInitialState());
+        mSwerveDrive.shift(0);
+      }),
        mAutoBuilder.followPath(path1)
     );
+
   }
 }

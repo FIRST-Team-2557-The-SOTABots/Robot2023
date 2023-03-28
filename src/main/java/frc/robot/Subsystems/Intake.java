@@ -8,11 +8,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
     MotorController motors;
-    ColorSensorV3 mSenseor;
 
-    public Intake(MotorController motors, ColorSensorV3 cV3){
+    public Intake(MotorController motors){
         this.motors = motors;
-        this.mSenseor = cV3;
     }
 
     public void release(){
@@ -53,7 +51,6 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("color sensor", mSenseor.getProximity());
     }
 
 }

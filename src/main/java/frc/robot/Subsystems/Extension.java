@@ -33,11 +33,11 @@ public class Extension extends SubsystemBase{
     }
 
     public double getLength(){
-        return config.getArmBaseLength() + (getEncoder()/config.getEncoderPerInch());
+        return config.getArmBaseLength() + getLengthFromStart();
     }   
 
     public double getLengthFromStart() {
-        return (getEncoder()/config.getEncoderPerInch());
+        return Math.max((getEncoder()/config.getEncoderPerInch()),0);
     }
 
     public boolean isFullyRetracted(){

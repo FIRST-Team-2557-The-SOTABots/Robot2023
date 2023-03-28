@@ -1,8 +1,6 @@
 package frc.robot.Commands.Autos;
 
-import edu.wpi.first.math.estimator.ExtendedKalmanFilter;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Subsystems.Extension;
 import frc.robot.Subsystems.Intake;
