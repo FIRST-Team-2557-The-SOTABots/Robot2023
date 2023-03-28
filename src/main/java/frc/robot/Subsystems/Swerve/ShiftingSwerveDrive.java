@@ -169,6 +169,13 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     return modulePositions;
   }
 
+  public SwerveModuleState[] getMeasuredStates(){
+    SwerveModuleState[] states = new SwerveModuleState[mSwerveModules.length];
+    for (int i = 0; i < mSwerveModules.length; i++){
+      states[i] = mSwerveModules[i].getMeasuredState();
+    }
+    return states;
+  }
   /**
    * Updates the rotation of the translations of the modules
    * @param angle The angle of the drivetrain
@@ -237,7 +244,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     // updateModuleTranslation(mGyro.getRotation2d());
     
     SmartDashboard.putBoolean("field centric active", mFieldCentricActive);
-    SmartDashboard.putNumber("angle", mGyro.getAngle());
+    SmartDashboard.putNumber("angle", mGyro.getAngle()); //TODO: I think that the gyro angle will need to be reversed once everything else is
     // SmartDashboard.putNumber("bot angle radians", mGyro.getRotation2d().getRadians());
     // SmartDashboard.putNumber("Gyro roll", mGyro.getRoll());
     // SmartDashboard.putNumber("Gyro yaw", mGyro.getYaw());

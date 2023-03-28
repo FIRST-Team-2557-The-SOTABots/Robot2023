@@ -10,6 +10,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lib.Config.ShiftingSwerveModuleConfig;
@@ -103,6 +104,21 @@ public class ShiftingSwerveModule extends SubsystemBase {
   }
 
   /**
+   * To accurately track the behavior of the drivetrain, knowing the actual state of the module is necessary since set state
+   * often varies from actual state.
+   * @return the measured state of the swerve module (not set state!)
+   */
+  public SwerveModuleState getMeasuredState() {
+    SwerveModuleState state = new SwerveModuleState(mSpeedMotor.getEncoderVelocity(), getRotation2d());
+    if (state.speedMetersPerSecond < 0.0) {
+      state.speedMetersPerSecond *= -1;
+      state.angle = state.angle.plus(new Rotation2d(Math.PI));
+    } 
+    return state;
+  }
+
+  
+  /**
    * Gets the speed of the module in meters per second
    * @return The speed of the module in meters per second
    */
@@ -119,7 +135,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    */
   public double getAngle() {
     // return mOffsets.nativeToAdjusted(getAngleNoOffset());
-    return mAngleMotor.getEncoderPosition();
+    return mAngleMotor.getEncoderPosition();//TODO: I think that this needs to be inverted
   }
 
   /**
@@ -135,7 +151,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * @return Rotation2d of the module
    */
   public Rotation2d getRotation2d() {
-    return new Rotation2d(nativeToRadians(getAngle()));
+    return new Rotation2d(nativeToRadians(getAngle())); 
   }
 
   /** 
