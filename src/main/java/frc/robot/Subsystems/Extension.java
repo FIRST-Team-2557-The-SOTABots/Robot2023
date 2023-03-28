@@ -22,26 +22,15 @@ public class Extension extends SubsystemBase{
         this.kEncoderPerInch = config.getEncoderPerInch();
     }
 
-<<<<<<< HEAD
-    public void set(double speed){
+    public void setVoltage(double speed){
         SmartDashboard.putNumber("SpeedInit", speed);
-        if(limitswitch.get() && speed < 0){
+        if(mLimitswitch.get() && speed < 0){
            speed = 0;
         }
         if(!hasReset && speed > 0) speed = 0;
-        motor.setVoltage(speed);
+        mMotor.setVoltage(speed);
         SmartDashboard.putNumber("extensionSpeed", speed);
       }
-=======
-    public void setVoltage(double voltage){
-        if(mLimitswitch.get() && voltage < 0) {
-           voltage = 0;
-        }
-        if(!hasReset && voltage > 0) voltage = 0;
-        mMotor.setVoltage(voltage);
-        SmartDashboard.putNumber("extensionSpeed", voltage);
-    }
->>>>>>> fcc58b6 (Changed some config components to be grabbed in constructor. dont make config object a member variable please)
  
 
     public double getEncoder(){
@@ -49,19 +38,11 @@ public class Extension extends SubsystemBase{
     }
 
     public double getLength(){
-<<<<<<< HEAD
-        return config.getArmBaseLength() + getLengthFromStart();
+        return kArmBaseLength + getLengthFromStart();
     }   
 
     public double getLengthFromStart() {
-        return Math.max((getEncoder()/config.getEncoderPerInch()),0);
-=======
-        return kArmBaseLength + (getEncoder() / kEncoderPerInch);
-    }   
-
-    public double getLengthFromStart() {
-        return (getEncoder() / kEncoderPerInch);
->>>>>>> fcc58b6 (Changed some config components to be grabbed in constructor. dont make config object a member variable please)
+        return Math.max((getEncoder() / kEncoderPerInch), 0 );
     }
 
     public boolean isFullyRetracted(){
@@ -78,16 +59,9 @@ public class Extension extends SubsystemBase{
             hasReset = true;
         }
         // SmartDashboard.putNumber("extensionEncoder", getEncoder());
-<<<<<<< HEAD
         // SmartDashboard.putNumber("Extension length inches", getLength());
         // SmartDashboard.putBoolean("limitswitch", limitswitch.get());
-=======
-        // SmartDashboard.putNumber("length", getLengthFromStart());
-        // SmartDashboard.putNumber("Extension length inches", getLength());
-        // SmartDashboard.putBoolean("limitswitch", mLimitswitch.get());
->>>>>>> fcc58b6 (Changed some config components to be grabbed in constructor. dont make config object a member variable please)
         // SmartDashboard.putNumber("extension motor limit", motor.getMotorLimits().getUpperLimit());
-        SmartDashboard.putNumber("Extension get", mMotor.get());
 
     }
 
