@@ -138,7 +138,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     );
     mSwerveDriveOdometry.resetPosition(
       rotation,
-      getModulePositions(),
+      getModulePositions(), //TODO: maybe change to getmodulestate
       pose
     );
   }
@@ -190,6 +190,8 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     mSwerveDriveOdometry.resetPosition(mGyro.getRotation2d(), getModulePositions(), pose2d);
   }
 
+  
+
   /**
    * Gets the translation 2d array of the modules
    * @return Translation 2d array of the modules
@@ -238,7 +240,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     updatePose(
-      getModulePositions(), 
+      getModulePositions(), //TODO: maybe change to get module states instead
       mGyro.getRotation2d()
     );
     // updateModuleTranslation(mGyro.getRotation2d());

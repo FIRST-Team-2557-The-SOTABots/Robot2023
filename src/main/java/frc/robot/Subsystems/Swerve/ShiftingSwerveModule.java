@@ -98,7 +98,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    */
   public SwerveModulePosition getMeasuredPosition() {
     return new SwerveModulePosition(
-      kWheelCircumference, 
+      kWheelCircumference, //TODO: Change to getMeters per second 
       getRotation2d()
     );
   }
