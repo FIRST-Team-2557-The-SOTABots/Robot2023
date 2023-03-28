@@ -96,9 +96,14 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * Gets the swerve module position of the module
    * @return The SwerveModulePosition of the module
    */
-  public SwerveModulePosition getMeasuredPosition() {
-    return new SwerveModulePosition(
-      kWheelCircumference, //TODO: Change to getMeters per second 
+  public SwerveModulePosition getMeasuredPosition(int gear) {
+    // return new SwerveModulePosition(
+    //   kWheelCircumference, //TODO: Change to getMeters per second 
+    //   getRotation2d()
+    // );
+
+    return  new SwerveModulePosition(
+      getDistance(gear),
       getRotation2d()
     );
   }
@@ -106,7 +111,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
   /**
    * To accurately track the behavior of the drivetrain, knowing the actual state of the module is necessary since set state
    * often varies from actual state.
-   * @return the measured state of the swerve module (not set state!)
+   * @return the measured state of the swerve module (not set state[!)
    */
   public SwerveModuleState getMeasuredState() {
     SwerveModuleState state = new SwerveModuleState(mSpeedMotor.getEncoderVelocity(), getRotation2d());
@@ -125,6 +130,13 @@ public class ShiftingSwerveModule extends SubsystemBase {
   public double getSpeed(int gear) {
     return nativeToMetersPerSecond(
       mSpeedMotor.getEncoderVelocity(), 
+      kGearRatios[gear]
+    );
+  }
+
+  public double getDistance(int gear){
+    return nativeToMetersPerSecond(
+      mSpeedMotor.getNativeEncoderPosition(),
       kGearRatios[gear]
     );
   }

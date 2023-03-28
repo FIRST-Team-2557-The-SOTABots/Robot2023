@@ -164,7 +164,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     int moduleNum = mSwerveModules.length;
     SwerveModulePosition[] modulePositions = new SwerveModulePosition[moduleNum];
     for (int i = 0; i < moduleNum; i++) {
-      modulePositions[i] = mSwerveModules[i].getMeasuredPosition();
+      modulePositions[i] = mSwerveModules[i].getMeasuredPosition(mShifter.getGear());
     }
     return modulePositions;
   }
