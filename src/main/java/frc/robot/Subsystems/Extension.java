@@ -7,16 +7,22 @@ import lib.Config.SuperStructureConfig;
 import lib.MotorController.SOTA_MotorController;
 
 public class Extension extends SubsystemBase{
-    private double maxLength;
-    private SOTA_MotorController motor;
-    private DigitalInput limitswitch;
-    private SuperStructureConfig config;
+    private SOTA_MotorController mMotor;
+    private DigitalInput mLimitswitch;
+    private double kMaxLength;
+    private double kArmBaseLength;
+    private double kEncoderPerInch;
     private boolean hasReset = false;
 
     public Extension(SOTA_MotorController motor, DigitalInput limitSwitch, SuperStructureConfig config){
-        this.motor = motor; this.limitswitch = limitSwitch; this.maxLength = config.getMaxExtension(); this.config = config;
+        this.mMotor = motor; 
+        this.mLimitswitch = limitSwitch; 
+        this.kMaxLength = config.getMaxExtension();
+        this.kArmBaseLength = config.getArmBaseLength();
+        this.kEncoderPerInch = config.getEncoderPerInch();
     }
 
+<<<<<<< HEAD
     public void set(double speed){
         SmartDashboard.putNumber("SpeedInit", speed);
         if(limitswitch.get() && speed < 0){
@@ -26,37 +32,62 @@ public class Extension extends SubsystemBase{
         motor.setVoltage(speed);
         SmartDashboard.putNumber("extensionSpeed", speed);
       }
+=======
+    public void setVoltage(double voltage){
+        if(mLimitswitch.get() && voltage < 0) {
+           voltage = 0;
+        }
+        if(!hasReset && voltage > 0) voltage = 0;
+        mMotor.setVoltage(voltage);
+        SmartDashboard.putNumber("extensionSpeed", voltage);
+    }
+>>>>>>> fcc58b6 (Changed some config components to be grabbed in constructor. dont make config object a member variable please)
  
 
     public double getEncoder(){
-        return motor.getEncoderPosition();
+        return mMotor.getEncoderPosition();
     }
 
     public double getLength(){
+<<<<<<< HEAD
         return config.getArmBaseLength() + getLengthFromStart();
     }   
 
     public double getLengthFromStart() {
         return Math.max((getEncoder()/config.getEncoderPerInch()),0);
+=======
+        return kArmBaseLength + (getEncoder() / kEncoderPerInch);
+    }   
+
+    public double getLengthFromStart() {
+        return (getEncoder() / kEncoderPerInch);
+>>>>>>> fcc58b6 (Changed some config components to be grabbed in constructor. dont make config object a member variable please)
     }
 
     public boolean isFullyRetracted(){
-        return limitswitch.get();
+        return mLimitswitch.get();
     }
     public double getMaxExtension(){
-        return maxLength;
+        return kMaxLength;
     }
 
     @Override
     public void periodic() {
-        if(limitswitch.get()) {
-            motor.resetNativeEncoder();
+        if(mLimitswitch.get()) {
+            mMotor.resetNativeEncoder();
             hasReset = true;
         }
         // SmartDashboard.putNumber("extensionEncoder", getEncoder());
+<<<<<<< HEAD
         // SmartDashboard.putNumber("Extension length inches", getLength());
         // SmartDashboard.putBoolean("limitswitch", limitswitch.get());
+=======
+        // SmartDashboard.putNumber("length", getLengthFromStart());
+        // SmartDashboard.putNumber("Extension length inches", getLength());
+        // SmartDashboard.putBoolean("limitswitch", mLimitswitch.get());
+>>>>>>> fcc58b6 (Changed some config components to be grabbed in constructor. dont make config object a member variable please)
         // SmartDashboard.putNumber("extension motor limit", motor.getMotorLimits().getUpperLimit());
+        SmartDashboard.putNumber("Extension get", mMotor.get());
 
     }
 

@@ -50,9 +50,9 @@ public class DefaultDrive extends CommandBase {
 
   protected void shift(double lo, double hi) {
     if (lo != 0.0) 
-      mSwerveDrive.shift(0);
-    if (hi != 0.0)
       mSwerveDrive.shift(1);
+    if (hi != 0.0)
+      mSwerveDrive.shift(0);
   }
 
   // Returns true when the command should end.
