@@ -14,7 +14,7 @@ public class Rotation extends SubsystemBase{
     }
 
     public void set(double speed) {
-        motor.set(speed);
+        // motor.set(speed);
     }
 
     public double getRotatorEncoder() {

@@ -155,6 +155,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * Updates the total distance with the previous encoder position
    */
   public void updateDistance() {
+    SmartDashboard.putNumber(mModulePosition + "update val", (mSpeedMotor.getNativeEncoderPosition() - mPrevEncoderPosition) * (kWheelCircumference / (kGearRatios[getCurrentGear()] * kSpeedCountsPerRevolution)));
     mDistance += (mSpeedMotor.getNativeEncoderPosition() - mPrevEncoderPosition) * (kWheelCircumference / (kGearRatios[getCurrentGear()] * kSpeedCountsPerRevolution));
     this.mPrevEncoderPosition = mSpeedMotor.getNativeEncoderPosition();
   }
