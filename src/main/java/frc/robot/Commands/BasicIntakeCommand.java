@@ -6,7 +6,7 @@ import lib.Control.SOTA_Xboxcontroller;
 
 public class BasicIntakeCommand extends CommandBase{
     private Intake mIntake;
-    private CommandXboxController mController;
+    private SOTA_Xboxcontroller mController;
 
     public BasicIntakeCommand(Intake mIntake, SOTA_Xboxcontroller controller){
         this.mIntake = mIntake; 
