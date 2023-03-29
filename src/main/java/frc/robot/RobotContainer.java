@@ -81,7 +81,7 @@ public class RobotContainer {
   private ExtensionPID extensionPID;
   private BasicIntakeCommand intakeCommand;
   private ResetExtension mResetExtension;
-  private AutoLevel mAutoLevel;
+  // private AutoLevel mAutoLevel;
   private BackUpMobility mBackUpMobility;
   private ParallelDeadlineGroup mBackUpAuto;
 
@@ -144,7 +144,6 @@ public class RobotContainer {
     try{
       SOTA_Gyro gyro = new NavX(new AHRS(Port.kMXP), true);
       DoubleSolenoid solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
-
       GearShifter shifter = new DoubleSolenoidShifter(solenoid, 
         configUtils.readFromClassPath(DoubleSolenoidConfig.class, 
         "Swerve/DoubleSolenoidSwerveShifter"));
@@ -184,7 +183,7 @@ public class RobotContainer {
        configUtils.readFromClassPath(ShiftingSwerveDriveConfig.class, "Swerve/ShiftingSwerveDrive"));
 
        
-       mAutoLevel = new AutoLevel(mSwerveDrive);
+      //  mAutoLevel = new AutoLevel(mSwerveDrive);
 
 
     } catch (IOException e) {
@@ -193,34 +192,35 @@ public class RobotContainer {
     }
    
 
-    try{
-    SOTA_MotorController rotationMotor = MotorControllerFactory.generateSparkDelegate(
-    (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/RotatorMotor")));
+    try {
+      SOTA_MotorController rotationMotor = MotorControllerFactory.generateSparkDelegate(
+      (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/RotatorMotor")));
 
-    SOTA_MotorController winchMotor = MotorControllerFactory.generateSparkDelegate
-    (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/WinchMotor"));
+      SOTA_MotorController winchMotor = MotorControllerFactory.generateSparkDelegate
+      (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/WinchMotor"));
 
-    MotorController intakeMotorRight = new CANSparkMax(2, MotorType.kBrushless);
-    // intakeMotorRight.setInverted(true);
-    MotorController intakeMotors = new MotorControllerGroup(new CANSparkMax(1, MotorType.kBrushless),
-    intakeMotorRight);
+      SOTA_MotorController intakeMotorTop = MotorControllerFactory.generateSparkDelegate
+      (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/IntakeMotorTop"));
+      SOTA_MotorController intakeMotorBottom = MotorControllerFactory.generateSparkDelegate
+      (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/IntakeMotorBottom"));
 
-    DigitalInput limitSwitch = new DigitalInput(0);
+      DigitalInput limitSwitch = new DigitalInput(0);
 
       SuperStructureConfig superStructureConfig = configUtils.readFromClassPath(SuperStructureConfig.class,
        "SuperStructure/SuperStructure");
 
       this.mExtension = new Extension(winchMotor, limitSwitch, superStructureConfig);
       this.mRotation = new Rotation(rotationMotor, superStructureConfig);
-      this.mIntake = new Intake(intakeMotors);
+      this.mIntake = new Intake(intakeMotorTop, intakeMotorBottom);
 
-      SuperStructure superStructure = new SuperStructure(mExtension::getLength,mRotation::getRotationDegrees, superStructureConfig);
-      PIDController armRotationController = new PIDController(0.03,0,0);
+      SuperStructure superStructure = new SuperStructure(mExtension::getLength, mRotation::getRotationDegrees, superStructureConfig);
+
+      ProfiledPIDController rotationPID = superStructureConfig.getRotationProfiledPIDController();
 
       ProfiledPIDController extensController = new ProfiledPIDController(3, 0, 0,
        new TrapezoidProfile.Constraints(40.0,80.0));
 
-      this.rotationPID = new RotationPID(mRotation, armRotationController, 150, mExtension::getLengthFromStart, superStructure::minRotation, superStructure::maxRotation, superStructureConfig);
+      this.rotationPID = new RotationPID(mRotation, mExtension::getLengthFromStart, superStructure::minRotation, superStructure::maxRotation, superStructureConfig);
       this.extensionPID = new ExtensionPID(extensController, mExtension, superStructure::maxExtension);
       this.mResetExtension = new ResetExtension(mExtension);
       this.intakeCommand = new BasicIntakeCommand(mIntake, mController);
@@ -237,7 +237,7 @@ public class RobotContainer {
     );    
 
     Map<String, Command> eventMap = new HashMap<String, Command>();
-       eventMap.put("event1", new InstantCommand(
+      eventMap.put("event1", new InstantCommand(
         () -> {
           rotationPID.setSetpoint(RotationSetpoint.FLOOR);
           extensionPID.setSetpoint(ExtensionSetpoint.MID);
@@ -251,7 +251,7 @@ public class RobotContainer {
         },
         mRotation, mExtension
       ));
-       mAutoBuilder = AutoFactory.swerveAutoBuilderGenerator(mSwerveDrive, eventMap);
+      mAutoBuilder = AutoFactory.swerveAutoBuilderGenerator(mSwerveDrive, eventMap);
 
     configureDefaultCommands();
     configureBindings();
@@ -300,7 +300,7 @@ public class RobotContainer {
       new InstantCommand(
         () -> {
           rotationPID.setSetpoint(RotationSetpoint.SUBSTATION);
-          extensionPID.setSetpoint(ExtensionSetpoint.HIGH);
+          extensionPID.setSetpoint(ExtensionSetpoint.SUBSTATION);
         },
         mRotation, mExtension
       )
@@ -310,15 +310,31 @@ public class RobotContainer {
       new InstantCommand(
         () -> {
           rotationPID.setSetpoint(RotationSetpoint.FLOOR);
-          extensionPID.setSetpoint(ExtensionSetpoint.MID);
+          extensionPID.setSetpoint(ExtensionSetpoint.FLOOR);
         },
         mRotation, mExtension
+      )
+    );
+    mController.start().onTrue(
+      new InstantCommand(
+        () -> {
+          rotationPID.setSetpoint(RotationSetpoint.FLOORCONEKNOCK);
+          extensionPID.setSetpoint(ExtensionSetpoint.FLOORCONE);
+        }
+      )
+    ).onFalse(
+      new InstantCommand(
+        () -> {
+          rotationPID.setSetpoint(RotationSetpoint.FLOORCONE);
+        },
+        mRotation
       )
     );
     mController.a().onTrue( // SCORE MID ON RELEASE HIGH
       new InstantCommand(
         () -> {
           rotationPID.setSetpoint(RotationSetpoint.SCORE);
+          extensionPID.startExhaustTimeout();
           extensionPID.setSetpoint(ExtensionSetpoint.MID);
         },
         mRotation, mExtension
@@ -326,7 +342,9 @@ public class RobotContainer {
     ).onFalse(
       new InstantCommand(
         () -> {
-          extensionPID.setSetpoint(ExtensionSetpoint.HIGH);
+          if (!extensionPID.exhaustTimedOut()) {
+            extensionPID.setSetpoint(ExtensionSetpoint.HIGH);
+          }
         },
         mExtension
       )
@@ -371,7 +389,7 @@ public class RobotContainer {
         mSwerveDrive.updatePose(path1.getInitialState());
         mSwerveDrive.shift(0);
       }),
-       mAutoBuilder.followPath(path1)
+      mAutoBuilder.followPath(path1)
     );
 
   }

@@ -7,55 +7,61 @@ import lib.Config.SuperStructureConfig;
 import lib.MotorController.SOTA_MotorController;
 
 public class Extension extends SubsystemBase{
-    private double maxLength;
-    private SOTA_MotorController motor;
-    private DigitalInput limitswitch;
-    private SuperStructureConfig config;
+    private SOTA_MotorController mMotor;
+    private DigitalInput mLimitswitch;
+    private double kMaxLength;
+    private double kArmBaseLength;
+    private double kEncoderPerInch;
     private boolean hasReset = false;
 
     public Extension(SOTA_MotorController motor, DigitalInput limitSwitch, SuperStructureConfig config){
-        this.motor = motor; this.limitswitch = limitSwitch; this.maxLength = config.getMaxExtension(); this.config = config;
+        this.mMotor = motor; 
+        this.mLimitswitch = limitSwitch; 
+        this.kMaxLength = config.getMaxExtension();
+        this.kArmBaseLength = config.getArmBaseLength();
+        this.kEncoderPerInch = config.getEncoderPerInch();
     }
 
-    public void set(double speed){
+    public void setVoltage(double speed){
         SmartDashboard.putNumber("SpeedInit", speed);
-        if(limitswitch.get() && speed < 0){
+        if(mLimitswitch.get() && speed < 0){
            speed = 0;
         }
         if(!hasReset && speed > 0) speed = 0;
-        motor.setVoltage(speed);
+        mMotor.setVoltage(speed);
         SmartDashboard.putNumber("extensionSpeed", speed);
-      }
+    }
  
 
     public double getEncoder(){
-        return motor.getEncoderPosition();
+        return mMotor.getEncoderPosition();
     }
 
     public double getLength(){
-        return config.getArmBaseLength() + getLengthFromStart();
+        return kArmBaseLength + getLengthFromStart();
     }   
 
     public double getLengthFromStart() {
-        return Math.max((getEncoder()/config.getEncoderPerInch()),0);
+        return Math.max((getEncoder() / kEncoderPerInch), 0 );
     }
 
     public boolean isFullyRetracted(){
-        return limitswitch.get();
+        return mLimitswitch.get();
     }
     public double getMaxExtension(){
-        return maxLength;
+        return kMaxLength;
     }
 
     @Override
     public void periodic() {
-        if(limitswitch.get()) {
-            motor.resetNativeEncoder();
+        if(mLimitswitch.get()) {
+            mMotor.resetNativeEncoder();
             hasReset = true;
         }
-        // SmartDashboard.putNumber("extensionEncoder", getEncoder());
+        SmartDashboard.putNumber("extensionEncoder", getEncoder());
+        SmartDashboard.putNumber("length", getLengthFromStart());
         // SmartDashboard.putNumber("Extension length inches", getLength());
-        // SmartDashboard.putBoolean("limitswitch", limitswitch.get());
+        SmartDashboard.putBoolean("limitswitch", mLimitswitch.get());
         // SmartDashboard.putNumber("extension motor limit", motor.getMotorLimits().getUpperLimit());
 
     }
