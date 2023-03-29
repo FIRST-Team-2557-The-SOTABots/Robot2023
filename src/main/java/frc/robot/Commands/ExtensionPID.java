@@ -9,9 +9,13 @@ import frc.robot.Subsystems.Extension;
 public class ExtensionPID extends CommandBase {
 
     public enum ExtensionSetpoint {
-        HIGH(32),
-        MID(10),
-        RESET(-2);
+        RESET(-2),
+        FLOOR(10),
+        FLOORCONE(17),
+        HIGH(39), // 32 for old claw
+        MID(20),
+        SUBSTATION(16),
+        SINGLE(0.0);
 
         public double inches;
 
@@ -56,10 +60,7 @@ public class ExtensionPID extends CommandBase {
 
         // SmartDashboard.putNumber("extensionSpeed", output);
         
-        // if(mController.getLeftBumper()) setPoint = 3;
-        // if(mController.getRightBumper()) setPoint = -3;
-        // else setPoint = 0;
-        mExtension.set(output);
+        mExtension.setVoltage(output);
 
         // SmartDashboard.putNumber("extensionGoal", setPoint);
         // SmartDashboard.putNumber("Max Extension", maxLength.getAsDouble());

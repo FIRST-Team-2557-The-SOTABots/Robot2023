@@ -3,14 +3,28 @@
     "encoderPerDegree": 0.002744444,
     "armBaseLength": 28.5,
     "encoderPerInch": 7.357,
-    "height": 23,
+    "height": 27.5,
     "bOffset": -6,
     "fOffset": -3,
     "fAbsoluteOffset": -2.5,
     "bAbsoluteOffset": -5.5,
     "maxExtension": 32,
     "rotationEncoderOffset": 0.16,
-    "rotationalDelta": 0.01,
-    "rotationalDeltaProportional": 0.015
+    "rotationDelta": 0.01,
+    "rotationDeltaProportional": 0.015,
+
+    "rotationInitSetpoint": 150,
+    "rotationKPG": 0.05,
+    "rotationKP": 0.03,
+    "rotationKI": 0.0,
+    "rotationKD": 0.0,
+    "rotationMaxVel": 50.0,
+    "rotationMaxAccel": 10000.0,
+
+    "extensionKP": 4.0,
+    "extensionKI": 0.0,
+    "extensionKD": 0.0,
+    "extensionMaxVel": 40.0,
+    "extensionMaxAccel": 80.0
     
 }

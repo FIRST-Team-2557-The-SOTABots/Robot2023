@@ -16,11 +16,11 @@ public class BasicArmExtension extends CommandBase{
     @Override
     public void execute() {
         if(mController.getA()){
-            mArm.set(-2);
+            mArm.setVoltage(-2);
         } else if(mController.getB()){
-            mArm.set(3);
+            mArm.setVoltage(3);
         } else {
-            mArm.set(0);
+            mArm.setVoltage(0);
         }
 
     }

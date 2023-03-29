@@ -281,6 +281,21 @@ public class RobotContainer {
         mRotation, mExtension
       )
     );
+    mController.start().onTrue(
+      new InstantCommand(
+        () -> {
+          rotationPID.setSetpoint(RotationSetpoint.FLOORCONEKNOCK);
+          extensionPID.setSetpoint(ExtensionSetpoint.FLOORCONE);
+        }
+      )
+    ).onFalse(
+      new InstantCommand(
+        () -> {
+          rotationPID.setSetpoint(RotationSetpoint.FLOORCONE);
+        },
+        mRotation
+      )
+    );
     mController.a().onTrue( // SCORE MID ON RELEASE HIGH
       new InstantCommand(
         () -> {

@@ -12,12 +12,12 @@ public class ResetExtension extends CommandBase{
     }
     @Override
     public void execute() {
-        mExtension.set(-5);
+        mExtension.setVoltage(-1);
         
     }
     @Override
     public void end(boolean interrupted) {
-        mExtension.set(0);
+        mExtension.setVoltage(0);
     }
     @Override
     public boolean isFinished() {
