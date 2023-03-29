@@ -1,9 +1,9 @@
 {
-    "encoderAtZeroDegrees": 0.07600008,
+    "encoderAtZeroDegrees": 0.1538,
     "encoderPerDegree": 0.002744444,
     "armBaseLength": 28.5,
     "encoderPerInch": 7.357,
-    "height": 26.5,
+    "height": 23,
     "bOffset": -6,
     "fOffset": -3,
     "fAbsoluteOffset": -2.5,
