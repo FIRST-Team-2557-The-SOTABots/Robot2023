@@ -204,7 +204,7 @@ public class RobotContainer {
     );    
 
     Map<String, Command> eventMap = new HashMap<String, Command>();
-       eventMap.put("event1", new InstantCommand(
+      eventMap.put("event1", new InstantCommand(
         () -> {
           rotationPID.setSetpoint(RotationSetpoint.FLOOR);
           extensionPID.setSetpoint(ExtensionSetpoint.MID);
@@ -218,7 +218,7 @@ public class RobotContainer {
         },
         mRotation, mExtension
       ));
-       mAutoBuilder = AutoFactory.swerveAutoBuilderGenerator(mSwerveDrive, eventMap);
+      mAutoBuilder = AutoFactory.swerveAutoBuilderGenerator(mSwerveDrive, eventMap);
 
     configureDefaultCommands();
     configureBindings();
@@ -357,7 +357,7 @@ public class RobotContainer {
         mSwerveDrive.updatePose(path1.getInitialState());
         mSwerveDrive.shift(0);
       }),
-       mAutoBuilder.followPath(path1)
+      mAutoBuilder.followPath(path1)
     );
 
   }
