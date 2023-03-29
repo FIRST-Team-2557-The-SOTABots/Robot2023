@@ -5,6 +5,8 @@
 package frc.robot.Subsystems.Swerve;
 
 
+import java.util.function.IntSupplier;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -33,16 +35,24 @@ public class ShiftingSwerveModule extends SubsystemBase {
   private double kSpeedCountsPerRevolution;
   private double kWheelCircumference; 
 
+  private IntSupplier mGear;
+
+  private double mPrevEncoderPosition;
+  private double mDistance;
+
   public ShiftingSwerveModule(
     SOTA_MotorController angleMotor, 
     SOTA_MotorController speedMotor, 
+    IntSupplier gear,
     ShiftingSwerveModuleConfig config) {
 
-
+    
     this.mModulePosition = config.getModulePosition();
     
     this.mSpeedMotor = speedMotor; 
     this.mAngleMotor = angleMotor;
+
+    this.mGear = gear;
 
     this.kGearRatios = config.getGearRatios();
 
@@ -68,7 +78,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * Drives the modules with a ShiftingSwerveModuleState
    * @param state The ShiftingSwerveModuleState
    */
-  public void drive(ShiftingSwerveModuleState state) {
+  public void drive(ShiftingSwerveModuleState state) { // TODO: Change back to SwerveModuleState
     state = ShiftingSwerveModuleState.optimize(state, getRotation2d());
 
     double angleSetpointNative = Math.abs(radiansToNative(state.angle.getRadians()));
@@ -77,7 +87,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
 
     mAngleMotor.setVoltage(state.speedMetersPerSecond == 0 ? 0 :  angleFFOutput + anglePIDOutput);
 
-    double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[state.gear]);
+    double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[mGear.getAsInt()]);
     double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getNativeEncoderVelocity(), speedSetpointNative);
 
     // double v = SmartDashboard.getNumber("Voltage" + mModulePosition, 0);
@@ -89,7 +99,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
     // mSpeedMotor.set((speedSetpointNative / maxSpeed));
 
 
-    SmartDashboard.putBoolean("Current Gear", state.gear == 0 ? false : true);
+    // SmartDashboard.putBoolean("Current Gear", state.gear == 0 ? false : true); // Extract this out into ShiftingSwerveDrive
   }
 
   /** 
@@ -100,10 +110,9 @@ public class ShiftingSwerveModule extends SubsystemBase {
     // return new SwerveModulePosition(
     //   kWheelCircumference, //TODO: Change to getMeters per second 
     //   getRotation2d()
-    // );
-
+    //);
     return  new SwerveModulePosition(
-      getDistance(gear),
+      getDistance(),
       getRotation2d()
     );
   }
@@ -134,11 +143,27 @@ public class ShiftingSwerveModule extends SubsystemBase {
     );
   }
 
-  public double getDistance(int gear){
-    return nativeToMetersPerSecond(
-      mSpeedMotor.getNativeEncoderPosition(),
-      kGearRatios[gear]
-    );
+  /**
+   * Gets total distance the module has traveled
+   * @return The distance traveled
+   */
+  public double getDistance() {
+    return mDistance;
+  }
+
+  /**
+   * Updates the total distance with the previous encoder position
+   */
+  public void updateDistance() {
+    mDistance += (mSpeedMotor.getNativeEncoderPosition() - mPrevEncoderPosition) * (kWheelCircumference / (kGearRatios[getCurrentGear()] * kSpeedCountsPerRevolution));
+    this.mPrevEncoderPosition = mSpeedMotor.getNativeEncoderPosition();
+  }
+
+  /**
+   * Gets the gear from the ShiftingSwerveDrive
+   */
+  public int getCurrentGear(){
+    return mGear.getAsInt();
   }
 
   /** 
@@ -216,6 +241,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
 
   @Override
   public void periodic() {
+    updateDistance();
     // This method will be called once per scheduler run
     // SmartDashboard.putBoolean("isInverted" + mModulePosition, mSpeedMotor.getInverted());
 

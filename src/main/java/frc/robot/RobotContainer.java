@@ -7,6 +7,7 @@ package frc.robot;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.IntSupplier;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -113,39 +114,72 @@ public class RobotContainer {
     dController = new SOTA_Xboxcontroller(0);
     mController = new SOTA_Xboxcontroller(1);
 
-    ShiftingSwerveModule[] swerveModules = {
+    // ShiftingSwerveModule[] swerveModules = {
       
-      initSwerveModule(
-        "Swerve/FrontLeft/SpeedFalcon",
-        "Swerve/FrontLeft/AngleSparkMax",
-        "Swerve/FrontLeft/ShiftingSwerveModule"
-      ),
+    //   initSwerveModule(
+    //     "Swerve/FrontLeft/SpeedFalcon",
+    //     "Swerve/FrontLeft/AngleSparkMax",
+    //     "Swerve/FrontLeft/ShiftingSwerveModule"
+    //   ),
 
-      initSwerveModule(
-        "Swerve/BackLeft/SpeedFalcon",
-        "Swerve/BackLeft/AngleSparkMax",
-      "Swerve/BackLeft/ShiftingSwerveModule"
-      ),
+    //   initSwerveModule(
+    //     "Swerve/BackLeft/SpeedFalcon",
+    //     "Swerve/BackLeft/AngleSparkMax",
+    //   "Swerve/BackLeft/ShiftingSwerveModule"
+    //   ),
 
-      initSwerveModule(
-        "Swerve/BackRight/SpeedFalcon",
-        "Swerve/BackRight/AngleSparkMax",
-        "Swerve/BackRight/ShiftingSwerveModule"
-      ),
+    //   initSwerveModule(
+    //     "Swerve/BackRight/SpeedFalcon",
+    //     "Swerve/BackRight/AngleSparkMax",
+    //     "Swerve/BackRight/ShiftingSwerveModule"
+    //   ),
       
-      initSwerveModule(
-        "Swerve/FrontRight/SpeedFalcon",
-        "Swerve/FrontRight/AngleSparkMax",
-        "Swerve/FrontRight/ShiftingSwerveModule"
-      ),
-    };
+    //   initSwerveModule(
+    //     "Swerve/FrontRight/SpeedFalcon",
+    //     "Swerve/FrontRight/AngleSparkMax",
+    //     "Swerve/FrontRight/ShiftingSwerveModule"
+    //   ),
+    // };
     
     try{
-      SOTA_Gyro gyro = new NavX(new AHRS(Port.kMXP), true);//TODO: change back to SOTAGyro
+      SOTA_Gyro gyro = new NavX(new AHRS(Port.kMXP), true);
       DoubleSolenoid solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
+
       GearShifter shifter = new DoubleSolenoidShifter(solenoid, 
         configUtils.readFromClassPath(DoubleSolenoidConfig.class, 
         "Swerve/DoubleSolenoidSwerveShifter"));
+
+        ShiftingSwerveModule[] swerveModules = {
+      
+          initSwerveModule(
+            "Swerve/FrontLeft/SpeedFalcon",
+            "Swerve/FrontLeft/AngleSparkMax",
+            "Swerve/FrontLeft/ShiftingSwerveModule",
+            shifter::getGear
+          ),
+    
+          initSwerveModule(
+            "Swerve/BackLeft/SpeedFalcon",
+            "Swerve/BackLeft/AngleSparkMax",
+          "Swerve/BackLeft/ShiftingSwerveModule",
+          shifter::getGear
+          ),
+    
+          initSwerveModule(
+            "Swerve/BackRight/SpeedFalcon",
+            "Swerve/BackRight/AngleSparkMax",
+            "Swerve/BackRight/ShiftingSwerveModule",
+            shifter::getGear
+          ),
+          
+          initSwerveModule(
+            "Swerve/FrontRight/SpeedFalcon",
+            "Swerve/FrontRight/AngleSparkMax",
+            "Swerve/FrontRight/ShiftingSwerveModule",
+            shifter::getGear
+          ),
+        };
+
       mSwerveDrive = new ShiftingSwerveDrive(swerveModules, shifter, gyro, 
        configUtils.readFromClassPath(ShiftingSwerveDriveConfig.class, "Swerve/ShiftingSwerveDrive"));
 
@@ -315,14 +349,14 @@ public class RobotContainer {
     // return mBackUpMobility.withTimeout(mBackUpMobility.kTime); // removed use of depracated thingy if dont work just comment out
   }
 
-  public ShiftingSwerveModule initSwerveModule(String speedConfig, String angleConfig, String moduleConfig) {
+  public ShiftingSwerveModule initSwerveModule(String speedConfig, String angleConfig, String moduleConfig, IntSupplier gear) {
     try{
       ShiftingSwerveModuleConfig config = configUtils.readFromClassPath(ShiftingSwerveModuleConfig.class, moduleConfig);
       MotorControllerConfig speedMotorConfig = configUtils.readFromClassPath(MotorControllerConfig.class, speedConfig);
       MotorControllerConfig rotatorConfig = configUtils.readFromClassPath(MotorControllerConfig.class, angleConfig);
       SOTA_MotorController speedMotor = MotorControllerFactory.generateFalconDelegate(speedMotorConfig);
       SOTA_MotorController angleMotor = MotorControllerFactory.generateSparkDelegate(rotatorConfig);
-      return new ShiftingSwerveModule(angleMotor, speedMotor, config);
+      return new ShiftingSwerveModule(angleMotor, speedMotor, gear, config);
     } catch(IOException e){
       throw new RuntimeException("Could not create config", e);
     }
@@ -331,7 +365,6 @@ public class RobotContainer {
 
 
   public Command autos(){
-    
     PathPlannerTrajectory path1 = PathPlanner.loadPath("Leave Community", 4, 3.5, false);
     return new SequentialCommandGroup(
       new InstantCommand(() -> {
