@@ -16,7 +16,7 @@ public class ExtensionPID extends CommandBase {
         FLOORCONE(17),
         HIGH(39), // 32 for old claw
         MID(20),
-        SUBSTATION(16),
+        SUBSTATION(12),
         SINGLE(0.0);
 
         public double inches;
@@ -51,10 +51,10 @@ public class ExtensionPID extends CommandBase {
 
         // setPoint = SmartDashboard.getNumber("Extension Length", 0.0);
 
-        mSetpoint = Math.min(mSetpoint, kMaxLength.getAsDouble());
+        double adjustedSetpoint = Math.min(mSetpoint, kMaxLength.getAsDouble());
         // extendPID.reset(kSetpoint, 0.0);
 
-        double output = extendPID.calculate(mExtension.getLengthFromStart(), mSetpoint);
+        double output = extendPID.calculate(mExtension.getLengthFromStart(), adjustedSetpoint);
 
         // SmartDashboard.putNumber("extensionSpeed", output);
         

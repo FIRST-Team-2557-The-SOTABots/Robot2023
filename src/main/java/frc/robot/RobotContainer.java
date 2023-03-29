@@ -62,6 +62,7 @@ import lib.Factories.MotorControllerFactory;
 import lib.Gyro.NavX;
 import lib.Gyro.SOTA_Gyro;
 import lib.MotorController.SOTA_MotorController;
+import lib.MotorController.SparkMaxDelegate;
 import lib.Pneumatics.GearShifter;
 
 public class RobotContainer {
@@ -81,7 +82,7 @@ public class RobotContainer {
   private ExtensionPID extensionPID;
   private BasicIntakeCommand intakeCommand;
   private ResetExtension mResetExtension;
-  // private AutoLevel mAutoLevel;
+  private AutoLevel mAutoLevel;
   private BackUpMobility mBackUpMobility;
   private ParallelDeadlineGroup mBackUpAuto;
 
@@ -92,54 +93,17 @@ public class RobotContainer {
   // private SendableChooser<CommandBase> mAutoChooser;
 
   public RobotContainer() {
-    
-    // SmartDashboard.putNumber("rotation setpoint", 180);
-    // SmartDashboard.putNumber("Extension Length", 0);
-
-    // SmartDashboard.putNumber("set p", 0);
-    // SmartDashboard.putNumber("TestDelta", 0.0);
+ 
 
     ObjectMapper mapper = new ObjectMapper();
     mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     this.configUtils = new ConfigUtils(mapper);
     
-    // mAutoChooser = new SendableChooser<CommandBase>();
-    // mAutoChooser.setDefaultOption("None", null);
-    // mAutoChooser.addOption("Back Up Mobility", 
-    //   new RunCommand(() -> {
-    //     mSwerveDrive.drive(-0.5, 0, 0, mSwerveDrive.getRotation2d());
-    //   }, mSwerveDrive).withTimeout(2.5)
-    // );
+ 
 
     dController = new SOTA_Xboxcontroller(0);
     mController = new SOTA_Xboxcontroller(1);
 
-    // ShiftingSwerveModule[] swerveModules = {
-      
-    //   initSwerveModule(
-    //     "Swerve/FrontLeft/SpeedFalcon",
-    //     "Swerve/FrontLeft/AngleSparkMax",
-    //     "Swerve/FrontLeft/ShiftingSwerveModule"
-    //   ),
-
-    //   initSwerveModule(
-    //     "Swerve/BackLeft/SpeedFalcon",
-    //     "Swerve/BackLeft/AngleSparkMax",
-    //   "Swerve/BackLeft/ShiftingSwerveModule"
-    //   ),
-
-    //   initSwerveModule(
-    //     "Swerve/BackRight/SpeedFalcon",
-    //     "Swerve/BackRight/AngleSparkMax",
-    //     "Swerve/BackRight/ShiftingSwerveModule"
-    //   ),
-      
-    //   initSwerveModule(
-    //     "Swerve/FrontRight/SpeedFalcon",
-    //     "Swerve/FrontRight/AngleSparkMax",
-    //     "Swerve/FrontRight/ShiftingSwerveModule"
-    //   ),
-    // };
     
     try{
       SOTA_Gyro gyro = new NavX(new AHRS(Port.kMXP), true);
@@ -183,7 +147,7 @@ public class RobotContainer {
        configUtils.readFromClassPath(ShiftingSwerveDriveConfig.class, "Swerve/ShiftingSwerveDrive"));
 
        
-      //  mAutoLevel = new AutoLevel(mSwerveDrive);
+       mAutoLevel = new AutoLevel(mSwerveDrive);
 
 
     } catch (IOException e) {
@@ -199,10 +163,16 @@ public class RobotContainer {
       SOTA_MotorController winchMotor = MotorControllerFactory.generateSparkDelegate
       (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/WinchMotor"));
 
-      SOTA_MotorController intakeMotorTop = MotorControllerFactory.generateSparkDelegate
-      (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/IntakeMotorTop"));
-      SOTA_MotorController intakeMotorBottom = MotorControllerFactory.generateSparkDelegate
-      (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/IntakeMotorBottom"));
+      // SOTA_MotorController intakeMotorTop = MotorControllerFactory.generateSparkDelegate
+      // (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/IntakeMotorBottom.json"));
+      // SOTA_MotorController intakeMotorBottom = MotorControllerFactory.generateSparkDelegate
+      // (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/IntakeMotorTop"));
+      CANSparkMax intakeMotor1 = new CANSparkMax(1, MotorType.kBrushless);
+      CANSparkMax intakeMotor2 = new CANSparkMax(2, MotorType.kBrushless);
+      intakeMotor1.setInverted(true);
+
+      SOTA_MotorController intakeMotorBottom = new SparkMaxDelegate(intakeMotor1, null);
+      SOTA_MotorController intakeMotorTop = new SparkMaxDelegate(intakeMotor2, null);
 
       DigitalInput limitSwitch = new DigitalInput(0);
 
@@ -269,11 +239,8 @@ public class RobotContainer {
 
     dController.start().onTrue(
       new InstantCommand(
-        () -> {
-          mSwerveDrive.resetGyro();
-        },
-        mSwerveDrive
-      )
+        mSwerveDrive::resetGyro
+      ) 
     );
     dController.a().onTrue(
       new InstantCommand(
@@ -292,10 +259,9 @@ public class RobotContainer {
       )
     );
 
-    // mController.rightTrigger().whileTrue(new RunCommand(mIntake::intake, mIntake)).onFalse(new SequentialCommandGroup(
-    //   new RunCommand(() -> mIntake.set(-0.01), mIntake).withTimeout(0.5),
-    //   new InstantCommand(mIntake::stop)));
-    // mController.leftTrigger().whileTrue(new RunCommand(mIntake::release, mIntake)).onFalse(new InstantCommand(mIntake::stop));
+    mController.b().whileTrue(new InstantCommand(() -> {
+      mIntake.set(-5);
+    }));
     mController.leftBumper().onTrue( // Substation
       new InstantCommand(
         () -> {
@@ -305,7 +271,7 @@ public class RobotContainer {
         mRotation, mExtension
       )
     );
-    mController.start().onTrue(mResetExtension);
+    mController.y().onTrue(mResetExtension);
     mController.back().onTrue( // FLOOR
       new InstantCommand(
         () -> {

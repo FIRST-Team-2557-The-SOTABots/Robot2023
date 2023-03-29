@@ -37,9 +37,10 @@ public class Intake extends SubsystemBase {
     // }
 
     
-    // public void stop() {
-    //     motors.set(0);       
-    // }
+    public void stop() {
+        mTopMotor.set(0);
+        mBottomMotor.set(0);       
+    }
 
     @Override
     public void periodic() {
