@@ -241,7 +241,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     // This method will be called once per scheduler run
     updatePose(
       getModulePositions(), 
-      new Rotation2d(getRotation2d().getRadians() + Math.PI / 2)
+      getRotation2d()
     );
     // updateModuleTranslation(mGyro.getRotation2d());
     

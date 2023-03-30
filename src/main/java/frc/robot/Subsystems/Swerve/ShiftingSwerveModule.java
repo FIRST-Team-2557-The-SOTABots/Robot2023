@@ -169,7 +169,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    */
   public double getAngle() {
     // return mOffsets.nativeToAdjusted(getAngleNoOffset());
-    return -1 * mAngleMotor.getEncoderPosition();//TODO: I think that this needs to be inverted
+    return  mAngleMotor.getEncoderPosition();//TODO: I think that this needs to be inverted
   }
 
   /**

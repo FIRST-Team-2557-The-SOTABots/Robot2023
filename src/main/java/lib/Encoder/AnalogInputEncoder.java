@@ -16,7 +16,7 @@ public class AnalogInputEncoder implements SOTA_AbsoulteEncoder {
     }
 
     public double get() {
-        return MathUtil.inputModulus(getPositionNoOffset() - kOffset, 0, kCountsPerRevolution);
+        return -1 * MathUtil.inputModulus(getPositionNoOffset() - kOffset, 0, kCountsPerRevolution) + kCountsPerRevolution;
     }
 
     
