@@ -138,7 +138,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     );
     mSwerveDriveOdometry.resetPosition(
       rotation,
-      getModulePositions(), //TODO: maybe change to getmodulestate
+      getModulePositions(), 
       pose
     );
   }
@@ -164,7 +164,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     int moduleNum = mSwerveModules.length;
     SwerveModulePosition[] modulePositions = new SwerveModulePosition[moduleNum];
     for (int i = 0; i < moduleNum; i++) {
-      modulePositions[i] = mSwerveModules[i].getMeasuredPosition(mShifter.getGear());
+      modulePositions[i] = mSwerveModules[i].getMeasuredPosition();
     }
     return modulePositions;
   }
@@ -187,7 +187,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   } 
 
   public void updatePose(Pose2d pose2d){
-    mSwerveDriveOdometry.resetPosition(mGyro.getRotation2d(), getModulePositions(), pose2d);
+    mSwerveDriveOdometry.resetPosition(getRotation2d(), getModulePositions(), pose2d);
   }
 
   
@@ -221,7 +221,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
    * @return The rotation2d of the drivetrain
    */
   public Rotation2d getRotation2d() {
-    return new Rotation2d(-mGyro.getRotation2d().getRadians());
+    return mGyro.getRotation2d();
   }
 
   public Pose2d getPose() {
@@ -240,13 +240,13 @@ public class ShiftingSwerveDrive extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     updatePose(
-      getModulePositions(), //TODO: maybe change to get module states instead
-      mGyro.getRotation2d()
+      getModulePositions(), 
+      new Rotation2d(getRotation2d().getRadians() + Math.PI / 2)
     );
     // updateModuleTranslation(mGyro.getRotation2d());
     
     SmartDashboard.putBoolean("field centric active", mFieldCentricActive);
-    SmartDashboard.putNumber("angle", mGyro.getAngle()); //TODO: I think that the gyro angle will need to be reversed once everything else is
+    SmartDashboard.putNumber("angle", mGyro.getAngle()); 
     SmartDashboard.putNumber("Odometry x", mSwerveDriveOdometry.getPoseMeters().getX());
     SmartDashboard.putNumber("Odometry y", mSwerveDriveOdometry.getPoseMeters().getY());
     // SmartDashboard.putNumber("bot angle radians", mGyro.getRotation2d().getRadians());

@@ -106,11 +106,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * Gets the swerve module position of the module
    * @return The SwerveModulePosition of the module
    */
-  public SwerveModulePosition getMeasuredPosition(int gear) {
-    // return new SwerveModulePosition(
-    //   kWheelCircumference, //TODO: Change to getMeters per second 
-    //   getRotation2d()
-    //);
+  public SwerveModulePosition getMeasuredPosition() {
     return  new SwerveModulePosition(
       getDistance(),
       getRotation2d()

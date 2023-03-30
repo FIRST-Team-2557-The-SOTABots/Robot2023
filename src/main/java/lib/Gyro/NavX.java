@@ -29,7 +29,7 @@ public class NavX implements SOTA_Gyro {
   }
 
   public Rotation2d getRotation2d() {
-    return isInverted ? new Rotation2d(-mNavX.getRotation2d().getRadians()) : mNavX.getRotation2d(); //TODO: test to make sure this is correct
+    return new Rotation2d(Math.toRadians(getAngle())); 
   }
 
   public void setAngle(double radians) {

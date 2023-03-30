@@ -13,7 +13,7 @@ public class SwerveUtils {
     int moduleNum = swerveModules.length;
     SwerveModulePosition[] modulePositions = new SwerveModulePosition[moduleNum];
     for (int i = 0; i < moduleNum; i++) {
-      modulePositions[i] = swerveModules[i].getMeasuredPosition(gear);
+      modulePositions[i] = swerveModules[i].getMeasuredPosition();
     }
     return modulePositions;
   }
