@@ -9,7 +9,7 @@
     "offsets": [2.972411805, 4.151610903, 0.465087843, 1.594238118, 2.972411804],
     
     "speedKP": 0.0007,
-    "speedKI": 0.0,
+    "speedKI": 0.00035,
     "speedKD": 0.0,
     "speedMaxAccel": 20000.0,
     "speedMaxVel": 40000.0,

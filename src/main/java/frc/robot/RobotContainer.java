@@ -163,16 +163,16 @@ public class RobotContainer {
       SOTA_MotorController winchMotor = MotorControllerFactory.generateSparkDelegate
       (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/WinchMotor"));
 
-      // SOTA_MotorController intakeMotorTop = MotorControllerFactory.generateSparkDelegate
-      // (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/IntakeMotorBottom.json"));
-      // SOTA_MotorController intakeMotorBottom = MotorControllerFactory.generateSparkDelegate
-      // (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/IntakeMotorTop"));
-      CANSparkMax intakeMotor1 = new CANSparkMax(1, MotorType.kBrushless);
-      CANSparkMax intakeMotor2 = new CANSparkMax(2, MotorType.kBrushless);
-      intakeMotor1.setInverted(true);
+      SOTA_MotorController intakeMotorTop = MotorControllerFactory.generateSparkDelegate
+      (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/IntakeMotorTop"));
+      SOTA_MotorController intakeMotorBottom = MotorControllerFactory.generateSparkDelegate
+      (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/IntakeMotorBottom"));
+      // CANSparkMax intakeMotor1 = new CANSparkMax(1, MotorType.kBrushless);
+      // CANSparkMax intakeMotor2 = new CANSparkMax(2, MotorType.kBrushless);
+      // intakeMotor1.setInverted(true);
 
-      SOTA_MotorController intakeMotorBottom = new SparkMaxDelegate(intakeMotor1, null);
-      SOTA_MotorController intakeMotorTop = new SparkMaxDelegate(intakeMotor2, null);
+      // SOTA_MotorController intakeMotorBottom = new SparkMaxDelegate(intakeMotor1, null);
+      // SOTA_MotorController intakeMotorTop = new SparkMaxDelegate(intakeMotor2, null);
 
       DigitalInput limitSwitch = new DigitalInput(0);
 

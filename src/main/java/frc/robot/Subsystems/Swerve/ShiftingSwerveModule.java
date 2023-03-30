@@ -248,7 +248,8 @@ public class ShiftingSwerveModule extends SubsystemBase {
     SmartDashboard.putBoolean("Should shift", shouldShift);
 
     SmartDashboard.putNumber("Speed Motor Speed", mSpeedMotor.getNativeEncoderVelocity());
-
+    
+    SmartDashboard.putNumber("Angle error" + mModulePosition, mSpeedPID.getVelocityError());
     // SmartDashboard.putNumber("current draw" + mModulePosition, mSpeedMotor.getMotorCurrent());
     // SmartDashboard.putNumber("mModulePosition", kAngleCountsPerRevolution);
   }

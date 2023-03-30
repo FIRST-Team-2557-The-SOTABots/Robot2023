@@ -63,6 +63,7 @@ public class Extension extends SubsystemBase{
         // SmartDashboard.putNumber("Extension length inches", getLength());
         SmartDashboard.putBoolean("limitswitch", mLimitswitch.get());
         // SmartDashboard.putNumber("extension motor limit", motor.getMotorLimits().getUpperLimit());
+        SmartDashboard.putNumber("extension current", mMotor.getMotorCurrent());
 
     }
 
