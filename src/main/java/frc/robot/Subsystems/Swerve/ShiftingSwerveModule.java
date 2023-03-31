@@ -28,7 +28,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
   private ProfiledPIDController mAnglePID;
   private PIDController mSpeedPID;
   private SimpleMotorFeedforward mAngleFF;
-  // private SimpleMotorFeedforward mSpeedFF;
+  private SimpleMotorFeedforward mSpeedFF;
 
   private double[] kGearRatios;
   private double kAngleCountsPerRevolution;
@@ -64,7 +64,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
 
     this.mAngleFF = config.angleFF();
 
-    // this.mSpeedFF = config.speedFF();
+    this.mSpeedFF = config.speedFF();
 
     this.mAnglePID = config.generateAnglePID(kAngleCountsPerRevolution);
     this.mSpeedPID = config.generateSpeedPID();
@@ -89,13 +89,13 @@ public class ShiftingSwerveModule extends SubsystemBase {
 
     double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[mGear.getAsInt()]);
     double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getNativeEncoderVelocity(), speedSetpointNative);
-
+    double speedFFOutput = mSpeedFF.calculate(speedSetpointNative);
     // double v = SmartDashboard.getNumber("Voltage" + mModulePosition, 0);
 
     // mSpeedMotor.setVoltage(v);
 
-    mSpeedMotor.setVoltage(speedPIDOutput);
-    // mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
+    // mSpeedMotor.setVoltage(speedPIDOutput);
+    mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
     // mSpeedMotor.set((speedSetpointNative / maxSpeed));
 
 
