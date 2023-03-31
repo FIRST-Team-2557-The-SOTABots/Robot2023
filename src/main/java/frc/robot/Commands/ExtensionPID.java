@@ -16,7 +16,7 @@ public class ExtensionPID extends CommandBase {
         FLOOR(10),
         FLOORCONE(17),
         HIGH(39), // 32 for old claw
-        MID(20),
+        MID(20.25),
         SUBSTATION(16),
         SINGLE(0.0);
 

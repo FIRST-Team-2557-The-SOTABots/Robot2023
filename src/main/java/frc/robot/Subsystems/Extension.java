@@ -32,7 +32,7 @@ public class Extension extends SubsystemBase{
     }
  
 
-    public double getEncoder(){
+    public double getEncoder() {
         return mMotor.getEncoderPosition();
     }
 

@@ -255,7 +255,7 @@ public class RobotContainer {
     mController.a().onTrue( // SCORE MID ON RELEASE HIGH
       new InstantCommand(
         () -> {
-          rotationPID.setSetpoint(RotationSetpoint.SCORE);
+          rotationPID.setSetpoint(RotationSetpoint.MID);
           extensionPID.startExhaustTimeout();
           extensionPID.setSetpoint(ExtensionSetpoint.MID);
         },
@@ -265,6 +265,7 @@ public class RobotContainer {
       new InstantCommand(
         () -> {
           if (!extensionPID.exhaustTimedOut()) {
+            rotationPID.setSetpoint(RotationSetpoint.HIGH);
             extensionPID.setSetpoint(ExtensionSetpoint.HIGH);
           }
         },
