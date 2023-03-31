@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.IntSupplier;
 
+import javax.management.openmbean.OpenDataException;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kauailabs.navx.frc.AHRS;
@@ -23,6 +25,7 @@ import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -45,6 +48,7 @@ import frc.robot.Commands.ResetExtension;
 import frc.robot.Commands.RotationPID;
 import frc.robot.Commands.RotationPID.RotationSetpoint;
 import frc.robot.Commands.Autos.BackUpMobility;
+import frc.robot.Commands.Autos.OnePieceMobilityAutoBalence;
 import frc.robot.Commands.Autos.PlaceCondAndMobilityWithPath;
 import frc.robot.Subsystems.Extension;
 import frc.robot.Subsystems.Intake;
@@ -88,6 +92,8 @@ public class RobotContainer {
   private AutoLevel mAutoLevel;
   private BackUpMobility mBackUpMobility;
   private ParallelDeadlineGroup mBackUpAuto;
+
+  
 
   private SwerveAutoBuilder mAutoBuilder;
 
@@ -188,7 +194,6 @@ public class RobotContainer {
 
       SuperStructure superStructure = new SuperStructure(mExtension::getLength, mRotation::getRotationDegrees, superStructureConfig);
 
-      ProfiledPIDController rotationPID = superStructureConfig.getRotationProfiledPIDController();
 
       ProfiledPIDController extensController = new ProfiledPIDController(3, 0, 0,
        new TrapezoidProfile.Constraints(40.0,80.0));
@@ -197,6 +202,8 @@ public class RobotContainer {
       this.extensionPID = new ExtensionPID(extensController, mExtension, superStructure::maxExtension);
       this.mResetExtension = new ResetExtension(mExtension);
       this.intakeCommand = new BasicIntakeCommand(mIntake, mController);
+
+
     
     } catch(IOException e){}
 
@@ -264,7 +271,7 @@ public class RobotContainer {
         mSwerveDrive
       )
     );
-    dController.y().onTrue(mAutoLevel);
+    dController.y().whileTrue(mAutoLevel);
 
     mController.b().whileTrue(new InstantCommand(() -> {
       mIntake.set(-5);
@@ -356,17 +363,28 @@ public class RobotContainer {
 
 
   public Command autos(){
-    PathPlannerTrajectory path1 = PathPlanner.loadPath("Leave Community", 4, 3.5, false);
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> {
-        mSwerveDrive.updatePose(path1.getInitialState());
-        mSwerveDrive.shift(0);
-      }),
-      mResetExtension,
-  //     mAutoBuilder.followPath(path1)
-  //   );
 
-  // }
-  new PlaceCondAndMobilityWithPath(extensionPID, rotationPID, mAutoBuilder, mIntake, path1));
+    
+  //   PathPlannerTrajectory path1 = PathPlanner.loadPath("Leave Community", 4, 2, false);
+    return new SequentialCommandGroup(
+  //     new InstantCommand(() -> {
+  //       mSwerveDrive.updatePose(path1.getInitialState());
+  //       mSwerveDrive.shift(0);
+  //     }),
+      mResetExtension,
+      
+      new InstantCommand(() -> {
+        mSwerveDrive.setFieldCentricActive(true);
+        mSwerveDrive.resetGyro();
+        mSwerveDrive.setGyro(Math.PI);
+        
+      }),
+      new OnePieceMobilityAutoBalence(extensionPID, rotationPID, mIntake, mSwerveDrive, mAutoLevel));
+
+  // //     mAutoBuilder.followPath(path1)
+  // //   );
+
+  // // }
+  // new PlaceCondAndMobilityWithPath(extensionPID, rotationPID, mAutoBuilder, mIntake, path1));
   } 
 }

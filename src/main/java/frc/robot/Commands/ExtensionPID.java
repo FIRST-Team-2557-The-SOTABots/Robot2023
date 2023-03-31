@@ -11,7 +11,7 @@ import frc.robot.Subsystems.Extension;
 public class ExtensionPID extends CommandBase {
 
     public enum ExtensionSetpoint {
-        RESET(-2),
+        RESET(-0.5),
         FLOOR(10),
         FLOORCONE(17),
         HIGH(37), // 32 for old claw

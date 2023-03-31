@@ -16,7 +16,7 @@ public class BasicIntakeCommand extends CommandBase{
 
     @Override
     public void execute() {
-        double speed = mController.getLeftY() * 0.5;
+        double speed = mController.getLeftY() * 0.8;
 
         mIntake.set(speed);
     }

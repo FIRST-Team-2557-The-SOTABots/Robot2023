@@ -232,11 +232,19 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     return mGyro.getPitch();
   }
 
+  public double getRoll() {
+    return mGyro.getRoll();
+  }
+
   public void resetGyro() {
     mGyro.resetAngle();
     mSwerveDriveOdometry.resetPosition(getRotation2d(), getModulePositions(), 
-    new Pose2d(getPose().getTranslation(), getRotation2d()));;
+    new Pose2d(getPose().getTranslation(), getRotation2d()));
 
+  }
+
+  public void setGyro(double radians) {
+    mGyro.setAngle(radians);
   }
 
   @Override
@@ -255,7 +263,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     // SmartDashboard.putNumber("bot angle radians", mGyro.getRotation2d().getRadians());
     // SmartDashboard.putNumber("Gyro roll", mGyro.getRoll());
     // SmartDashboard.putNumber("Gyro yaw", mGyro.getYaw());
-    // SmartDashboard.putNumber("Gyro pitch", mGyro.getPitch());
+    SmartDashboard.putNumber("Gyro pitch", mGyro.getPitch());
     
   }
   

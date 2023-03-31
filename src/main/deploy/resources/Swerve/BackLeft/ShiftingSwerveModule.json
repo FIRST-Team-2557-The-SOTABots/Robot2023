@@ -22,7 +22,7 @@
     "angleKP": 6.0,
     "angleKI": 0.0,
     "angleKD": 0.0,
-    "angleMaxAccel": 70.0,
+    "angleMaxAccel": 50.0,
     "angleKS": 0.0357224,
     "angleKV": 0.207199,
     "anglePIDTolerance": 0.0

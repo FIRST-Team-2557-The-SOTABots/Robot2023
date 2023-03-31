@@ -52,7 +52,10 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {}
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+    CommandScheduler.getInstance().clearComposedCommands();
+
+  }
 
   @Override
   public void teleopInit() {
