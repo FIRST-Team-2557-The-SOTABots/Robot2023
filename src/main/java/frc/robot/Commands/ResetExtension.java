@@ -12,7 +12,7 @@ public class ResetExtension extends CommandBase{
     }
     @Override
     public void execute() {
-        mExtension.setVoltage(-1);
+        mExtension.setVoltage(-4);
         
     }
     @Override

@@ -28,7 +28,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
   private ProfiledPIDController mAnglePID;
   private PIDController mSpeedPID;
   private SimpleMotorFeedforward mAngleFF;
-  private SimpleMotorFeedforward mSpeedFF;
+  // private SimpleMotorFeedforward mSpeedFF;
 
   private double[] kGearRatios;
   private double kAngleCountsPerRevolution;
@@ -64,7 +64,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
 
     this.mAngleFF = config.angleFF();
 
-    this.mSpeedFF = config.speedFF();
+    // this.mSpeedFF = config.speedFF();
 
     this.mAnglePID = config.generateAnglePID(kAngleCountsPerRevolution);
     this.mSpeedPID = config.generateSpeedPID();
@@ -89,13 +89,13 @@ public class ShiftingSwerveModule extends SubsystemBase {
 
     double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[mGear.getAsInt()]);
     double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getNativeEncoderVelocity(), speedSetpointNative);
-    double speedFFOutput = mSpeedFF.calculate(speedSetpointNative);
+
     // double v = SmartDashboard.getNumber("Voltage" + mModulePosition, 0);
 
     // mSpeedMotor.setVoltage(v);
 
-    // mSpeedMotor.setVoltage(speedPIDOutput);
-    mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
+    mSpeedMotor.setVoltage(speedPIDOutput);
+    // mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
     // mSpeedMotor.set((speedSetpointNative / maxSpeed));
 
 
@@ -151,7 +151,6 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * Updates the total distance with the previous encoder position
    */
   public void updateDistance() {
-    SmartDashboard.putNumber(mModulePosition + "update val", (mSpeedMotor.getNativeEncoderPosition() - mPrevEncoderPosition) * (kWheelCircumference / (kGearRatios[getCurrentGear()] * kSpeedCountsPerRevolution)));
     mDistance += (mSpeedMotor.getNativeEncoderPosition() - mPrevEncoderPosition) * (kWheelCircumference / (kGearRatios[getCurrentGear()] * kSpeedCountsPerRevolution));
     this.mPrevEncoderPosition = mSpeedMotor.getNativeEncoderPosition();
   }
@@ -238,6 +237,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
 
   @Override
   public void periodic() {
+    
     updateDistance();
     // This method will be called once per scheduler run
     // SmartDashboard.putBoolean("isInverted" + mModulePosition, mSpeedMotor.getInverted());
@@ -250,6 +250,8 @@ public class ShiftingSwerveModule extends SubsystemBase {
     SmartDashboard.putNumber("Speed Motor Speed", mSpeedMotor.getNativeEncoderVelocity());
     
     SmartDashboard.putNumber("Angle error" + mModulePosition, mSpeedPID.getVelocityError());
+
+    SmartDashboard.putNumber("distance" + mModulePosition, mDistance);
     // SmartDashboard.putNumber("current draw" + mModulePosition, mSpeedMotor.getMotorCurrent());
     // SmartDashboard.putNumber("mModulePosition", kAngleCountsPerRevolution);
   }

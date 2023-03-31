@@ -45,7 +45,13 @@ public class PlaceCondAndMobilityWithPath extends ParallelCommandGroup{
                 }),
                 new WaitUntilCommand(mRotationPID::atSetpoint),
                 new WaitUntilCommand(mExtensionCommand::atSetpoint),
-                new InstantCommand(mIntake::outTakeCone),
+                new InstantCommand(mIntake::outTakeCone, mIntake),
+                new InstantCommand(() -> {
+                    mRotationPID.setSetpoint(RotationSetpoint.RESET);
+                    mExtensionCommand.setSetpoint(ExtensionSetpoint.RESET);
+                }),
+                new WaitUntilCommand(mRotationPID::atSetpoint),
+                new WaitUntilCommand(mExtensionCommand::atSetpoint),
                 autoBuilder.followPath(trajectory)
                 
             )

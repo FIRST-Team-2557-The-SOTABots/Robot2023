@@ -129,7 +129,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
    * @param state State of the robot according to PathPlanner
    */
   public void updatePose(PathPlannerState state) {
-    mGyro.setAngle(state.holonomicRotation.getRadians());
+    mGyro.setAngle(state.holonomicRotation.getDegrees());
     Rotation2d rotation = new Rotation2d(state.holonomicRotation.getRadians());
     Pose2d pose = new Pose2d(
         state.poseMeters.getX(), 
@@ -234,6 +234,9 @@ public class ShiftingSwerveDrive extends SubsystemBase {
 
   public void resetGyro() {
     mGyro.resetAngle();
+    mSwerveDriveOdometry.resetPosition(getRotation2d(), getModulePositions(), 
+    new Pose2d(getPose().getTranslation(), getRotation2d()));;
+
   }
 
   @Override
@@ -243,12 +246,12 @@ public class ShiftingSwerveDrive extends SubsystemBase {
       getModulePositions(), 
       getRotation2d()
     );
-    // updateModuleTranslation(mGyro.getRotation2d());
     
     SmartDashboard.putBoolean("field centric active", mFieldCentricActive);
     SmartDashboard.putNumber("angle", mGyro.getAngle()); 
     SmartDashboard.putNumber("Odometry x", mSwerveDriveOdometry.getPoseMeters().getX());
     SmartDashboard.putNumber("Odometry y", mSwerveDriveOdometry.getPoseMeters().getY());
+    SmartDashboard.putNumber("Odometry angle", mSwerveDriveOdometry.getPoseMeters().getRotation().getDegrees());
     // SmartDashboard.putNumber("bot angle radians", mGyro.getRotation2d().getRadians());
     // SmartDashboard.putNumber("Gyro roll", mGyro.getRoll());
     // SmartDashboard.putNumber("Gyro yaw", mGyro.getYaw());

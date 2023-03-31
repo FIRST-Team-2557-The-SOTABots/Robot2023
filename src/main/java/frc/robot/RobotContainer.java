@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.IntSupplier;
@@ -21,6 +22,7 @@ import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -243,6 +245,9 @@ public class RobotContainer {
         mSwerveDrive::resetGyro
       ) 
     );
+    dController.back().onTrue(new InstantCommand(() -> {
+      mSwerveDrive.updatePose(new Pose2d());
+    }));
     dController.a().onTrue(
       new InstantCommand(
         () -> {
@@ -351,15 +356,15 @@ public class RobotContainer {
 
   public Command autos(){
     PathPlannerTrajectory path1 = PathPlanner.loadPath("Leave Community", 4, 3.5, false);
-  //   return new SequentialCommandGroup(
-  //     new InstantCommand(() -> {
-  //       mSwerveDrive.updatePose(path1.getInitialState());
-  //       mSwerveDrive.shift(0);
-  //     }),
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> {
+        mSwerveDrive.updatePose(path1.getInitialState());
+        mSwerveDrive.shift(0);
+      }),
   //     mAutoBuilder.followPath(path1)
   //   );
 
   // }
-  return new PlaceCondAndMobilityWithPath(extensionPID, rotationPID, mAutoBuilder, mIntake, path1);
+  new PlaceCondAndMobilityWithPath(extensionPID, rotationPID, mAutoBuilder, mIntake, path1));
   } 
 }

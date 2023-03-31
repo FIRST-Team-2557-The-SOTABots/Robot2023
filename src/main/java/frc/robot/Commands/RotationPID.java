@@ -31,9 +31,6 @@ public class RotationPID extends CommandBase{
     private Rotation mRotation;
     private double setpoint;
     private PIDController pidController;
-    private DoubleSupplier minAngle;
-    private DoubleSupplier maxAngle;
-    private DoubleSupplier extensionlength;
     private double kP;
     private double kPG; // proportional gain against gravity
     private DoubleSupplier kMinAngle;
