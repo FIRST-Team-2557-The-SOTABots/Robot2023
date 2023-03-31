@@ -264,6 +264,7 @@ public class RobotContainer {
         mSwerveDrive
       )
     );
+    dController.y().onTrue(mAutoLevel);
 
     mController.b().whileTrue(new InstantCommand(() -> {
       mIntake.set(-5);
@@ -361,6 +362,7 @@ public class RobotContainer {
         mSwerveDrive.updatePose(path1.getInitialState());
         mSwerveDrive.shift(0);
       }),
+      mResetExtension,
   //     mAutoBuilder.followPath(path1)
   //   );
 

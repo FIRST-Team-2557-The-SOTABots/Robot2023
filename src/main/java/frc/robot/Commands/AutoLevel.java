@@ -16,7 +16,7 @@ public class AutoLevel extends CommandBase{
     @Override
     public void execute() {
         mSwerveDrive.setFieldCentricActive(false);
-        double output = MathUtil.clamp(mSwerveDrive.getPitch() / 140, 0.2, 0.2);
+        double output = MathUtil.clamp(mSwerveDrive.getPitch() / 200, 0.2, 0.2);
         mSwerveDrive.drive(output,0,0, mSwerveDrive.getRotation2d());
     }
     @Override
