@@ -8,7 +8,7 @@
         "lowerLimit": null,
         "upperLimit": 290,
         "finalLimits": true
-    }
-    
+    },
+    "currentLimits": 40
 
 }

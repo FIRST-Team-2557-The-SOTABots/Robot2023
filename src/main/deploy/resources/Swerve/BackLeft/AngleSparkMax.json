@@ -9,6 +9,7 @@
         "encoderOffset": 0.865478427,
         "countsPerRevolution": 5,
         "encoderType": "ANALOG"
-    }
+    },
+    "currentLimit": 40
 
 }
