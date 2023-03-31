@@ -43,6 +43,7 @@ import frc.robot.Commands.ResetExtension;
 import frc.robot.Commands.RotationPID;
 import frc.robot.Commands.RotationPID.RotationSetpoint;
 import frc.robot.Commands.Autos.BackUpMobility;
+import frc.robot.Commands.Autos.PlaceCondAndMobilityWithPath;
 import frc.robot.Subsystems.Extension;
 import frc.robot.Subsystems.Intake;
 import frc.robot.Subsystems.Rotation;
@@ -350,13 +351,15 @@ public class RobotContainer {
 
   public Command autos(){
     PathPlannerTrajectory path1 = PathPlanner.loadPath("Leave Community", 4, 3.5, false);
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> {
-        mSwerveDrive.updatePose(path1.getInitialState());
-        mSwerveDrive.shift(0);
-      }),
-      mAutoBuilder.followPath(path1)
-    );
+  //   return new SequentialCommandGroup(
+  //     new InstantCommand(() -> {
+  //       mSwerveDrive.updatePose(path1.getInitialState());
+  //       mSwerveDrive.shift(0);
+  //     }),
+  //     mAutoBuilder.followPath(path1)
+  //   );
 
-  }
+  // }
+  return new PlaceCondAndMobilityWithPath(extensionPID, rotationPID, mAutoBuilder, mIntake, path1);
+  } 
 }

@@ -65,6 +65,10 @@ public class RotationPID extends CommandBase{
     public void setSetpoint(RotationSetpoint newSetpoint) {
         setpoint = newSetpoint.angle;
     }
+
+    public boolean atSetpoint(){
+        return Math.abs(setpoint - mRotation.getRotationDegrees()) < 1; 
+    }
     
 
     @Override

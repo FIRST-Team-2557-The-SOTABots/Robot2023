@@ -30,6 +30,13 @@ public class Intake extends SubsystemBase {
     public boolean hasPiece() {
         return false;
     }
+    public void outTakeCone(){
+        intakeCone(-0.2);
+    }
+
+    public void outTakeCube(){
+        intakeCube(-0.2);
+    }
 
     
     // public void set(double speed) {

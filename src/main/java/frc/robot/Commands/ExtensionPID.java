@@ -46,6 +46,9 @@ public class ExtensionPID extends CommandBase {
         this.mSetpoint = setpoint.inches;
     }
 
+    public boolean atSetpoint(){
+        return Math.abs(mSetpoint - mExtension.getLengthFromStart()) < 2;
+    }
     @Override
     public void execute() {
 
