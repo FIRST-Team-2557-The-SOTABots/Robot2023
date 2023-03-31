@@ -219,7 +219,7 @@ public class RobotContainer {
       ));
       eventMap.put("event2", new InstantCommand(
         () -> {
-          rotationPID.setSetpoint(RotationSetpoint.SCORE);
+          rotationPID.setSetpoint(RotationSetpoint.MID);
           extensionPID.setSetpoint(ExtensionSetpoint.MID);
         },
         mRotation, mExtension
@@ -278,7 +278,6 @@ public class RobotContainer {
         mRotation, mExtension
       )
     );
-    mController.y().onTrue(mResetExtension);
     mController.back().onTrue( // FLOOR
       new InstantCommand(
         () -> {
@@ -306,7 +305,7 @@ public class RobotContainer {
     mController.a().onTrue( // SCORE MID ON RELEASE HIGH
       new InstantCommand(
         () -> {
-          rotationPID.setSetpoint(RotationSetpoint.SCORE);
+          rotationPID.setSetpoint(RotationSetpoint.MID);
           extensionPID.startExhaustTimeout();
           extensionPID.setSetpoint(ExtensionSetpoint.MID);
         },
@@ -316,10 +315,20 @@ public class RobotContainer {
       new InstantCommand(
         () -> {
           if (!extensionPID.exhaustTimedOut()) {
+            rotationPID.setSetpoint(RotationSetpoint.HIGH);
             extensionPID.setSetpoint(ExtensionSetpoint.HIGH);
           }
         },
         mExtension
+      )
+    );
+    mController.b().onTrue(
+      new InstantCommand(
+        () -> {
+          rotationPID.setSetpoint(RotationSetpoint.SINGLE);
+          extensionPID.setSetpoint(ExtensionSetpoint.SINGLE);
+        },
+        mRotation, mExtension
       )
     );
     mController.x().onTrue( // RESET
@@ -331,7 +340,7 @@ public class RobotContainer {
         mRotation, mExtension
       )
     );
-    
+    mController.y().onTrue(mResetExtension); // Emergency reset
 
   }
 

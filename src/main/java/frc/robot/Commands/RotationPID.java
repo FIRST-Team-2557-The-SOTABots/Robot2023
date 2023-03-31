@@ -16,14 +16,15 @@ public class RotationPID extends CommandBase{
         FLOOR(49),
         FLOORCONE(55),
         FLOORCONEKNOCK(69),
-        SCORE(116),
-        SUBSTATION(135),
+        HIGH(116),
+        MID(110),
+        SUBSTATION(130),
         SINGLE(98);
     
-        public double angle;
+        public double degrees;
     
-        private RotationSetpoint(double angle) {
-            this.angle = angle;
+        private RotationSetpoint(double degrees) {
+            this.degrees = degrees;
         }
     
     }
@@ -60,7 +61,7 @@ public class RotationPID extends CommandBase{
     }
 
     public void setSetpoint(RotationSetpoint newSetpoint) {
-        setpoint = newSetpoint.angle;
+        setpoint = newSetpoint.degrees;
     }
 
     public boolean atSetpoint(){

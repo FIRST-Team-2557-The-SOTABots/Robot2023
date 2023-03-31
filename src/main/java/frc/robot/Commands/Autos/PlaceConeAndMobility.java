@@ -49,7 +49,7 @@ public class PlaceConeAndMobility extends SequentialCommandGroup {
         addCommands(
             new InstantCommand(
                 () -> {
-                    mRotationPID.setSetpoint(RotationSetpoint.SCORE);
+                    mRotationPID.setSetpoint(RotationSetpoint.HIGH);
                     mExtensionPID.setSetpoint(ExtensionSetpoint.HIGH);
                     mSwerveDrive.updatePose(kMobility.getInitialState());
                     mSwerveDrive.shift(0);
