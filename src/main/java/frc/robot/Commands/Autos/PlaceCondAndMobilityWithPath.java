@@ -40,7 +40,7 @@ public class PlaceCondAndMobilityWithPath extends ParallelCommandGroup{
             mRotationPID,
             new SequentialCommandGroup(
                 new InstantCommand(() ->{
-                    mRotationPID.setSetpoint(RotationSetpoint.SCORE);
+                    mRotationPID.setSetpoint(RotationSetpoint.HIGH);
                     mExtensionCommand.setSetpoint(ExtensionSetpoint.HIGH);
                 }),
                 new WaitUntilCommand(mRotationPID::atSetpoint),
