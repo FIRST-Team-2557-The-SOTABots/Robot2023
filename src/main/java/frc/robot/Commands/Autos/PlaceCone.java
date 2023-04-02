@@ -22,21 +22,19 @@ import frc.robot.Commands.RotationPID.RotationSetpoint;
 import frc.robot.Subsystems.Intake;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 
-public class OnePieceMobilityAutoBalence extends ParallelCommandGroup {
+public class PlaceCone extends ParallelCommandGroup {
   private static double kOuttakeTimeout = 0.5;
-  private static double kMobilityTimeout = 2;
+  private static double kMobilityTimeout = 2.5;
   private static double kLineupAuto = 2.0;
   private static double kStrTime = 0.5;
   /** Creates a new OnePieceMobilityAutoBalence. */
-  public OnePieceMobilityAutoBalence(
+  public PlaceCone(
     ExtensionPID extensionPID,
     RotationPID rotationPID,
-    Intake intake,
-    ShiftingSwerveDrive swerveDrive,
-    AutoLevel autoLevel
+    Intake intake
   ) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addCommands(
+    addCommands( // TODO: Autos violate DRY coding principle
       extensionPID,
       rotationPID,
       new SequentialCommandGroup(
@@ -62,18 +60,12 @@ public class OnePieceMobilityAutoBalence extends ParallelCommandGroup {
           }, intake
         ),
         new WaitUntilCommand(rotationPID::atSetpoint),
-        new WaitUntilCommand(extensionPID::atSetpoint),
+        new WaitUntilCommand(extensionPID::atSetpoint)
         // new RunCommand(
         //   () -> 
         //   swerveDrive.drive(
         //     0.3, -0.3, 0, swerveDrive.getRotation2d()
         //     ), swerveDrive).withTimeout(kStrTime),
-        new RunCommand(
-          () ->
-            swerveDrive.drive(
-            new ChassisSpeeds(-2,0,0)
-            ), swerveDrive
-        ).withTimeout(kMobilityTimeout),
         // new RunCommand(
         //   () -> {
         //     swerveDrive.drive(
@@ -81,7 +73,6 @@ public class OnePieceMobilityAutoBalence extends ParallelCommandGroup {
         //     );  
         //   }
         // ).withTimeout(kLineupAuto),
-        autoLevel
       )
     );
   }

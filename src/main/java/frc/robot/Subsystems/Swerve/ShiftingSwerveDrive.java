@@ -256,14 +256,17 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     );
     
     SmartDashboard.putBoolean("field centric active", mFieldCentricActive);
-    SmartDashboard.putNumber("angle", mGyro.getAngle()); 
-    SmartDashboard.putNumber("Odometry x", mSwerveDriveOdometry.getPoseMeters().getX());
-    SmartDashboard.putNumber("Odometry y", mSwerveDriveOdometry.getPoseMeters().getY());
-    SmartDashboard.putNumber("Odometry angle", mSwerveDriveOdometry.getPoseMeters().getRotation().getDegrees());
+    SmartDashboard.putNumber("Gyro angle", mGyro.getAngle()); 
+    // SmartDashboard.putNumber("Odometry x", mSwerveDriveOdometry.getPoseMeters().getX());
+    // SmartDashboard.putNumber("Odometry y", mSwerveDriveOdometry.getPoseMeters().getY());
+    // SmartDashboard.putNumber("Odometry angle", mSwerveDriveOdometry.getPoseMeters().getRotation().getDegrees());
     // SmartDashboard.putNumber("bot angle radians", mGyro.getRotation2d().getRadians());
     // SmartDashboard.putNumber("Gyro roll", mGyro.getRoll());
     // SmartDashboard.putNumber("Gyro yaw", mGyro.getYaw());
-    SmartDashboard.putNumber("Gyro pitch", mGyro.getPitch());
+    // SmartDashboard.putNumber("Gyro pitch", mGyro.getPitch());
+
+    SmartDashboard.putBoolean("Current Gear", mShifter.getGear() == 0 ? false : true); // Extract this out into ShiftingSwerveDrive
+
     
   }
   

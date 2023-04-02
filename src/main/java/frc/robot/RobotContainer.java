@@ -50,6 +50,8 @@ import frc.robot.Commands.RotationPID.RotationSetpoint;
 import frc.robot.Commands.Autos.BackUpMobility;
 import frc.robot.Commands.Autos.OnePieceMobilityAutoBalence;
 import frc.robot.Commands.Autos.PlaceCondAndMobilityWithPath;
+import frc.robot.Commands.Autos.PlaceCone;
+import frc.robot.Commands.Autos.PlaceConeAndMobility;
 import frc.robot.Subsystems.Extension;
 import frc.robot.Subsystems.Intake;
 import frc.robot.Subsystems.Rotation;
@@ -273,6 +275,21 @@ public class RobotContainer {
     );
     dController.y().whileTrue(mAutoLevel);
 
+    // dController.leftTrigger().onTrue(
+    //   new InstantCommand(
+    //     () -> {
+    //       mSwerveDrive.shift(0);
+    //     }
+    //   )
+    // );
+    // dController.rightTrigger().onTrue(
+    //   new InstantCommand(
+    //     () -> {
+    //       mSwerveDrive.shift(1);
+    //     }
+    //   )
+    // );
+
     mController.b().whileTrue(new InstantCommand(() -> {
       mIntake.set(-5);
     }));
@@ -383,12 +400,14 @@ public class RobotContainer {
       mResetExtension,
       
       new InstantCommand(() -> {
-        mSwerveDrive.setFieldCentricActive(true);
+        // mSwerveDrive.setFieldCentricActive(true);
         mSwerveDrive.resetGyro();
-        mSwerveDrive.setGyro(Math.PI);
+        // mSwerveDrive.setGyro(Math.PI);
         
       }),
       new OnePieceMobilityAutoBalence(extensionPID, rotationPID, mIntake, mSwerveDrive, mAutoLevel));
+      // new PlaceConeAndMobility(extensionPID, rotationPID, mIntake, mSwerveDrive)); //TODO: PLEASE MAKE AN AUTO CHOOSER
+      // new PlaceCone(extensionPID, rotationPID, mIntake));
 
   // //     mAutoBuilder.followPath(path1)
   // //   );

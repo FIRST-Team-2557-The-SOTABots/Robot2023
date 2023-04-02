@@ -91,6 +91,10 @@ public class ShiftingSwerveModule extends SubsystemBase {
     double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getNativeEncoderVelocity(), speedSetpointNative);
     double speedFFOutput = mSpeedFF.calculate(speedSetpointNative);
 
+    // TODO: this needs to be tested to see if swerve is going at the speed it needs to be at 
+    // SmartDashboard.putNumber("setpoint native speed " + mModulePosition, speedSetpointNative); 
+    // SmartDashboard.putNumber("speed native velocity " + mModulePosition, mSpeedMotor.getNativeEncoderVelocity());
+
     // double v = SmartDashboard.getNumber("Voltage" + mModulePosition, 0);
 
     // mSpeedMotor.setVoltage(v);
@@ -100,7 +104,6 @@ public class ShiftingSwerveModule extends SubsystemBase {
     // mSpeedMotor.set((speedSetpointNative / maxSpeed));
 
 
-    // SmartDashboard.putBoolean("Current Gear", state.gear == 0 ? false : true); // Extract this out into ShiftingSwerveDrive
   }
 
   /** 
@@ -108,7 +111,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * @return The SwerveModulePosition of the module
    */
   public SwerveModulePosition getMeasuredPosition() {
-    return  new SwerveModulePosition(
+    return new SwerveModulePosition(
       getDistance(),
       getRotation2d()
     );
@@ -243,16 +246,16 @@ public class ShiftingSwerveModule extends SubsystemBase {
     // This method will be called once per scheduler run
     // SmartDashboard.putBoolean("isInverted" + mModulePosition, mSpeedMotor.getInverted());
 
-    boolean shouldShift = mSpeedMotor.get() > 0.70;
+    boolean shouldShift = Math.abs(mSpeedMotor.get()) > 0.70;
     
     SmartDashboard.putNumber("angle no offset " + mModulePosition, mAngleMotor.getEncoder().getAbsolutePosition());
     SmartDashboard.putBoolean("Should shift", shouldShift);
 
-    SmartDashboard.putNumber("Speed Motor Speed", mSpeedMotor.getNativeEncoderVelocity());
+    // SmartDashboard.putNumber("Speed Motor Speed", mSpeedMotor.getNativeEncoderVelocity());
     
-    SmartDashboard.putNumber("Angle error" + mModulePosition, mSpeedPID.getVelocityError());
+    // SmartDashboard.putNumber("Angle error" + mModulePosition, mSpeedPID.getVelocityError());
 
-    SmartDashboard.putNumber("distance" + mModulePosition, mDistance);
+    // SmartDashboard.putNumber("distance" + mModulePosition, mDistance);
     // SmartDashboard.putNumber("current draw" + mModulePosition, mSpeedMotor.getMotorCurrent());
     // SmartDashboard.putNumber("mModulePosition", kAngleCountsPerRevolution);
   }

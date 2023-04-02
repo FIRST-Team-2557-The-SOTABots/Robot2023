@@ -14,9 +14,9 @@ public class ExtensionPID extends CommandBase {
         RESET(-0.5),
         FLOOR(10),
         FLOORCONE(17),
-        HIGH(39), // 32 for old claw
+        HIGH(37), // 32 for old claw
         MID(20.25),
-        SUBSTATION(16),
+        SUBSTATION(11),
         SINGLE(0.0);
 
         public double inches;
@@ -64,7 +64,7 @@ public class ExtensionPID extends CommandBase {
         
         mExtension.setVoltage(output);
 
-        SmartDashboard.putNumber("extensionGoal", mSetpoint);
+        // SmartDashboard.putNumber("extensionGoal", mSetpoint);
         // SmartDashboard.putNumber("Max Extension", maxLength.getAsDouble());
         
     }

@@ -30,7 +30,7 @@ public class DefaultDrive extends CommandBase {
     double rot = mDriveStick.getRightX();
 
     // Squares inputs and preserves sign TODO: make controller class that handles this
-    fwd = -Math.signum(fwd) * fwd * fwd;
+    fwd = -Math.signum(fwd) * fwd * fwd; // thought i fixed this 
     str = -Math.signum(str) * str * str;
     rot = -Math.signum(rot) * rot * rot;
 
@@ -44,17 +44,15 @@ public class DefaultDrive extends CommandBase {
     drive(fwd, str, rot, mSwerveDrive.getRotation2d(), new Translation2d());
   }
 
-  
-
   protected void drive(double fwd, double str, double rot, Rotation2d angle, Translation2d pointOfRotation) {
     mSwerveDrive.drive(fwd, str, rot, angle, pointOfRotation);
   }
 
   protected void shift(double lo, double hi) {
     if (lo != 0.0) 
-      mSwerveDrive.shift(1);
-    if (hi != 0.0)
       mSwerveDrive.shift(0);
+    if (hi != 0.0)
+      mSwerveDrive.shift(1);
   }
 
   // Returns true when the command should end.

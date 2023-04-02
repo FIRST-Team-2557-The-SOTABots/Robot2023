@@ -16,9 +16,9 @@ public class RotationPID extends CommandBase{
         FLOOR(49),
         FLOORCONE(55),
         FLOORCONEKNOCK(69),
-        HIGH(116),
+        HIGH(118),
         MID(110),
-        SUBSTATION(130),
+        SUBSTATION(135),
         SINGLE(98);
     
         public double degrees;
@@ -79,18 +79,15 @@ public class RotationPID extends CommandBase{
         double output = Math.sin(mRotation.getRotationRadians()) * (kRotationDelta + (kRotationDeltaProportional * kExtensionlength.getAsDouble() / kMaxExtension)) 
         + pidController.calculate(mRotation.getRotationDegrees(), adjustedSetpoint);
 
-        SmartDashboard.putNumber("output", output);
         // SmartDashboard.putNumber("kPG", kPG);
         // SmartDashboard.putNumber("max extension", kMaxExtension);
 
         mRotation.set(output);
 
-        SmartDashboard.putNumber("Delta", kRotationDeltaProportional);
-
-        SmartDashboard.putNumber("Angle Output", output);
+        // SmartDashboard.putNumber("Angle Output", output);
         // SmartDashboard.putNumber("MinAngle", minAngle.getAsDouble());
         // SmartDashboard.putNumber("maxAngle", maxAngle.getAsDouble());
-        SmartDashboard.putNumber("Rotation goal", setpoint);
+        // SmartDashboard.putNumber("Rotation goal", setpoint);
 
     }
     

@@ -1,69 +1,86 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.Commands.Autos;
 
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.auto.SwerveAutoBuilder;
+import javax.swing.text.html.MinimalHTMLWriter;
 
-import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotWheelSize;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.Commands.AutoLevel;
 import frc.robot.Commands.ExtensionPID;
 import frc.robot.Commands.RotationPID;
 import frc.robot.Commands.ExtensionPID.ExtensionSetpoint;
 import frc.robot.Commands.RotationPID.RotationSetpoint;
-import frc.robot.Subsystems.Extension;
 import frc.robot.Subsystems.Intake;
-import frc.robot.Subsystems.Rotation;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 
-public class PlaceConeAndMobility extends SequentialCommandGroup {
-
-    private static PathPlannerTrajectory kMobility = PathPlanner.loadPath("MobilityFrom", 4, 3.5);
-    private static double kExtendTimeout = 1.5;
-    private static double kPlaceConeTimeout = 0.5;
-
-    private Extension mExtension;
-    private ExtensionPID mExtensionPID;
-    private Rotation mRotation;
-    private RotationPID mRotationPID;
-    private Intake mIntake;
-    private ShiftingSwerveDrive mSwerveDrive;
-    private SwerveAutoBuilder mAutoBuilder;
-
-    public PlaceConeAndMobility(Extension extension, 
-        ExtensionPID extensionPID, 
-        Rotation rotation, 
-        RotationPID rotationPID, 
-        Intake intake, 
-        ShiftingSwerveDrive swerveDrive, 
-        SwerveAutoBuilder autoBuilder) {
-        this.mExtension = extension;
-        this.mExtensionPID = extensionPID;
-        this.mRotation = rotation;
-        this.mRotationPID = rotationPID;
-        this.mIntake = intake;
-        this.mSwerveDrive = swerveDrive;
-        addRequirements(mExtension, intake, rotation, swerveDrive);
-        addCommands(
-            new InstantCommand(
-                () -> {
-                    mRotationPID.setSetpoint(RotationSetpoint.HIGH);
-                    mExtensionPID.setSetpoint(ExtensionSetpoint.HIGH);
-                    mSwerveDrive.updatePose(kMobility.getInitialState());
-                    mSwerveDrive.shift(0);
-                }, mExtension, mRotation, mSwerveDrive
-            ),
-            new WaitCommand(kExtendTimeout),
-            new RunCommand(
-                () -> {
-                    mIntake.set(-1); // TODO: Double check this 
-                }, intake
-            ).withTimeout(kPlaceConeTimeout),
-            mAutoBuilder.followPath(kMobility)
-        );
-
-    }
-    
+public class PlaceConeAndMobility extends ParallelCommandGroup {
+  private static double kOuttakeTimeout = 0.5;
+  private static double kMobilityTimeout = 2.5;
+  private static double kLineupAuto = 2.0;
+  private static double kStrTime = 0.5;
+  /** Creates a new OnePieceMobilityAutoBalence. */
+  public PlaceConeAndMobility(
+    ExtensionPID extensionPID,
+    RotationPID rotationPID,
+    Intake intake,
+    ShiftingSwerveDrive swerveDrive
+  ) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    addCommands(
+      extensionPID,
+      rotationPID,
+      new SequentialCommandGroup(
+        new InstantCommand(
+          () -> {
+            extensionPID.setSetpoint(ExtensionSetpoint.HIGH);
+            rotationPID.setSetpoint(RotationSetpoint.HIGH); // TODO:Change
+            intake.set(0.3);
+          }, intake
+        ),
+        new WaitUntilCommand(rotationPID::atSetpoint),
+        new WaitUntilCommand(extensionPID::atSetpoint),
+        new RunCommand(
+          () -> {
+            intake.set(-0.3);
+          }, intake
+        ).withTimeout(kOuttakeTimeout),
+        new InstantCommand(
+          () -> {
+            extensionPID.setSetpoint(ExtensionSetpoint.RESET);
+            rotationPID.setSetpoint(RotationSetpoint.RESET);
+            intake.stop();
+          }, intake
+        ),
+        new WaitUntilCommand(rotationPID::atSetpoint),
+        new WaitUntilCommand(extensionPID::atSetpoint),
+        // new RunCommand(
+        //   () -> 
+        //   swerveDrive.drive(
+        //     0.3, -0.3, 0, swerveDrive.getRotation2d()
+        //     ), swerveDrive).withTimeout(kStrTime),
+        new RunCommand(
+          () ->
+            swerveDrive.drive(
+            new ChassisSpeeds(-2,0,0)
+            ), swerveDrive
+        ).withTimeout(kMobilityTimeout)
+        // new RunCommand(
+        //   () -> {
+        //     swerveDrive.drive(
+        //       new ChassisSpeeds(2,0,0)
+        //     );  
+        //   }
+        // ).withTimeout(kLineupAuto),
+      )
+    );
+  }
 }
