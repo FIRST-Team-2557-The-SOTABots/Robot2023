@@ -36,33 +36,33 @@ public class PlaceConeAndMobility extends ParallelCommandGroup {
   ) {
     // Use addRequirements() here to declare subsystem dependencies.
     addCommands(
-      extensionPID,
-      rotationPID,
+      // extensionPID,
+      // rotationPID,
       new SequentialCommandGroup(
-        new InstantCommand(
-          () -> {
-            extensionPID.setSetpoint(ExtensionSetpoint.HIGH);
-            rotationPID.setSetpoint(RotationSetpoint.HIGH); // TODO:Change
-            intake.set(0.3);
-          }, intake
-        ),
-        new WaitUntilCommand(rotationPID::atSetpoint),
-        new WaitUntilCommand(extensionPID::atSetpoint),
-        new RunCommand(
-          () -> {
-            intake.set(-0.3);
-          }, intake
-        ).withTimeout(kOuttakeTimeout),
-        new InstantCommand(
-          () -> {
-            extensionPID.setSetpoint(ExtensionSetpoint.RESET);
-            rotationPID.setSetpoint(RotationSetpoint.RESET);
-            intake.stop();
-          }, intake
-        ),
-        new WaitUntilCommand(rotationPID::atSetpoint),
-        new WaitUntilCommand(extensionPID::atSetpoint),
+        // new InstantCommand(
+        //   () -> {
+        //     extensionPID.setSetpoint(ExtensionSetpoint.HIGH);
+        //     rotationPID.setSetpoint(RotationSetpoint.HIGH); // TODO:Change
+        //     intake.set(0.3);
+        //   }, intake
+        // ),
+        // new WaitUntilCommand(rotationPID::atSetpoint),
+        // new WaitUntilCommand(extensionPID::atSetpoint),
         // new RunCommand(
+        //   () -> {
+        //     intake.set(-0.3);
+        //   }, intake
+        // ).withTimeout(kOuttakeTimeout),
+        // new InstantCommand(
+        //   () -> {
+        //     extensionPID.setSetpoint(ExtensionSetpoint.RESET);
+        //     rotationPID.setSetpoint(RotationSetpoint.RESET);
+        //     intake.stop();
+        //   }, intake
+        // ),
+        // new WaitUntilCommand(rotationPID::atSetpoint),
+        // new WaitUntilCommand(extensionPID::atSetpoint),
+        // // new RunCommand(
         //   () -> 
         //   swerveDrive.drive(
         //     0.3, -0.3, 0, swerveDrive.getRotation2d()
@@ -72,14 +72,14 @@ public class PlaceConeAndMobility extends ParallelCommandGroup {
             swerveDrive.drive(
             new ChassisSpeeds(-2,0,0)
             ), swerveDrive
-        ).withTimeout(kMobilityTimeout)
-        // new RunCommand(
-        //   () -> {
-        //     swerveDrive.drive(
-        //       new ChassisSpeeds(2,0,0)
-        //     );  
-        //   }
-        // ).withTimeout(kLineupAuto),
+        ).withTimeout(kMobilityTimeout),
+        new RunCommand(
+          () -> {
+            swerveDrive.drive(
+              new ChassisSpeeds(0,0,0)
+            );  
+          }
+        ).withTimeout(kLineupAuto)
       )
     );
   }

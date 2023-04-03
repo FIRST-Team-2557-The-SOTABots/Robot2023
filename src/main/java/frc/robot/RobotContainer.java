@@ -402,12 +402,13 @@ public class RobotContainer {
       new InstantCommand(() -> {
         // mSwerveDrive.setFieldCentricActive(true);
         mSwerveDrive.resetGyro();
+        mSwerveDrive.setGyro(Math.PI);
         // mSwerveDrive.setGyro(Math.PI);
         
       }),
-      new OnePieceMobilityAutoBalence(extensionPID, rotationPID, mIntake, mSwerveDrive, mAutoLevel));
+      // new OnePieceMobilityAutoBalence(extensionPID, rotationPID, mIntake, mSwerveDrive, mAutoLevel));
       // new PlaceConeAndMobility(extensionPID, rotationPID, mIntake, mSwerveDrive)); //TODO: PLEASE MAKE AN AUTO CHOOSER
-      // new PlaceCone(extensionPID, rotationPID, mIntake));
+      new PlaceCone(extensionPID, rotationPID, mIntake));
 
   // //     mAutoBuilder.followPath(path1)
   // //   );
