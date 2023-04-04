@@ -4,7 +4,7 @@ package lib.Control;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
-public class SOTA_Xboxcontroller extends CommandXboxController{
+public class SOTA_Xboxcontroller extends CommandXboxController {
 
     public SOTA_Xboxcontroller(int port) {
         super(port);

@@ -13,6 +13,7 @@ public class RotationPID extends CommandBase{
 
     public enum RotationSetpoint {
         RESET(150),
+        REST(175),
         FLOOR(49),
         FLOORCONE(55),
         FLOORCONEKNOCK(69),
@@ -71,7 +72,6 @@ public class RotationPID extends CommandBase{
 
     @Override
     public void execute() {
-        // SmartDashboard.getNumber("set p", 0));
         double adjustedSetpoint = MathUtil.clamp(setpoint, kMinAngle.getAsDouble(), kMaxAngle.getAsDouble());
 
         pidController.setP(kPG - ((kP * kExtensionlength.getAsDouble()) / kMaxExtension));
@@ -79,15 +79,8 @@ public class RotationPID extends CommandBase{
         double output = Math.sin(mRotation.getRotationRadians()) * (kRotationDelta + (kRotationDeltaProportional * kExtensionlength.getAsDouble() / kMaxExtension)) 
         + pidController.calculate(mRotation.getRotationDegrees(), adjustedSetpoint);
 
-        // SmartDashboard.putNumber("kPG", kPG);
-        // SmartDashboard.putNumber("max extension", kMaxExtension);
-
         mRotation.set(output);
 
-        // SmartDashboard.putNumber("Angle Output", output);
-        // SmartDashboard.putNumber("MinAngle", minAngle.getAsDouble());
-        // SmartDashboard.putNumber("maxAngle", maxAngle.getAsDouble());
-        // SmartDashboard.putNumber("Rotation goal", setpoint);
 
     }
     

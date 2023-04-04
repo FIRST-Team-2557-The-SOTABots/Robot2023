@@ -12,11 +12,7 @@ import lib.Config.SuperStructureConfig;
 
 public class SuperStructure extends SubsystemBase {
 
-  // private SOTAGyro pigeon;
-  // private SOTAMotorController rotatorMotor;
-  // private SOTAMotorController winchMotor;
-  // private DigitalInput limitSwitch;
-  // private MotorController intakeMotors;
+
 
   private DoubleSupplier extensionLength;
   private DoubleSupplier CurrentAngle;

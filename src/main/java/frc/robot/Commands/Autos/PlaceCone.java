@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Commands.AutoLevel;
+import frc.robot.Commands.BasicIntakeCommand;
 import frc.robot.Commands.ExtensionPID;
 import frc.robot.Commands.RotationPID;
 import frc.robot.Commands.ExtensionPID.ExtensionSetpoint;
@@ -31,33 +32,34 @@ public class PlaceCone extends ParallelCommandGroup {
   public PlaceCone(
     ExtensionPID extensionPID,
     RotationPID rotationPID,
-    Intake intake
+    BasicIntakeCommand intakeCommand
   ) {
     // Use addRequirements() here to declare subsystem dependencies.
     addCommands( // TODO: Autos violate DRY coding principle
       extensionPID,
       rotationPID,
+      intakeCommand,
       new SequentialCommandGroup(
         new InstantCommand(
           () -> {
             extensionPID.setSetpoint(ExtensionSetpoint.HIGH);
             rotationPID.setSetpoint(RotationSetpoint.HIGH); // TODO:Change
-            intake.set(0.3);
-          }, intake
+            intakeCommand.setPower(0.3);
+          }
         ),
         new WaitUntilCommand(rotationPID::atSetpoint),
         new WaitUntilCommand(extensionPID::atSetpoint),
         new RunCommand(
           () -> {
-            intake.set(-0.3);
-          }, intake
+            intakeCommand.setPower(-0.3);
+          }
         ).withTimeout(kOuttakeTimeout),
         new InstantCommand(
           () -> {
             extensionPID.setSetpoint(ExtensionSetpoint.RESET);
             rotationPID.setSetpoint(RotationSetpoint.RESET);
-            intake.stop();
-          }, intake
+            intakeCommand.setPower(0.0);
+          }
         ),
         new WaitUntilCommand(rotationPID::atSetpoint),
         new WaitUntilCommand(extensionPID::atSetpoint)

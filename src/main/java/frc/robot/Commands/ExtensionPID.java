@@ -4,7 +4,6 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Extension;
 
@@ -12,6 +11,7 @@ public class ExtensionPID extends CommandBase {
 
     public enum ExtensionSetpoint {
         RESET(-0.5),
+        REST(-0.5),
         FLOOR(10),
         FLOORCONE(17),
         HIGH(37), // 32 for old claw
@@ -50,7 +50,7 @@ public class ExtensionPID extends CommandBase {
         if(mSetpoint < 0 && mExtension.getLengthFromStart() == 0) return true; 
         return Math.abs(mSetpoint - mExtension.getLengthFromStart()) < 2;
     }
-    @Override
+
     public void execute() {
 
         // setPoint = SmartDashboard.getNumber("Extension Length", 0.0);
@@ -75,7 +75,12 @@ public class ExtensionPID extends CommandBase {
 
     public boolean exhaustTimedOut() {
         return mExhaustTimer.hasElapsed(kExhaustTime);
-    }    
+    }   
+    
+    // TODO: finish
+    public void limitExtension() {
+
+    }
 
     
 }

@@ -8,8 +8,8 @@
     "angles": [0.0, 1.5707, 3.1415, 4.7123, 6.2831],
     "offsets": [1.279296744, 2.515868883, 3.811034766, 0.037841793, 1.279296743],
     
-    "speedKP": 0.0008,
-    "speedKI": 0.000,
+    "speedKP": 0.0005,
+    "speedKI": 0.0005,
     "speedKD": 0.0,
     "speedMaxAccel": 20000.0,
     "speedMaxVel": 40000.0,
@@ -19,7 +19,7 @@
 
     "maxWheelSpeed": 10,
 
-    "angleKP": 6.0,
+    "angleKP": 5.0,
     "angleKI": 2.0,
     "angleKD": 0.0,
     "angleMaxAccel": 50.0,

@@ -90,6 +90,8 @@ public class RobotContainer {
   private Extension mExtension;
   private Intake mIntake;
 
+  private SuperStructure superStructure;
+
   private DefaultDrive mDriveCommand;
   private RotationPID rotationPID;
   private ExtensionPID extensionPID;
@@ -200,7 +202,7 @@ public class RobotContainer {
       this.mRotation = new Rotation(rotationMotor, superStructureConfig);
       this.mIntake = new Intake(intakeMotorTop, intakeMotorBottom);
 
-      SuperStructure superStructure = new SuperStructure(mExtension::getLength, mRotation::getRotationDegrees, superStructureConfig);
+      this.superStructure = new SuperStructure(mExtension::getLength, mRotation::getRotationDegrees, superStructureConfig);
 
 
       ProfiledPIDController extensController = new ProfiledPIDController(3, 0, 0,
@@ -209,9 +211,7 @@ public class RobotContainer {
       this.rotationPID = new RotationPID(mRotation, mExtension::getLengthFromStart, superStructure::minRotation, superStructure::maxRotation, superStructureConfig);
       this.extensionPID = new ExtensionPID(extensController, mExtension, superStructure::maxExtension);
       this.mResetExtension = new ResetExtension(mExtension);
-      this.intakeCommand = new BasicIntakeCommand(mIntake, mController);
-
-
+      this.intakeCommand = new BasicIntakeCommand(mIntake, mController::getLeftY);
     
     } catch(IOException e){}
 
@@ -263,9 +263,9 @@ public class RobotContainer {
         mSwerveDrive::resetGyro
       ) 
     );
-    dController.back().onTrue(new InstantCommand(() -> {
-      mSwerveDrive.updatePose(new Pose2d());
-    }));
+    // dController.back().onTrue(new InstantCommand(() -> {
+    //   mSwerveDrive.updatePose(new Pose2d());
+    // }));
     dController.a().onTrue(
       new InstantCommand(
         () -> {
@@ -309,6 +309,14 @@ public class RobotContainer {
           extensionPID.setSetpoint(ExtensionSetpoint.SUBSTATION);
         },
         mRotation, mExtension
+      )
+    );
+    mController.rightBumper().onTrue(
+      new InstantCommand(
+        () -> {
+          rotationPID.setSetpoint(RotationSetpoint.REST);
+          extensionPID.setSetpoint(ExtensionSetpoint.REST);
+        }
       )
     );
     mController.back().onTrue( // FLOOR
@@ -397,15 +405,27 @@ public class RobotContainer {
 
 
   public void configureAutos(){
-    this.mAutoChooser = new SendableChooser<>();
-    this.mAutoChooser.setDefaultOption("None", extensionPID);
-
-    // this.mAutoChooser.addOption("Place And Mobility Path",
-    //  new PlaceCondAndMobilityWithPath(mSwerveDrive, extensionPID, rotationPID, mAutoBuilder, mIntake,
-    //   PathPlanner.loadPath("Leave Community", new PathConstraints(4, 3.5))));
+    try{
+      SuperStructureConfig autoSuperStructureConfig = configUtils.readFromClassPath(SuperStructureConfig.class,
+        "SuperStructure/SuperStructure");
+      ProfiledPIDController autoExtensController = new ProfiledPIDController(3, 0, 0,
+        new TrapezoidProfile.Constraints(40.0,80.0));
+      RotationPID autorotationPID = new RotationPID(mRotation, mExtension::getLengthFromStart, superStructure::minRotation, superStructure::maxRotation, autoSuperStructureConfig);
+      ExtensionPID autoextensionPID = new ExtensionPID(autoExtensController, mExtension, superStructure::maxExtension);
+      ResetExtension automResetExtension = new ResetExtension(mExtension);
+      BasicIntakeCommand autoIntakeCommand = new BasicIntakeCommand(mIntake, () -> 0.0);
+      this.mAutoChooser = new SendableChooser<>();
+      this.mAutoChooser.setDefaultOption("None", extensionPID);
+      // this.mAutoChooser.addOption("Place And Mobility Path",
+      //   new PlaceCondAndMobilityWithPath(mSwerveDrive, autoextensionPID, autorotationPID, mAutoBuilder, mIntake,
+      //   PathPlanner.loadPath("Leave Community", new PathConstraints(4, 3.5))));
+      this.mAutoChooser.addOption("Place", 
+        new PlaceCone(autoextensionPID, autorotationPID, autoIntakeCommand));
 
     // this.mAutoChooser.addOption("Place And Balance", new OnePieceMobilityAutoBalence(extensionPID, rotationPID, mIntake, mSwerveDrive, mAutoLevel));
     
     SmartDashboard.putData("Auto", this.mAutoChooser);
+  }catch(IOException e){}
+
   } 
 }

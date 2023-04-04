@@ -43,11 +43,14 @@ public class DefaultDrive extends CommandBase {
     if(mDriveStick.getStart()) mSwerveDrive.resetGyro();
     if(mDriveStick.getX()){
       double setpoint = (mSwerveDrive.getRotation2d().getRadians() % (Math.PI * 2)) > Math.PI ? Math.PI * 2 : 0;
-      rot = -((setpoint + (mSwerveDrive.getRotation2d().getRadians() % (Math.PI * 2))) * 0.2) ; //TODO set 4 to angle kpin config
+      double error = (mSwerveDrive.getRotation2d().getRadians() % (Math.PI * 2)) + setpoint;
+      rot = -(error < 0.1 ? error : error) * 0.5; //TODO set 4 to angle kpin config
       // rot = rot < 0.01 ? 0 : rot;
     }
     if(mDriveStick.getY()){
-      rot = -(Math.PI + (mSwerveDrive.getRotation2d().getRadians() % (Math.PI * 2 ))) * 0.2;
+      double error = -Math.PI + (mSwerveDrive.getRotation2d().getRadians() % (Math.PI * 2 ));
+      rot = -(error < 0.1 ? error : error) * 0.5; //TODO set 4 to angle kpin config
+
       // rot = rot < 0.01 ? 0 : rot;
 
     }

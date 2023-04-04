@@ -103,7 +103,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
 
   public void drive(ChassisSpeeds speeds){
     SwerveModuleState[] moduleStates = mSwerveDriveKinematics.toSwerveModuleStates(speeds, new Translation2d());
-    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, kMaxWheelSpeed);
+    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, getMaxWheelSpeed());
     drive(ShiftingSwerveModuleState.toShiftingSwerveModuleState(moduleStates, mShifter.getGear()));
   }
   public void autoShift(){
@@ -122,7 +122,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     mShifter.shift(gear);
   }
   public double getMaxWheelSpeed(){
-    return mShifter.getGear() == 1 ? 2.7 : 5.4;
+    return mShifter.getGear() == 0 ? 2.2 : 5;
   }
 
   /** 

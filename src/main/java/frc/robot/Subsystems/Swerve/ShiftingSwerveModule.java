@@ -87,15 +87,18 @@ public class ShiftingSwerveModule extends SubsystemBase {
     double anglePIDOutput = mAnglePID.calculate(getAngle(), angleSetpointNative);
     double angleFFOutput = mAngleFF.calculate(mAnglePID.getSetpoint().velocity);
 
-
     double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[mGear.getAsInt()]);
     double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getNativeEncoderVelocity(), speedSetpointNative);
     double speedFFOutput = mSpeedFF.calculate(speedSetpointNative);
 
-    double error =  getAngle() - angleSetpointNative;
-    SmartDashboard.putNumber("angle error" + mModulePosition,error);
-    mAngleMotor.setVoltage(speedSetpointNative == 0 ? 0 :  angleFFOutput + anglePIDOutput);
+    // double error =  getAngle() - angleSetpointNative;
+    // SmartDashboard.putNumber("angle error" + mModulePosition,error);
+    
+    double error = speedSetpointNative - mSpeedMotor.getNativeEncoderVelocity();
+    SmartDashboard.putNumber("speed error " + mModulePosition, error);
 
+
+    mAngleMotor.setVoltage(speedSetpointNative == 0 ? 0 :  angleFFOutput + anglePIDOutput);
     mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
 
 
