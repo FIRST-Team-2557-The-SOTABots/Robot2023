@@ -15,6 +15,7 @@ import javax.management.openmbean.OpenDataException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
@@ -27,12 +28,15 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -98,6 +102,8 @@ public class RobotContainer {
   
 
   private SwerveAutoBuilder mAutoBuilder;
+
+  private SendableChooser<Command> mAutoChooser;
 
   
 
@@ -235,9 +241,12 @@ public class RobotContainer {
       ));
       mAutoBuilder = AutoFactory.swerveAutoBuilderGenerator(mSwerveDrive, eventMap);
 
+    configureAutos();
+
     configureDefaultCommands();
     configureBindings();
   }
+
 
   private void configureDefaultCommands(){
     mSwerveDrive.setDefaultCommand(mDriveCommand);
@@ -273,7 +282,7 @@ public class RobotContainer {
         mSwerveDrive
       )
     );
-    dController.y().whileTrue(mAutoLevel);
+    // dController.y().whileTrue(mAutoLevel);
 
     // dController.leftTrigger().onTrue(
     //   new InstantCommand(
@@ -369,8 +378,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return autos();
-    // return mBackUpMobility.withTimeout(mBackUpMobility.kTime); // removed use of depracated thingy if dont work just comment out
+    return (Command) mAutoChooser.getSelected();
   }
 
   public ShiftingSwerveModule initSwerveModule(String speedConfig, String angleConfig, String moduleConfig, IntSupplier gear) {
@@ -388,32 +396,16 @@ public class RobotContainer {
 
 
 
-  public Command autos(){
+  public void configureAutos(){
+    this.mAutoChooser = new SendableChooser<>();
+    this.mAutoChooser.setDefaultOption("None", extensionPID);
 
+    // this.mAutoChooser.addOption("Place And Mobility Path",
+    //  new PlaceCondAndMobilityWithPath(mSwerveDrive, extensionPID, rotationPID, mAutoBuilder, mIntake,
+    //   PathPlanner.loadPath("Leave Community", new PathConstraints(4, 3.5))));
+
+    // this.mAutoChooser.addOption("Place And Balance", new OnePieceMobilityAutoBalence(extensionPID, rotationPID, mIntake, mSwerveDrive, mAutoLevel));
     
-  //   PathPlannerTrajectory path1 = PathPlanner.loadPath("Leave Community", 4, 2, false);
-    return new SequentialCommandGroup(
-  //     new InstantCommand(() -> {
-  //       mSwerveDrive.updatePose(path1.getInitialState());
-  //       mSwerveDrive.shift(0);
-  //     }),
-      mResetExtension,
-      
-      new InstantCommand(() -> {
-        // mSwerveDrive.setFieldCentricActive(true);
-        mSwerveDrive.resetGyro();
-        mSwerveDrive.setGyro(Math.PI);
-        // mSwerveDrive.setGyro(Math.PI);
-        
-      }),
-      // new OnePieceMobilityAutoBalence(extensionPID, rotationPID, mIntake, mSwerveDrive, mAutoLevel));
-      // new PlaceConeAndMobility(extensionPID, rotationPID, mIntake, mSwerveDrive)); //TODO: PLEASE MAKE AN AUTO CHOOSER
-      new PlaceCone(extensionPID, rotationPID, mIntake));
-
-  // //     mAutoBuilder.followPath(path1)
-  // //   );
-
-  // // }
-  // new PlaceCondAndMobilityWithPath(extensionPID, rotationPID, mAutoBuilder, mIntake, path1));
+    SmartDashboard.putData("Auto", this.mAutoChooser);
   } 
 }

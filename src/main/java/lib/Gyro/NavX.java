@@ -4,7 +4,6 @@
 
 package lib.Gyro;
 
-import javax.print.attribute.standard.MediaSize.NA;
 
 import com.kauailabs.navx.frc.AHRS;
 

@@ -19,7 +19,6 @@ public class Robot extends TimedRobot {
     try {
       m_robotContainer = new RobotContainer();
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     CameraServer.startAutomaticCapture();

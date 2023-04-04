@@ -41,8 +41,21 @@ public class DefaultDrive extends CommandBase {
     if(mDriveStick.getA()) mSwerveDrive.setFieldCentricActive(true);
     if(mDriveStick.getB()) mSwerveDrive.setFieldCentricActive(false); 
     if(mDriveStick.getStart()) mSwerveDrive.resetGyro();
+    if(mDriveStick.getX()){
+      double setpoint = (mSwerveDrive.getRotation2d().getRadians() % (Math.PI * 2)) > Math.PI ? Math.PI * 2 : 0;
+      rot = -((setpoint + (mSwerveDrive.getRotation2d().getRadians() % (Math.PI * 2))) * 0.2) ; //TODO set 4 to angle kpin config
+      // rot = rot < 0.01 ? 0 : rot;
+    }
+    if(mDriveStick.getY()){
+      rot = -(Math.PI + (mSwerveDrive.getRotation2d().getRadians() % (Math.PI * 2 ))) * 0.2;
+      // rot = rot < 0.01 ? 0 : rot;
+
+    }
+
+
     drive(fwd, str, rot, mSwerveDrive.getRotation2d(), new Translation2d());
   }
+  
 
   protected void drive(double fwd, double str, double rot, Rotation2d angle, Translation2d pointOfRotation) {
     mSwerveDrive.drive(fwd, str, rot, angle, pointOfRotation);

@@ -78,15 +78,15 @@ public class ShiftingSwerveDrive extends SubsystemBase {
    */
   public void drive(double fwd, double str, double rot, Rotation2d currentAngle, Translation2d pointOfRotation) {
     // Scales inputs based off of max speeds
-    fwd = MathUtil.clamp(fwd, -1.0, 1.0) * kMaxWheelSpeed; 
-    str = MathUtil.clamp(str, -1.0, 1.0) * kMaxWheelSpeed;
+    fwd = MathUtil.clamp(fwd, -1.0, 1.0) * getMaxWheelSpeed(); 
+    str = MathUtil.clamp(str, -1.0, 1.0) * getMaxWheelSpeed() ;
     rot = MathUtil.clamp(rot, -1.0, 1.0) * kMaxAngularVelocity;
 
     ChassisSpeeds speeds = mFieldCentricActive == true ?
       ChassisSpeeds.fromFieldRelativeSpeeds(fwd, str, rot, currentAngle) : 
       new ChassisSpeeds(fwd, str, rot);
     SwerveModuleState[] moduleStates = mSwerveDriveKinematics.toSwerveModuleStates(speeds, pointOfRotation);
-    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, kMaxWheelSpeed);
+    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, getMaxWheelSpeed());
     drive(ShiftingSwerveModuleState.toShiftingSwerveModuleState(moduleStates, mShifter.getGear()));
   }
 
@@ -106,6 +106,13 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, kMaxWheelSpeed);
     drive(ShiftingSwerveModuleState.toShiftingSwerveModuleState(moduleStates, mShifter.getGear()));
   }
+  public void autoShift(){
+    // boolean overActiveRange = true;
+    // for (ShiftingSwerveModule i : mSwerveModules){
+    //   if(!i.shouldShift()) overActiveRange = false;
+    // }
+    // shift(overActiveRange ? 1 : 0);
+  }
   
   /** 
    * Shifts the gear of the drivetrain
@@ -113,6 +120,9 @@ public class ShiftingSwerveDrive extends SubsystemBase {
    */
   public void shift(int gear) {
     mShifter.shift(gear);
+  }
+  public double getMaxWheelSpeed(){
+    return mShifter.getGear() == 1 ? 2.7 : 5.4;
   }
 
   /** 
@@ -254,6 +264,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
       getModulePositions(), 
       getRotation2d()
     );
+    autoShift();
     
     SmartDashboard.putBoolean("field centric active", mFieldCentricActive);
     SmartDashboard.putNumber("Gyro angle", mGyro.getAngle()); 

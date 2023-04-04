@@ -22,7 +22,7 @@ import frc.robot.Commands.RotationPID.RotationSetpoint;
 import frc.robot.Subsystems.Intake;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 
-public class OnePieceMobilityAutoBalence extends ParallelCommandGroup {
+public class OnePieceMobilityAutoBalence extends SequentialCommandGroup {
   private static double kOuttakeTimeout = 0.5;
   private static double kMobilityTimeout = 2;
   private static double kLineupAuto = 2.0;
@@ -37,51 +37,58 @@ public class OnePieceMobilityAutoBalence extends ParallelCommandGroup {
   ) {
     // Use addRequirements() here to declare subsystem dependencies.
     addCommands(
-      extensionPID,
-      rotationPID,
-      new SequentialCommandGroup(
-        new InstantCommand(
-          () -> {
-            extensionPID.setSetpoint(ExtensionSetpoint.HIGH);
-            rotationPID.setSetpoint(RotationSetpoint.HIGH); // TODO:Change
-            intake.set(0.3);
-          }, intake
-        ),
-        new WaitUntilCommand(rotationPID::atSetpoint),
-        new WaitUntilCommand(extensionPID::atSetpoint),
-        new RunCommand(
-          () -> {
-            intake.set(-0.3);
-          }, intake
-        ).withTimeout(kOuttakeTimeout),
-        new InstantCommand(
-          () -> {
-            extensionPID.setSetpoint(ExtensionSetpoint.RESET);
-            rotationPID.setSetpoint(RotationSetpoint.RESET);
-            intake.stop();
-          }, intake
-        ),
-        new WaitUntilCommand(rotationPID::atSetpoint),
-        new WaitUntilCommand(extensionPID::atSetpoint),
-        // new RunCommand(
-        //   () -> 
-        //   swerveDrive.drive(
-        //     0.3, -0.3, 0, swerveDrive.getRotation2d()
-        //     ), swerveDrive).withTimeout(kStrTime),
-        new RunCommand(
-          () ->
-            swerveDrive.drive(
-            new ChassisSpeeds(-2,0,0)
-            ), swerveDrive
-        ).withTimeout(kMobilityTimeout),
-        // new RunCommand(
-        //   () -> {
-        //     swerveDrive.drive(
-        //       new ChassisSpeeds(2,0,0)
-        //     );  
-        //   }
-        // ).withTimeout(kLineupAuto),
-        autoLevel
+      new InstantCommand(() -> {
+          swerveDrive.resetGyro();
+          swerveDrive.setGyro(Math.PI);
+        }
+      ),
+      new ParallelCommandGroup(
+        extensionPID,
+        rotationPID,
+        new SequentialCommandGroup(
+          new InstantCommand(
+            () -> {
+              extensionPID.setSetpoint(ExtensionSetpoint.HIGH);
+              rotationPID.setSetpoint(RotationSetpoint.HIGH); // TODO:Change
+              intake.set(0.3);
+            }, intake
+          ),
+          new WaitUntilCommand(rotationPID::atSetpoint),
+          new WaitUntilCommand(extensionPID::atSetpoint),
+          new RunCommand(
+            () -> {
+              intake.set(-0.3);
+            }, intake
+          ).withTimeout(kOuttakeTimeout),
+          new InstantCommand(
+            () -> {
+              extensionPID.setSetpoint(ExtensionSetpoint.RESET);
+              rotationPID.setSetpoint(RotationSetpoint.RESET);
+              intake.stop();
+            }, intake
+          ),
+          new WaitUntilCommand(rotationPID::atSetpoint),
+          new WaitUntilCommand(extensionPID::atSetpoint),
+          // new RunCommand(
+          //   () -> 
+          //   swerveDrive.drive(
+          //     0.3, -0.3, 0, swerveDrive.getRotation2d()
+          //     ), swerveDrive).withTimeout(kStrTime),
+          new RunCommand(
+            () ->
+              swerveDrive.drive(
+              new ChassisSpeeds(-2,0,0)
+              ), swerveDrive
+          ).withTimeout(kMobilityTimeout),
+          // new RunCommand(
+          //   () -> {
+          //     swerveDrive.drive(
+          //       new ChassisSpeeds(2,0,0)
+          //     );  
+          //   }
+          // ).withTimeout(kLineupAuto),
+          autoLevel
+        ).withTimeout(15)
       )
     );
   }
