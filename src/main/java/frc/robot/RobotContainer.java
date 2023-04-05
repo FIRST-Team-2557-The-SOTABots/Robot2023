@@ -266,7 +266,7 @@ public class RobotContainer {
     // dController.back().onTrue(new InstantCommand(() -> {
     //   mSwerveDrive.updatePose(new Pose2d());
     // }));
-    dController.a().onTrue(
+    dController.rightBumper().onTrue(
       new InstantCommand(
         () -> {
           mSwerveDrive.setFieldCentricActive(true);
@@ -274,7 +274,7 @@ public class RobotContainer {
         mSwerveDrive
       )
     );
-    dController.b().onTrue(
+    dController.leftBumper().onTrue(
       new InstantCommand(
         () -> {
           mSwerveDrive.setFieldCentricActive(false);
@@ -421,8 +421,9 @@ public class RobotContainer {
       //   PathPlanner.loadPath("Leave Community", new PathConstraints(4, 3.5))));
       this.mAutoChooser.addOption("Place", 
         new PlaceCone(autoextensionPID, autorotationPID, autoIntakeCommand));
+      AutoLevel automAutoLevel = new AutoLevel(mSwerveDrive);
 
-    // this.mAutoChooser.addOption("Place And Balance", new OnePieceMobilityAutoBalence(extensionPID, rotationPID, mIntake, mSwerveDrive, mAutoLevel));
+    // this.mAutoChooser.addOption("Place And Balance", new OnePieceMobilityAutoBalence(autoextensionPID, autorotationPID, mIntake, mSwerveDrive, automAutoLevel).withTimeout(15));
     
     SmartDashboard.putData("Auto", this.mAutoChooser);
   }catch(IOException e){}

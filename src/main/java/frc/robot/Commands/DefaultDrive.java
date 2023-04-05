@@ -6,6 +6,8 @@ package frc.robot.Commands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 import lib.Control.SOTA_Xboxcontroller;
@@ -38,22 +40,34 @@ public class DefaultDrive extends CommandBase {
       mDriveStick.getLeftTriggerAxis(), 
       mDriveStick.getRightTriggerAxis()
     );
-    if(mDriveStick.getA()) mSwerveDrive.setFieldCentricActive(true);
-    if(mDriveStick.getB()) mSwerveDrive.setFieldCentricActive(false); 
+    // if(mDriveStick.getA()) mSwerveDrive.setFieldCentricActive(true);
+    // if(mDriveStick.getB()) mSwerveDrive.setFieldCentricActive(false); 
     if(mDriveStick.getStart()) mSwerveDrive.resetGyro();
-    if(mDriveStick.getX()){
-      double setpoint = (mSwerveDrive.getRotation2d().getRadians() % (Math.PI * 2)) > Math.PI ? Math.PI * 2 : 0;
-      double error = (mSwerveDrive.getRotation2d().getRadians() % (Math.PI * 2)) + setpoint;
-      rot = -(error < 0.1 ? error : error) * 0.5; //TODO set 4 to angle kpin config
+    if(mDriveStick.getY()){//Rotate forward
+
+      double error = (mSwerveDrive.getRotation2d().getRadians() % (Math.PI * 2));
+      error = error > Math.PI ? Math.PI - error : error;
+      rot = -(Math.abs(error) < 0.1 ? 0 : error) * 0.5; //TODO set 4 to angle kpin config
       // rot = rot < 0.01 ? 0 : rot;
     }
-    if(mDriveStick.getY()){
-      double error = -Math.PI + (mSwerveDrive.getRotation2d().getRadians() % (Math.PI * 2 ));
-      rot = -(error < 0.1 ? error : error) * 0.5; //TODO set 4 to angle kpin config
-
-      // rot = rot < 0.01 ? 0 : rot;
+    if(mDriveStick.getX()){//rotate to single substation
+      Alliance side = DriverStation.getAlliance();
+      if(side == Alliance.Blue){
+        double error = (mSwerveDrive.getRotation2d().getRadians() % (Math.PI * 2)) - Math.PI / 2;
+        error = error > Math.PI ? Math.PI - error : error;
+        rot = -(Math.abs(error) < 0.1 ? 0 : error) * 0.5;
+      } else {
+        double error = (mSwerveDrive.getRotation2d().getRadians() % (Math.PI * 2)) - Math.PI * 1.5;
+        error = error > Math.PI ? Math.PI - error : error;
+        rot = -(Math.abs(error) < 0.1 ? 0 : error) * 0.5;
+      }
 
     }
+    if(mDriveStick.getA()){//rotate backward
+      double error = Math.PI + (mSwerveDrive.getRotation2d().getRadians() % (Math.PI * 2 ));
+      rot = -(Math.abs(error) < 0.1 ? 0 : error) * 0.5;
+    }
+
 
 
     drive(fwd, str, rot, mSwerveDrive.getRotation2d(), new Translation2d());

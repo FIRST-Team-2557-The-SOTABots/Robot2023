@@ -22,6 +22,7 @@ public class Robot extends TimedRobot {
       e.printStackTrace();
     }
     CameraServer.startAutomaticCapture();
+    
   }
 
   @Override

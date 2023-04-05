@@ -19,19 +19,19 @@ public class SOTA_Xboxcontroller extends CommandXboxController {
     }
 
     public boolean getA(){
-        return super.a().getAsBoolean();
+        return a().getAsBoolean();
     }
     
     public boolean getB(){
-        return super.b().getAsBoolean();
+        return b().getAsBoolean();
     }
 
     public boolean getX(){
-        return super.x().getAsBoolean();
+        return x().getAsBoolean();
     }
 
     public boolean getY(){
-        return super.y().getAsBoolean();
+        return y().getAsBoolean();
     }
 
     public boolean getLeftBumper(){
