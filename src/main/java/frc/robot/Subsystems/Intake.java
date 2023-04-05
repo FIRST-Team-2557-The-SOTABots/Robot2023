@@ -31,17 +31,18 @@ public class Intake extends SubsystemBase {
         return false;
     }
     public void outTakeCone(){
-        intakeCone(-0.5);
+        intakeCone(-1);
     }
 
     public void outTakeCube(){
         intakeCube(-0.5);
     }
-
-    
-    // public void set(double speed) {
-    //     motors.set(speed);      
-    // }
+    public void intakeCone(){
+        intakeCone(0.2);
+    }
+    public void intakeCube(){
+        intakeCube(0.5);
+    }
 
     
     public void stop() {

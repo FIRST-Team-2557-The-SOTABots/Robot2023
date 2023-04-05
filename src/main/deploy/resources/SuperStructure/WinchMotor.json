@@ -6,7 +6,7 @@
     "countsPerRevolution": 2048,
     "motorLimitsConfig": {
         "lowerLimit": null,
-        "upperLimit": 186,
+        "upperLimit": 200,
         "finalLimits": true
     },
     "currentLimit": 40

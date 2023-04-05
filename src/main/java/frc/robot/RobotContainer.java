@@ -186,12 +186,7 @@ public class RobotContainer {
       (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/IntakeMotorTop"));
       SOTA_MotorController intakeMotorBottom = MotorControllerFactory.generateSparkDelegate
       (configUtils.readFromClassPath(MotorControllerConfig.class, "SuperStructure/IntakeMotorBottom"));
-      // CANSparkMax intakeMotor1 = new CANSparkMax(1, MotorType.kBrushless);
-      // CANSparkMax intakeMotor2 = new CANSparkMax(2, MotorType.kBrushless);
-      // intakeMotor1.setInverted(true);
 
-      // SOTA_MotorController intakeMotorBottom = new SparkMaxDelegate(intakeMotor1, null);
-      // SOTA_MotorController intakeMotorTop = new SparkMaxDelegate(intakeMotor2, null);
 
       DigitalInput limitSwitch = new DigitalInput(0);
 
@@ -219,10 +214,7 @@ public class RobotContainer {
 
     mBackUpMobility = new BackUpMobility(mSwerveDrive);
 
-    mBackUpAuto = CommandGroupBase.deadline(
-      new WaitCommand(mBackUpMobility.kTime),
-      mBackUpMobility
-    );    
+     
 
     Map<String, Command> eventMap = new HashMap<String, Command>();
       eventMap.put("event1", new InstantCommand(
@@ -409,9 +401,11 @@ public class RobotContainer {
     this.mAutoChooser = new SendableChooser<>();
     this.mAutoChooser.setDefaultOption("None", null);
 
-    mAutoChooser.addOption("place", new PlaceCone(getNewExtensionPID(), getNewRotationPID(), getNewIntakeCommand(), new ResetExtension(mExtension)));
+    // mAutoChooser.addOption("place", new PlaceCone(getNewExtensionPID(), getNewRotationPID(), getNewIntakeCommand(), new ResetExtension(mExtension)));
     mAutoChooser.addOption("Place and Mobility", new PlaceConeAndMobility(getNewExtensionPID(), getNewRotationPID(), mIntake, mSwerveDrive));
-    mAutoChooser.addOption("Place Cone and balance", new OnePieceMobilityAutoBalence(getNewExtensionPID(), getNewRotationPID(), mIntake, mSwerveDrive, new AutoLevel(mSwerveDrive)));
+    mAutoChooser.addOption("Place Cone and balance", new OnePieceMobilityAutoBalence(getNewExtensionPID(), getNewRotationPID(), mIntake, mSwerveDrive, new AutoLevel(mSwerveDrive), new ResetExtension(mExtension)));
+    mAutoChooser.addOption("Place cone with path", new PlaceCondAndMobilityWithPath(mSwerveDrive, getNewExtensionPID(), getNewRotationPID(),
+     mAutoBuilder, mIntake, PathPlanner.loadPath("Leave Community", new PathConstraints(2, 1)), new ResetExtension(mExtension)));
 
     SmartDashboard.putData(mAutoChooser);
   } 
@@ -433,6 +427,6 @@ public class RobotContainer {
     }
   }
   public BasicIntakeCommand getNewIntakeCommand(){
-    return new BasicIntakeCommand(mIntake, () -> 0.0);
+    return null;//new BasicIntakeCommand(mIntake, () -> 0.0);
   }
 }

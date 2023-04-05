@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Commands.AutoLevel;
 import frc.robot.Commands.ExtensionPID;
+import frc.robot.Commands.ResetExtension;
 import frc.robot.Commands.RotationPID;
 import frc.robot.Commands.ExtensionPID.ExtensionSetpoint;
 import frc.robot.Commands.RotationPID.RotationSetpoint;
@@ -33,10 +34,12 @@ public class OnePieceMobilityAutoBalence extends SequentialCommandGroup {
     RotationPID rotationPID,
     Intake intake,
     ShiftingSwerveDrive swerveDrive,
-    AutoLevel autoLevel
+    AutoLevel autoLevel,
+    ResetExtension resetExtension
   ) {
     // Use addRequirements() here to declare subsystem dependencies.
     addCommands(
+      resetExtension,
       new InstantCommand(() -> {
           swerveDrive.resetGyro();
           swerveDrive.setGyro(Math.PI);
