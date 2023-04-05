@@ -405,28 +405,34 @@ public class RobotContainer {
 
 
   public void configureAutos(){
-    try{
+
+    this.mAutoChooser = new SendableChooser<>();
+    this.mAutoChooser.setDefaultOption("None", null);
+
+    mAutoChooser.addOption("place", new PlaceCone(getNewExtensionPID(), getNewRotationPID(), getNewIntakeCommand(), new ResetExtension(mExtension)));
+    mAutoChooser.addOption("Place and Mobility", new PlaceConeAndMobility(getNewExtensionPID(), getNewRotationPID(), mIntake, mSwerveDrive));
+    mAutoChooser.addOption("Place Cone and balance", new OnePieceMobilityAutoBalence(getNewExtensionPID(), getNewRotationPID(), mIntake, mSwerveDrive, new AutoLevel(mSwerveDrive)));
+
+    SmartDashboard.putData(mAutoChooser);
+  } 
+
+
+  public ExtensionPID getNewExtensionPID(){
+    ProfiledPIDController autoExtensController = new ProfiledPIDController(3, 0, 0,
+    new TrapezoidProfile.Constraints(40.0,80.0));
+    return new ExtensionPID(autoExtensController, mExtension, superStructure::maxExtension);
+  }
+  public RotationPID getNewRotationPID(){
+    try {
       SuperStructureConfig autoSuperStructureConfig = configUtils.readFromClassPath(SuperStructureConfig.class,
         "SuperStructure/SuperStructure");
-      ProfiledPIDController autoExtensController = new ProfiledPIDController(3, 0, 0,
-        new TrapezoidProfile.Constraints(40.0,80.0));
-      RotationPID autorotationPID = new RotationPID(mRotation, mExtension::getLengthFromStart, superStructure::minRotation, superStructure::maxRotation, autoSuperStructureConfig);
-      ExtensionPID autoextensionPID = new ExtensionPID(autoExtensController, mExtension, superStructure::maxExtension);
-      ResetExtension automResetExtension = new ResetExtension(mExtension);
-      BasicIntakeCommand autoIntakeCommand = new BasicIntakeCommand(mIntake, () -> 0.0);
-      this.mAutoChooser = new SendableChooser<>();
-      this.mAutoChooser.setDefaultOption("None", extensionPID);
-      // this.mAutoChooser.addOption("Place And Mobility Path",
-      //   new PlaceCondAndMobilityWithPath(mSwerveDrive, autoextensionPID, autorotationPID, mAutoBuilder, mIntake,
-      //   PathPlanner.loadPath("Leave Community", new PathConstraints(4, 3.5))));
-      this.mAutoChooser.addOption("Place", 
-        new PlaceCone(autoextensionPID, autorotationPID, autoIntakeCommand));
-      AutoLevel automAutoLevel = new AutoLevel(mSwerveDrive);
-
-    // this.mAutoChooser.addOption("Place And Balance", new OnePieceMobilityAutoBalence(autoextensionPID, autorotationPID, mIntake, mSwerveDrive, automAutoLevel).withTimeout(15));
-    
-    SmartDashboard.putData("Auto", this.mAutoChooser);
-  }catch(IOException e){}
-
-  } 
+    return new RotationPID(mRotation, mExtension::getLengthFromStart, 
+    superStructure::minRotation, superStructure::maxRotation, autoSuperStructureConfig);
+    } catch(IOException e) {
+      throw new RuntimeException("Not able to create rotation PID");
+    }
+  }
+  public BasicIntakeCommand getNewIntakeCommand(){
+    return new BasicIntakeCommand(mIntake, () -> 0.0);
+  }
 }

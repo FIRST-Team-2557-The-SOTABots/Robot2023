@@ -24,7 +24,7 @@ import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 
 public class OnePieceMobilityAutoBalence extends SequentialCommandGroup {
   private static double kOuttakeTimeout = 0.5;
-  private static double kMobilityTimeout = 2;
+  private static double kMobilityTimeout = 4;
   private static double kLineupAuto = 2.0;
   private static double kStrTime = 0.5;
   /** Creates a new OnePieceMobilityAutoBalence. */
@@ -77,7 +77,7 @@ public class OnePieceMobilityAutoBalence extends SequentialCommandGroup {
           new RunCommand(
             () ->
               swerveDrive.drive(
-              new ChassisSpeeds(-2,0,0)
+              new ChassisSpeeds(-1,0,0)
               ), swerveDrive
           ).withTimeout(kMobilityTimeout),
           // new RunCommand(

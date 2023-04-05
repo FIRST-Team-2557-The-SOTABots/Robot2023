@@ -13,9 +13,9 @@ public class AutoLevel extends CommandBase{
     
     public AutoLevel(ShiftingSwerveDrive mShiftingSwerveDrive){
         this.mSwerveDrive = mShiftingSwerveDrive;
-        mPitchController = new PIDController(0.05, 0.08, 0); // TODO: Dont hard code this in the future
+        mPitchController = new PIDController(0.01, 0.04, 0); // TODO: Dont hard code this in the future
         mPitchController.setIntegratorRange(-0.05, 0.05);
-        mRollController = new PIDController(0.05, 0.08, 0);
+        mRollController = new PIDController(0.01, 0.04, 0);
         mRollController.setIntegratorRange(-0.05, 0.05);
         prevCentricState = mSwerveDrive.getFieldCentricActive();
         addRequirements(mSwerveDrive);

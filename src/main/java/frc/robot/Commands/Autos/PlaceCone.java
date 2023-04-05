@@ -17,13 +17,14 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Commands.AutoLevel;
 import frc.robot.Commands.BasicIntakeCommand;
 import frc.robot.Commands.ExtensionPID;
+import frc.robot.Commands.ResetExtension;
 import frc.robot.Commands.RotationPID;
 import frc.robot.Commands.ExtensionPID.ExtensionSetpoint;
 import frc.robot.Commands.RotationPID.RotationSetpoint;
 import frc.robot.Subsystems.Intake;
 import frc.robot.Subsystems.Swerve.ShiftingSwerveDrive;
 
-public class PlaceCone extends ParallelCommandGroup {
+public class PlaceCone extends SequentialCommandGroup {
   private static double kOuttakeTimeout = 0.5;
   private static double kMobilityTimeout = 2.5;
   private static double kLineupAuto = 2.0;
@@ -32,10 +33,13 @@ public class PlaceCone extends ParallelCommandGroup {
   public PlaceCone(
     ExtensionPID extensionPID,
     RotationPID rotationPID,
-    BasicIntakeCommand intakeCommand
+    BasicIntakeCommand intakeCommand,
+    ResetExtension resetExtension
   ) {
     // Use addRequirements() here to declare subsystem dependencies.
     addCommands( // TODO: Autos violate DRY coding principle
+    resetExtension,
+    new ParallelCommandGroup(
       extensionPID,
       rotationPID,
       intakeCommand,
@@ -63,19 +67,7 @@ public class PlaceCone extends ParallelCommandGroup {
         ),
         new WaitUntilCommand(rotationPID::atSetpoint),
         new WaitUntilCommand(extensionPID::atSetpoint)
-        // new RunCommand(
-        //   () -> 
-        //   swerveDrive.drive(
-        //     0.3, -0.3, 0, swerveDrive.getRotation2d()
-        //     ), swerveDrive).withTimeout(kStrTime),
-        // new RunCommand(
-        //   () -> {
-        //     swerveDrive.drive(
-        //       new ChassisSpeeds(2,0,0)
-        //     );  
-        //   }
-        // ).withTimeout(kLineupAuto),
-      )
+      ))
     );
   }
 }
