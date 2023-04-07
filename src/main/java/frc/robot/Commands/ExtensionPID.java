@@ -32,13 +32,15 @@ public class ExtensionPID extends CommandBase {
     private Extension mExtension;
     private DoubleSupplier kMaxLength;
     private double mSetpoint;
+    private double mThrottle;
     private Timer mExhaustTimer;
 
-    public ExtensionPID(ProfiledPIDController PID, Extension mArm, DoubleSupplier maxLength){
+    public ExtensionPID(ProfiledPIDController PID, Extension mArm, DoubleSupplier maxLength) {
         this.extendPID = PID; 
         this.mExtension = mArm; 
         this.kMaxLength = maxLength;
         mExhaustTimer = new Timer();
+        mThrottle = 1.0; // woopsies NaN error
         addRequirements(mArm);
     }
 
@@ -78,8 +80,8 @@ public class ExtensionPID extends CommandBase {
     }   
     
     // TODO: finish
-    public void limitExtension() {
-
+    public void throttleExtension(double percent) {
+        mThrottle = 1.0 - Math.abs(percent);
     }
 
     

@@ -64,9 +64,7 @@ public class PlaceCone extends SequentialCommandGroup {
             rotationPID.setSetpoint(RotationSetpoint.RESET);
             intakeCommand.setPower(0.0);
           }
-        ),
-        new WaitUntilCommand(rotationPID::atSetpoint),
-        new WaitUntilCommand(extensionPID::atSetpoint)
+        )
       ))
     );
   }

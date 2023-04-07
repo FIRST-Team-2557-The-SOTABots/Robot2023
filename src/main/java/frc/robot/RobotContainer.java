@@ -200,8 +200,8 @@ public class RobotContainer {
       this.superStructure = new SuperStructure(mExtension::getLength, mRotation::getRotationDegrees, superStructureConfig);
 
 
-      ProfiledPIDController extensController = new ProfiledPIDController(3, 0, 0,
-       new TrapezoidProfile.Constraints(40.0,80.0));
+      ProfiledPIDController extensController = new ProfiledPIDController(5, 0, 0,
+       new TrapezoidProfile.Constraints(60.0,100.0));
 
       this.rotationPID = new RotationPID(mRotation, mExtension::getLengthFromStart, superStructure::minRotation, superStructure::maxRotation, superStructureConfig);
       this.extensionPID = new ExtensionPID(extensController, mExtension, superStructure::maxExtension);
@@ -255,6 +255,7 @@ public class RobotContainer {
         mSwerveDrive::resetGyro
       ) 
     );
+    dController.back().whileTrue(mAutoLevel);
     // dController.back().onTrue(new InstantCommand(() -> {
     //   mSwerveDrive.updatePose(new Pose2d());
     // }));
@@ -274,6 +275,9 @@ public class RobotContainer {
         mSwerveDrive
       )
     );
+    dController.b().onTrue(new InstantCommand( () -> {
+      mSwerveDrive.setAutoShifting(true);
+    }));
     // dController.y().whileTrue(mAutoLevel);
 
     // dController.leftTrigger().onTrue(
@@ -308,6 +312,19 @@ public class RobotContainer {
         () -> {
           rotationPID.setSetpoint(RotationSetpoint.REST);
           extensionPID.setSetpoint(ExtensionSetpoint.REST);
+        }
+      )
+    );
+    mController.rightTrigger().whileTrue(
+      new InstantCommand(
+        () -> {
+          extensionPID.throttleExtension(mController.getRightTriggerAxis());
+        }
+      )
+    ).whileFalse( // Just in case
+      new InstantCommand(
+        () -> {
+          extensionPID.throttleExtension(0.0);
         }
       )
     );
@@ -373,7 +390,7 @@ public class RobotContainer {
         mRotation, mExtension
       )
     );
-    mController.y().onTrue(mResetExtension); // Emergency reset
+    mController.y().onTrue(new ResetExtension(mExtension)); // Emergency reset
 
   }
 
@@ -401,10 +418,11 @@ public class RobotContainer {
     this.mAutoChooser = new SendableChooser<>();
     this.mAutoChooser.setDefaultOption("None", null);
 
+    // TODO: Umm why this commented out?
     // mAutoChooser.addOption("place", new PlaceCone(getNewExtensionPID(), getNewRotationPID(), getNewIntakeCommand(), new ResetExtension(mExtension)));
-    mAutoChooser.addOption("Place and Mobility", new PlaceConeAndMobility(getNewExtensionPID(), getNewRotationPID(), mIntake, mSwerveDrive));
+    mAutoChooser.addOption("Place and Mobility", new PlaceConeAndMobility(getNewExtensionPID(), getNewRotationPID(), mIntake, mSwerveDrive, mResetExtension));
     mAutoChooser.addOption("Place Cone and balance", new OnePieceMobilityAutoBalence(getNewExtensionPID(), getNewRotationPID(), mIntake, mSwerveDrive, new AutoLevel(mSwerveDrive), new ResetExtension(mExtension)));
-    mAutoChooser.addOption("Place cone with path", new PlaceCondAndMobilityWithPath(mSwerveDrive, getNewExtensionPID(), getNewRotationPID(),
+    mAutoChooser.addOption("Place Two", new PlaceCondAndMobilityWithPath(mSwerveDrive, getNewExtensionPID(), getNewRotationPID(),
      mAutoBuilder, mIntake, PathPlanner.loadPath("Leave Community", new PathConstraints(2, 1)), new ResetExtension(mExtension)));
 
     SmartDashboard.putData(mAutoChooser);

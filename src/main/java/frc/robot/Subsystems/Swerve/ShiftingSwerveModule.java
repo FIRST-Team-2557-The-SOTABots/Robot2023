@@ -158,7 +158,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
   }
 
   public boolean shouldShift(){
-    return mSpeedMotor.get() > 0.7;
+    return nativeToMetersPerSecond(mSpeedMotor.getNativeEncoderVelocity(), kGearRatios[mGear.getAsInt()]) > 1.8; //TODO dont hard code
   }
 
   /**

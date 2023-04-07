@@ -31,14 +31,14 @@ public class Intake extends SubsystemBase {
         return false;
     }
     public void outTakeCone(){
-        intakeCone(-1);
+        intakeCone(-0.5);
     }
 
     public void outTakeCube(){
         intakeCube(-0.5);
     }
     public void intakeCone(){
-        intakeCone(0.2);
+        intakeCone(0.4);
     }
     public void intakeCube(){
         intakeCube(0.5);

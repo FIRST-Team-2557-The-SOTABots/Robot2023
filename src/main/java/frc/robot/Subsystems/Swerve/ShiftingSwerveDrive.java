@@ -35,6 +35,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
 
   private double kMaxWheelSpeed;
   private double kMaxAngularVelocity;
+  private boolean mAutoShifting = true;
 
   /** Creates a new ShiftingSwerveDrive. */
   public ShiftingSwerveDrive(
@@ -107,11 +108,11 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     drive(ShiftingSwerveModuleState.toShiftingSwerveModuleState(moduleStates, mShifter.getGear()));
   }
   public void autoShift(){
-    // boolean overActiveRange = true;
-    // for (ShiftingSwerveModule i : mSwerveModules){
-    //   if(!i.shouldShift()) overActiveRange = false;
-    // }
-    // shift(overActiveRange ? 1 : 0);
+    boolean overActiveRange = true;
+    for (ShiftingSwerveModule i : mSwerveModules){
+      if(!i.shouldShift()) overActiveRange = false;
+    }
+    shift(overActiveRange ? 1 : 0);
   }
   
   /** 
@@ -257,6 +258,10 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     mGyro.setAngle(radians);
   }
 
+  public void setAutoShifting(boolean isAutoShifting){
+    mAutoShifting = isAutoShifting;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -264,7 +269,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
       getModulePositions(), 
       getRotation2d()
     );
-    autoShift();
+    // if(mAutoShifting) autoShift();
     
     SmartDashboard.putBoolean("field centric active", mFieldCentricActive);
     SmartDashboard.putNumber("Gyro angle", mGyro.getAngle()); 
