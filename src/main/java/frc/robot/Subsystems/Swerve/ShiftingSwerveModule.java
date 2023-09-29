@@ -5,11 +5,14 @@
 package frc.robot.Subsystems.Swerve;
 
 
+import java.util.function.IntSupplier;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lib.Config.ShiftingSwerveModuleConfig;
@@ -25,22 +28,31 @@ public class ShiftingSwerveModule extends SubsystemBase {
   private ProfiledPIDController mAnglePID;
   private PIDController mSpeedPID;
   private SimpleMotorFeedforward mAngleFF;
-  // private SimpleMotorFeedforward mSpeedFF;
+  private SimpleMotorFeedforward mSpeedFF;
 
   private double[] kGearRatios;
   private double kAngleCountsPerRevolution;
   private double kSpeedCountsPerRevolution;
   private double kWheelCircumference; 
 
+  private IntSupplier mGear;
+
+  private double mPrevEncoderPosition;
+  private double mDistance;
+
   public ShiftingSwerveModule(
     SOTA_MotorController angleMotor, 
     SOTA_MotorController speedMotor, 
+    IntSupplier gear,
     ShiftingSwerveModuleConfig config) {
 
+    
     this.mModulePosition = config.getModulePosition();
     
     this.mSpeedMotor = speedMotor; 
     this.mAngleMotor = angleMotor;
+
+    this.mGear = gear;
 
     this.kGearRatios = config.getGearRatios();
 
@@ -52,10 +64,15 @@ public class ShiftingSwerveModule extends SubsystemBase {
 
     this.mAngleFF = config.angleFF();
 
-    // this.mSpeedFF = config.speedFF();
+    this.mSpeedFF = config.speedFF();
 
     this.mAnglePID = config.generateAnglePID(kAngleCountsPerRevolution);
     this.mSpeedPID = config.generateSpeedPID();
+
+    
+
+    // SmartDashboard.putNumber("Voltage" + mModulePosition, 0);
+
 
   }
 
@@ -63,23 +80,28 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * Drives the modules with a ShiftingSwerveModuleState
    * @param state The ShiftingSwerveModuleState
    */
-  public void drive(ShiftingSwerveModuleState state) {
+  public void drive(ShiftingSwerveModuleState state) { // TODO: Change back to SwerveModuleState
     state = ShiftingSwerveModuleState.optimize(state, getRotation2d());
 
-    double angleSetpointNative = radiansToNative(state.angle.getRadians());
+    double angleSetpointNative = Math.abs(radiansToNative(state.angle.getRadians()));
     double anglePIDOutput = mAnglePID.calculate(getAngle(), angleSetpointNative);
     double angleFFOutput = mAngleFF.calculate(mAnglePID.getSetpoint().velocity);
 
-    mAngleMotor.setVoltage(state.speedMetersPerSecond == 0 ? 0 :  angleFFOutput + anglePIDOutput);
-
-    double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[state.gear]);
+    double speedSetpointNative = metersPerSecondToNative(state.speedMetersPerSecond, kGearRatios[mGear.getAsInt()]);
     double speedPIDOutput = mSpeedPID.calculate(mSpeedMotor.getNativeEncoderVelocity(), speedSetpointNative);
+    double speedFFOutput = mSpeedFF.calculate(speedSetpointNative);
 
-    mSpeedMotor.setVoltage(speedPIDOutput);
-    // mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
-    // mSpeedMotor.set((speedSetpointNative / maxSpeed));
+    // double error =  getAngle() - angleSetpointNative;
+    // SmartDashboard.putNumber("angle error" + mModulePosition,error);
+    
+    double error = speedSetpointNative - mSpeedMotor.getNativeEncoderVelocity();
+    SmartDashboard.putNumber("speed error " + mModulePosition, error);
 
-    SmartDashboard.putBoolean("Current Gear", state.gear == 0 ? false : true);
+
+    mAngleMotor.setVoltage(speedSetpointNative == 0 ? 0 :  angleFFOutput + anglePIDOutput);
+    mSpeedMotor.setVoltage(speedFFOutput + speedPIDOutput);
+
+
   }
 
   /** 
@@ -88,11 +110,26 @@ public class ShiftingSwerveModule extends SubsystemBase {
    */
   public SwerveModulePosition getMeasuredPosition() {
     return new SwerveModulePosition(
-      kWheelCircumference, 
+      getDistance(),
       getRotation2d()
     );
   }
 
+  /**
+   * To accurately track the behavior of the drivetrain, knowing the actual state of the module is necessary since set state
+   * often varies from actual state.
+   * @return the measured state of the swerve module (not set state[!)
+   */
+  public SwerveModuleState getMeasuredState() {
+    SwerveModuleState state = new SwerveModuleState(mSpeedMotor.getEncoderVelocity(), getRotation2d());
+    if (state.speedMetersPerSecond < 0.0) {
+      state.speedMetersPerSecond *= -1;
+      state.angle = state.angle.plus(new Rotation2d(Math.PI));
+    } 
+    return state;
+  }
+
+  
   /**
    * Gets the speed of the module in meters per second
    * @return The speed of the module in meters per second
@@ -104,13 +141,41 @@ public class ShiftingSwerveModule extends SubsystemBase {
     );
   }
 
+  /**
+   * Gets total distance the module has traveled
+   * @return The distance traveled
+   */
+  public double getDistance() {
+    return mDistance;
+  }
+
+  /**
+   * Updates the total distance with the previous encoder position
+   */
+  public void updateDistance() {
+    mDistance += (mSpeedMotor.getNativeEncoderPosition() - mPrevEncoderPosition) * (kWheelCircumference / (kGearRatios[getCurrentGear()] * kSpeedCountsPerRevolution));
+    this.mPrevEncoderPosition = mSpeedMotor.getNativeEncoderPosition();
+  }
+
+  public boolean shouldShift(){
+    return nativeToMetersPerSecond(mSpeedMotor.getNativeEncoderVelocity(), kGearRatios[mGear.getAsInt()]) > 1.8; //TODO dont hard code
+  }
+
+  /**
+   * Gets the gear from the ShiftingSwerveDrive
+   */
+  public int getCurrentGear(){
+    return mGear.getAsInt();
+  }
+
   /** 
    * Gets the angle of the module in absolute encoder ticks
    * @return The angle of the module in absolute encoder ticks
    */
-  public double getAngle() {
+  public double 
+  getAngle() {
     // return mOffsets.nativeToAdjusted(getAngleNoOffset());
-    return mAngleMotor.getEncoderPosition();
+    return  mAngleMotor.getEncoderPosition();//TODO: I think that this needs to be inverted
   }
 
   /**
@@ -126,7 +191,7 @@ public class ShiftingSwerveModule extends SubsystemBase {
    * @return Rotation2d of the module
    */
   public Rotation2d getRotation2d() {
-    return new Rotation2d(nativeToRadians(getAngle()));
+    return new Rotation2d(nativeToRadians(getAngle())); 
   }
 
   /** 
@@ -179,13 +244,21 @@ public class ShiftingSwerveModule extends SubsystemBase {
 
   @Override
   public void periodic() {
+    
+    updateDistance();
     // This method will be called once per scheduler run
+    // SmartDashboard.putBoolean("isInverted" + mModulePosition, mSpeedMotor.getInverted());
 
-    boolean shouldShift = mSpeedMotor.get() > 0.70;
+    boolean shouldShift = Math.abs(mSpeedMotor.get()) > 0.70;
     
     SmartDashboard.putNumber("angle no offset " + mModulePosition, mAngleMotor.getEncoder().getAbsolutePosition());
     SmartDashboard.putBoolean("Should shift", shouldShift);
 
+    // SmartDashboard.putNumber("Speed Motor Speed", mSpeedMotor.getNativeEncoderVelocity());
+    
+    // SmartDashboard.putNumber("Angle error" + mModulePosition, mSpeedPID.getVelocityError());
+
+    // SmartDashboard.putNumber("distance" + mModulePosition, mDistance);
     // SmartDashboard.putNumber("current draw" + mModulePosition, mSpeedMotor.getMotorCurrent());
     // SmartDashboard.putNumber("mModulePosition", kAngleCountsPerRevolution);
   }

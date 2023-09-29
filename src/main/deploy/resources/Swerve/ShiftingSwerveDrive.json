@@ -1,6 +1,6 @@
 {
     "wheelBase": 19.625,
     "trackWidth": 19.625,
-    "maxWheelSpeed": 10,
-    "maxAngularVelocity": 15 
+    "maxWheelSpeed": 7,
+    "maxAngularVelocity": 6.28
 }

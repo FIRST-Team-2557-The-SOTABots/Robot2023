@@ -7,10 +7,13 @@ import lib.MotorController.SOTA_MotorController;
 
 public class Rotation extends SubsystemBase{
     private SOTA_MotorController motor;
-    private SuperStructureConfig config;
+    private double kEncoderAtZero;
+    private double kEncoderPerDegree;
 
     public Rotation(SOTA_MotorController motor, SuperStructureConfig config){
-        this.motor = motor; this.config = config;
+      this.motor = motor;
+      kEncoderAtZero = config.getEncoderAtZeroDegrees();
+      kEncoderPerDegree = config.getEncoderPerDegree();
     }
 
     public void set(double speed) {
@@ -22,7 +25,7 @@ public class Rotation extends SubsystemBase{
     }
 
     public double getRotationDegrees() {
-        return (getRotatorEncoder() - config.getEncoderAtZeroDegrees())/config.getEncoderPerDegree();
+        return (getRotatorEncoder() - kEncoderAtZero) / kEncoderPerDegree;
       }
 
     public double getRotationRadians() {
@@ -37,5 +40,6 @@ public class Rotation extends SubsystemBase{
         //   SmartDashboard.putNumber("angle from native", motor.getNativeEncoderPose());
           SmartDashboard.putNumber("angle from native", motor.getNativeEncoderPosition());
         //   SmartDashboard.putNumber("Rotation motor limit", motor.getMotorLimits().getUpperLimit());
+        SmartDashboard.putNumber("Rotation Current", motor.getMotorCurrent());
       }
 }

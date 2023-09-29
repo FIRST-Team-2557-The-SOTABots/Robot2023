@@ -4,24 +4,31 @@
 
 package lib.Gyro;
 
+
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public class NavX implements SOTA_Gyro {
   private final AHRS mNavX;
+  private final boolean isInverted;
 
   /** Creates a new NavX. */
   public NavX(AHRS navX) {
     this.mNavX = navX;
+    this.isInverted = false;
+  }
+  public NavX(AHRS navX, boolean isInverted){
+    this.mNavX = navX;
+    this.isInverted = isInverted;
   }
 
   public double getAngle() {
-    return mNavX.getAngle();
+    return isInverted ? -1 *  mNavX.getAngle() : mNavX.getAngle();
   }
 
   public Rotation2d getRotation2d() {
-    return mNavX.getRotation2d();
+    return new Rotation2d(Math.toRadians(getAngle())); 
   }
 
   public void setAngle(double radians) {
