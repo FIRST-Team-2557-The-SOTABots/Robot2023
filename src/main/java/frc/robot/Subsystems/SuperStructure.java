@@ -12,11 +12,7 @@ import lib.Config.SuperStructureConfig;
 
 public class SuperStructure extends SubsystemBase {
 
-  // private SOTAGyro pigeon;
-  // private SOTAMotorController rotatorMotor;
-  // private SOTAMotorController winchMotor;
-  // private DigitalInput limitSwitch;
-  // private MotorController intakeMotors;
+
 
   private DoubleSupplier extensionLength;
   private DoubleSupplier CurrentAngle;
@@ -32,11 +28,15 @@ public class SuperStructure extends SubsystemBase {
 
   /** Creates a new ArmSubsystem. */
   public SuperStructure(DoubleSupplier extensionLength, DoubleSupplier CurrentAngle, SuperStructureConfig config) {
-    this.extensionLength = extensionLength; this.CurrentAngle = CurrentAngle;
-     this.height = config.getHeight(); this.bOffset = config.getbOffset(); 
-     this.fOffset = config.getfOffset(); this.armLength = config.getArmBaseLength();
-     this.fAbsoluteOffset = config.getfAbsoluteOffset(); this.bAbsoluteOffset = config.getbAbsoluteOffset();
-     this.maxExtension = config.getMaxExtension();
+    this.extensionLength = extensionLength; 
+    this.CurrentAngle = CurrentAngle;
+    this.height = config.getHeight(); 
+    this.bOffset = config.getbOffset(); 
+    this.fOffset = config.getfOffset(); 
+    this.armLength = config.getArmBaseLength();
+    this.fAbsoluteOffset = config.getfAbsoluteOffset(); 
+    this.bAbsoluteOffset = config.getbAbsoluteOffset();
+    this.maxExtension = config.getMaxExtension();
 
   }
 

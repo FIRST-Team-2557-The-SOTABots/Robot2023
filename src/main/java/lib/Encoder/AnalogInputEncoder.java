@@ -12,11 +12,12 @@ public class AnalogInputEncoder implements SOTA_AbsoulteEncoder {
     public AnalogInputEncoder(AnalogInput encoder, EncoderConfig config) {
         this.mEncoder = encoder;
         this.kCountsPerRevolution = config.getCountsPerRevolution();
+        //this.kOffset = encoder.getAverageVoltage();
         this.kOffset = config.getEncoderOffset();
     }
 
     public double get() {
-        return MathUtil.inputModulus(getPositionNoOffset() - kOffset, 0, kCountsPerRevolution);
+        return -1 * MathUtil.inputModulus(getPositionNoOffset() - kOffset, 0, kCountsPerRevolution) + kCountsPerRevolution;
     }
 
     

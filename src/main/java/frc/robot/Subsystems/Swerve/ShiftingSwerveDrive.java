@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lib.Pneumatics.GearShifter;
 import lib.Config.ShiftingSwerveDriveConfig;
-import lib.Gyro.NavX;
 import lib.Gyro.SOTA_Gyro;
 
 public class ShiftingSwerveDrive extends SubsystemBase {
@@ -36,6 +35,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
 
   private double kMaxWheelSpeed;
   private double kMaxAngularVelocity;
+  private boolean mAutoShifting = true;
 
   /** Creates a new ShiftingSwerveDrive. */
   public ShiftingSwerveDrive(
@@ -79,15 +79,15 @@ public class ShiftingSwerveDrive extends SubsystemBase {
    */
   public void drive(double fwd, double str, double rot, Rotation2d currentAngle, Translation2d pointOfRotation) {
     // Scales inputs based off of max speeds
-    fwd = MathUtil.clamp(fwd, -1.0, 1.0) * kMaxWheelSpeed; 
-    str = MathUtil.clamp(str, -1.0, 1.0) * kMaxWheelSpeed;
+    fwd = MathUtil.clamp(fwd, -1.0, 1.0) * getMaxWheelSpeed(); 
+    str = MathUtil.clamp(str, -1.0, 1.0) * getMaxWheelSpeed() ;
     rot = MathUtil.clamp(rot, -1.0, 1.0) * kMaxAngularVelocity;
 
     ChassisSpeeds speeds = mFieldCentricActive == true ?
       ChassisSpeeds.fromFieldRelativeSpeeds(fwd, str, rot, currentAngle) : 
       new ChassisSpeeds(fwd, str, rot);
     SwerveModuleState[] moduleStates = mSwerveDriveKinematics.toSwerveModuleStates(speeds, pointOfRotation);
-    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, kMaxWheelSpeed);
+    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, getMaxWheelSpeed());
     drive(ShiftingSwerveModuleState.toShiftingSwerveModuleState(moduleStates, mShifter.getGear()));
   }
 
@@ -101,6 +101,19 @@ public class ShiftingSwerveDrive extends SubsystemBase {
       mSwerveModules[i].drive(moduleStates[i]);
     }
   }
+
+  public void drive(ChassisSpeeds speeds){
+    SwerveModuleState[] moduleStates = mSwerveDriveKinematics.toSwerveModuleStates(speeds, new Translation2d());
+    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, getMaxWheelSpeed());
+    drive(ShiftingSwerveModuleState.toShiftingSwerveModuleState(moduleStates, mShifter.getGear()));
+  }
+  public void autoShift(){
+    boolean overActiveRange = true;
+    for (ShiftingSwerveModule i : mSwerveModules){
+      if(!i.shouldShift()) overActiveRange = false;
+    }
+    shift(overActiveRange ? 1 : 0);
+  }
   
   /** 
    * Shifts the gear of the drivetrain
@@ -108,6 +121,9 @@ public class ShiftingSwerveDrive extends SubsystemBase {
    */
   public void shift(int gear) {
     mShifter.shift(gear);
+  }
+  public double getMaxWheelSpeed(){
+    return mShifter.getGear() == 0 ? 2.2 : 5;
   }
 
   /** 
@@ -124,7 +140,7 @@ public class ShiftingSwerveDrive extends SubsystemBase {
    * @param state State of the robot according to PathPlanner
    */
   public void updatePose(PathPlannerState state) {
-    mGyro.setAngle(state.holonomicRotation.getRadians());
+    mGyro.setAngle(state.holonomicRotation.getDegrees());
     Rotation2d rotation = new Rotation2d(state.holonomicRotation.getRadians());
     Pose2d pose = new Pose2d(
         state.poseMeters.getX(), 
@@ -133,10 +149,11 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     );
     mSwerveDriveOdometry.resetPosition(
       rotation,
-      getModulePositions(),
+      getModulePositions(), 
       pose
     );
   }
+
 
   // /**
   //  * Updates the pose of the robot using a Pose2d from the limelight
@@ -163,6 +180,13 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     return modulePositions;
   }
 
+  public SwerveModuleState[] getMeasuredStates(){
+    SwerveModuleState[] states = new SwerveModuleState[mSwerveModules.length];
+    for (int i = 0; i < mSwerveModules.length; i++){
+      states[i] = mSwerveModules[i].getMeasuredState();
+    }
+    return states;
+  }
   /**
    * Updates the rotation of the translations of the modules
    * @param angle The angle of the drivetrain
@@ -172,6 +196,12 @@ public class ShiftingSwerveDrive extends SubsystemBase {
       mModuleTranslation[i].rotateBy(angle);
     }
   } 
+
+  public void updatePose(Pose2d pose2d){
+    mSwerveDriveOdometry.resetPosition(getRotation2d(), getModulePositions(), pose2d);
+  }
+
+  
 
   /**
    * Gets the translation 2d array of the modules
@@ -202,15 +232,34 @@ public class ShiftingSwerveDrive extends SubsystemBase {
    * @return The rotation2d of the drivetrain
    */
   public Rotation2d getRotation2d() {
-    return new Rotation2d(-mGyro.getRotation2d().getRadians());
+    return mGyro.getRotation2d();
+  }
+
+  public Pose2d getPose() {
+    return mSwerveDriveOdometry.getPoseMeters();
   }
 
   public double getPitch(){
     return mGyro.getPitch();
   }
 
+  public double getRoll() {
+    return mGyro.getRoll();
+  }
+
   public void resetGyro() {
     mGyro.resetAngle();
+    mSwerveDriveOdometry.resetPosition(getRotation2d(), getModulePositions(), 
+    new Pose2d(getPose().getTranslation(), getRotation2d()));
+
+  }
+
+  public void setGyro(double radians) {
+    mGyro.setAngle(radians);
+  }
+
+  public void setAutoShifting(boolean isAutoShifting){
+    mAutoShifting = isAutoShifting;
   }
 
   @Override
@@ -218,16 +267,22 @@ public class ShiftingSwerveDrive extends SubsystemBase {
     // This method will be called once per scheduler run
     updatePose(
       getModulePositions(), 
-      mGyro.getRotation2d()
+      getRotation2d()
     );
-    // updateModuleTranslation(mGyro.getRotation2d());
+    // if(mAutoShifting) autoShift();
     
     SmartDashboard.putBoolean("field centric active", mFieldCentricActive);
-    SmartDashboard.putNumber("angle", mGyro.getAngle());
+    SmartDashboard.putNumber("Gyro angle", mGyro.getAngle()); 
+    // SmartDashboard.putNumber("Odometry x", mSwerveDriveOdometry.getPoseMeters().getX());
+    // SmartDashboard.putNumber("Odometry y", mSwerveDriveOdometry.getPoseMeters().getY());
+    // SmartDashboard.putNumber("Odometry angle", mSwerveDriveOdometry.getPoseMeters().getRotation().getDegrees());
     // SmartDashboard.putNumber("bot angle radians", mGyro.getRotation2d().getRadians());
     // SmartDashboard.putNumber("Gyro roll", mGyro.getRoll());
     // SmartDashboard.putNumber("Gyro yaw", mGyro.getYaw());
     // SmartDashboard.putNumber("Gyro pitch", mGyro.getPitch());
+
+    SmartDashboard.putBoolean("Current Gear", mShifter.getGear() == 0 ? false : true); // Extract this out into ShiftingSwerveDrive
+
     
   }
   

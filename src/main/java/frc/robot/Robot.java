@@ -19,10 +19,10 @@ public class Robot extends TimedRobot {
     try {
       m_robotContainer = new RobotContainer();
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     CameraServer.startAutomaticCapture();
+    
   }
 
   @Override
@@ -41,7 +41,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand().withTimeout(15);
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -52,7 +52,10 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {}
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+    CommandScheduler.getInstance().clearComposedCommands();
+
+  }
 
   @Override
   public void teleopInit() {

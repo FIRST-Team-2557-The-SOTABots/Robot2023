@@ -4,13 +4,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.util.InterpolatingTreeMap;
-import frc.robot.util.InterpolatingSwerveOffsetTreeMap;
 
 import static frc.robot.Constants.*;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public class ShiftingSwerveModuleConfig {
 
@@ -20,8 +16,6 @@ public class ShiftingSwerveModuleConfig {
 
     private double wheelDiameter;  
     
-    private double[] angles;
-    private double[] offsets;
 
     private double speedKP;
     private double speedKI;
@@ -97,22 +91,8 @@ public class ShiftingSwerveModuleConfig {
         return maxWheelSpeed;
     }
 
-    public double[] getAngles() {
-        return angles;
-    }
-
-    public double[] getOffsets() {
-        return offsets;
-    }
-
-    public Map<Double, Double>  getAnglesToOffset() {
-        Map<Double, Double> angleToOffset = new HashMap<Double, Double>();
-        for (int i = 0; i < angles.length; i++) {
-            angleToOffset.put(angles[i], offsets[i]);
-        }
-        // return new InterpolatingSwerveOffsetTreeMap(angleToOffset, ); 
-        return angleToOffset;
-    }
+   
+    
 
     public double getAngleKP() {
         return angleKP;
