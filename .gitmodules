@@ -1,0 +1,3 @@
+[submodule "src/main/java/SOTAlib"]
+	path = src/main/java/SOTAlib
+	url = https://github.com/FIRST-Team-2557-The-SOTABots/SOTAlib
